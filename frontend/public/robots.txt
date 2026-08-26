@@ -1,0 +1,7 @@
+# Everything on this site is meant to be indexed.
+User-agent: *
+Allow: /
+Disallow: /admin
+
+# Replace the host below with your live domain after deploying.
+Sitemap: https://wisdomlingo.com/sitemap.xml

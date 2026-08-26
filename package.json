@@ -1,0 +1,13 @@
+{
+  "name": "wisdomlingo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WisdomLingo education consultancy - React frontend with a Supabase backend.",
+  "scripts": {
+    "setup": "npm --prefix frontend install",
+    "dev": "npm --prefix frontend start",
+    "build": "npm --prefix frontend run build",
+    "test": "npm --prefix frontend test",
+    "db:push": "supabase db push --workdir backend"
+  }
+}

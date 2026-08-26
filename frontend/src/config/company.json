@@ -1,0 +1,24 @@
+{
+  "name": "WisdomLingo",
+  "legalName": "Wisdomlingo German Language Academy and Consultancy",
+  "tagline": "Learn. Travel. Achieve.",
+  "phone": "03118526814",
+  "phoneE164": "+92-311-8526814",
+  "email": "info@wisdomlingo.com",
+  "address": {
+    "street": "House 3A, Park Road, F-8/1",
+    "locality": "Islamabad",
+    "region": "Islamabad Capital Territory",
+    "postalCode": "44000",
+    "country": "PK"
+  },
+  "geo": { "latitude": 33.7102734, "longitude": 73.0321496 },
+  "hours": "Mon - Sat, 9:00 AM - 8:00 PM",
+  "openingHours": {
+    "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    "opens": "09:00",
+    "closes": "20:00"
+  },
+  "googlePlaceQuery": "Wisdomlingo German language Academy and consultancy",
+  "googleMapsUrl": "https://share.google/MD63jEY3xJEpiUtS2"
+}
