@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AlertTriangle, ExternalLink, LogOut, Menu } from "lucide-react";
+import { AlertTriangle, ChevronDown, ExternalLink, LogOut, Menu, UserRound } from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuth } from "../hooks/useAuth";
 import { ADMIN_EMAIL, isSupabaseConfigured, supabase } from "../lib/supabase";
 import { errorMessage } from "../lib/utils";
 import { ADMIN_TABS, AdminSidebar, AdminTab } from "../components/admin/AdminSidebar";
+import { ProfileModal, avatarUrl, displayName } from "../components/admin/ProfileModal";
+import { Avatar } from "../components/ui/Avatar";
 import { Spinner } from "../components/ui/Loader";
 import { ApprenticeshipsTab } from "../components/admin/ApprenticeshipsTab";
 import { CountriesTab } from "../components/admin/CountriesTab";
@@ -33,6 +35,30 @@ export const AdminDashboardPage: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
   const [unread, setUnread] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Escape and outside clicks close the account menu.
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    const onPointerDown = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("mousedown", onPointerDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("mousedown", onPointerDown);
+    };
+  }, [menuOpen]);
 
   // Refreshed on every tab change so the badge settles after reading messages.
   useEffect(() => {
@@ -64,6 +90,8 @@ export const AdminDashboardPage: React.FC = () => {
   };
 
   const address = user?.email || ADMIN_EMAIL;
+  const name = displayName(user);
+  const photo = avatarUrl(user);
   const headingTitle = HEADINGS[tab];
   const activeTab = ADMIN_TABS.find((item) => item.key === tab);
 
@@ -109,30 +137,74 @@ export const AdminDashboardPage: React.FC = () => {
 
               <span aria-hidden="true" className="hidden h-6 w-px bg-slate-200 sm:block" />
 
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
-                  {address.charAt(0).toUpperCase()}
-                </span>
-                <span className="hidden min-w-0 md:block">
-                  <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    Signed in
+              {/* The photo is the menu trigger - profile and sign out live inside it. */}
+              <div ref={menuRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setMenuOpen((value) => !value)}
+                  aria-haspopup="menu"
+                  aria-expanded={menuOpen}
+                  aria-label="Account menu"
+                  className="flex items-center gap-2.5 rounded-lg p-1 pr-2 transition hover:bg-slate-100"
+                >
+                  <Avatar src={photo} name={name} className="h-9 w-9 text-sm" />
+                  <span className="hidden min-w-0 text-left md:block">
+                    <span className="block max-w-[13rem] truncate text-xs font-bold text-slate-800">
+                      {name}
+                    </span>
+                    <span className="block max-w-[13rem] truncate text-[11px] text-slate-400">
+                      {address}
+                    </span>
                   </span>
-                  <span className="block max-w-[13rem] truncate text-xs font-semibold text-slate-800">
-                    {address}
-                  </span>
-                </span>
-              </div>
+                  <ChevronDown
+                    className={`hidden h-4 w-4 shrink-0 text-slate-400 transition md:block ${
+                      menuOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
 
-              <button
-                type="button"
-                onClick={handleSignOut}
-                disabled={signingOut}
-                aria-label="Sign out"
-                title="Sign out"
-                className="shrink-0 rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 disabled:opacity-50"
-              >
-                {signingOut ? <Spinner className="h-4 w-4" /> : <LogOut className="h-4 w-4" />}
-              </button>
+                {menuOpen && (
+                  <div
+                    role="menu"
+                    className="absolute right-0 top-full z-30 mt-2 w-60 animate-fade-in-up overflow-hidden rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl"
+                  >
+                    <div className="border-b border-slate-100 px-4 py-3">
+                      <p className="truncate text-sm font-bold text-slate-900">{name}</p>
+                      <p className="truncate text-xs text-slate-500">{address}</p>
+                    </div>
+
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setProfileOpen(true);
+                      }}
+                      className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                    >
+                      <UserRound className="h-4 w-4 text-slate-400" /> Your profile
+                    </button>
+
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        handleSignOut();
+                      }}
+                      disabled={signingOut}
+                      className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm font-semibold text-accent transition hover:bg-accent-50 disabled:opacity-50"
+                    >
+                      {signingOut ? (
+                        <Spinner className="h-4 w-4" />
+                      ) : (
+                        <LogOut className="h-4 w-4" />
+                      )}
+                      Sign out
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </header>
@@ -156,10 +228,12 @@ export const AdminDashboardPage: React.FC = () => {
             {tab === "apprenticeships" && <ApprenticeshipsTab />}
             {tab === "messages" && <MessagesTab onUnreadCountChange={setUnread} />}
             {tab === "seo" && <SeoTab />}
-            {tab === "settings" && <SettingsTab />}
+            {tab === "settings" && <SettingsTab onEditProfile={() => setProfileOpen(true)} />}
           </div>
         </main>
       </div>
+
+      <ProfileModal open={profileOpen} onClose={() => setProfileOpen(false)} />
     </div>
   );
 };

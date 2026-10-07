@@ -1,10 +1,11 @@
 import React from "react";
 import { ArrowRight, Briefcase, Calendar, Check, ChevronRight, Coins, FileCheck, Sparkles } from "lucide-react";
-import { COMPANY } from "../../config/site";
+import { useCompany } from "../../hooks/useCompany";
 import { FIELD_ICONS } from "../../data/content";
 import { Apprenticeship } from "../../types";
 
 export const ApprenticeshipCard: React.FC<{ item: Apprenticeship }> = ({ item }) => {
+  const COMPANY = useCompany();
   const Icon = FIELD_ICONS[item.field] || Briefcase;
   return (
     <article className="card flex flex-col overflow-hidden">

@@ -66,7 +66,13 @@ export interface ContactSubmission {
    ========================================================================= */
 
 /** The five public routes the admin can tune individually. */
-export type SeoPageKey = "home" | "courses" | "studyAbroad" | "apprenticeships" | "about";
+export type SeoPageKey =
+  | "home"
+  | "courses"
+  | "studyAbroad"
+  | "apprenticeships"
+  | "blog"
+  | "about";
 
 export interface SeoPageOverride {
   title: string;
@@ -89,6 +95,41 @@ export interface SeoSettings {
   twitter_handle: string | null;
   google_verification: string | null;
   pages: Partial<Record<SeoPageKey, SeoPageOverride>>;
+  updated_at?: string;
+}
+
+/**
+ * Editable business details, one row in `company_settings`.
+ *
+ * Mirrors the shape of `config/company.json`, which stays in the repo as the
+ * fallback used when the table is unreachable.
+ */
+export interface CompanySettings {
+  name: string;
+  legal_name: string;
+  tagline: string;
+  phone: string;
+  /** E.164-ish, e.g. +92-311-8526814 - tel: and WhatsApp links are built from this. */
+  phone_e164: string;
+  email: string;
+  address_street: string;
+  address_locality: string;
+  address_region: string;
+  address_postal_code: string;
+  address_country: string;
+  geo_latitude: number | null;
+  geo_longitude: number | null;
+  /** The human sentence shown on the site, e.g. "Mon - Sat, 9:00 AM - 8:00 PM". */
+  hours: string;
+  opening_days: string[];
+  opening_opens: string;
+  opening_closes: string;
+  google_place_query: string;
+  google_maps_url: string;
+  social_instagram: string;
+  social_facebook: string;
+  social_linkedin: string;
+  social_tiktok: string;
   updated_at?: string;
 }
 

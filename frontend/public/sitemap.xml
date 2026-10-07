@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Static sitemap for the five public routes.
+  Static sitemap for the six public routes.
   After deploying, replace https://wisdomlingo.com with your real domain here
   and in robots.txt, then submit it in Google Search Console.
 -->
@@ -24,6 +24,11 @@
     <loc>https://wisdomlingo.com/apprenticeships</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://wisdomlingo.com/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://wisdomlingo.com/about</loc>

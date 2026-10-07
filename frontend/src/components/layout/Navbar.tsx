@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { ArrowRight, Menu, Phone, ShieldCheck, X } from "lucide-react";
-import { COMPANY } from "../../config/site";
+import { useCompany } from "../../hooks/useCompany";
 import { NAV_LINKS, PRIMARY_NAV } from "../../config/navigation";
 import { useAuth } from "../../hooks/useAuth";
 import { Logo } from "./Logo";
 
 export const Navbar: React.FC = () => {
+  const COMPANY = useCompany();
   const [open, setOpen] = useState(false);
   const { session } = useAuth();
   const location = useLocation();
@@ -53,14 +54,6 @@ export const Navbar: React.FC = () => {
             className="inline-flex items-center gap-2 whitespace-nowrap rounded-lg border border-accent/40 px-3 py-2 text-sm font-semibold text-accent transition hover:bg-accent-50 xl:px-4"
           >
             <Phone className="h-4 w-4" /> Call Us
-          </a>
-          <a
-            href={COMPANY.whatsapp}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 whitespace-nowrap rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-700 xl:px-4"
-          >
-            Free Consultation
           </a>
         </div>
 

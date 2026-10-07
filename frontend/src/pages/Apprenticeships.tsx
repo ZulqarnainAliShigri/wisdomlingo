@@ -14,8 +14,10 @@ import { Seo } from "../components/Seo";
 import { StructuredData } from "../components/StructuredData";
 import { apprenticeshipListSchema } from "../lib/structuredData";
 import { useSeoSettings } from "../hooks/useSeo";
+import { useCompany } from "../hooks/useCompany";
 
 export const ApprenticeshipsPage: React.FC = () => {
+  const COMPANY = useCompany();
   const { items, loading } = useRemoteList<Apprenticeship>(
     "apprenticeships",
     SEED_APPRENTICESHIPS,
@@ -24,8 +26,8 @@ export const ApprenticeshipsPage: React.FC = () => {
 
   const { settings } = useSeoSettings();
   const apprenticeshipSchemaData = useMemo(
-    () => apprenticeshipListSchema(items, settings.site_url),
-    [items, settings.site_url]
+    () => apprenticeshipListSchema(items, settings.site_url, COMPANY.legalName),
+    [items, settings.site_url, COMPANY.legalName]
   );
 
   return (

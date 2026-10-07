@@ -22,6 +22,7 @@ export const SEO_PAGES: { key: SeoPageKey; label: string; path: string }[] = [
   { key: "courses", label: "Courses", path: "/courses" },
   { key: "studyAbroad", label: "Study Abroad", path: "/study-abroad" },
   { key: "apprenticeships", label: "Apprenticeships", path: "/apprenticeships" },
+  { key: "blog", label: "Blog", path: "/blog" },
   { key: "about", label: "About", path: "/about" },
 ];
 

@@ -4,23 +4,27 @@ import {
   CheckCircle2,
   Database,
   Download,
-  KeyRound,
   Pencil,
   RefreshCw,
+  RotateCcw,
+  Save,
   SlidersHorizontal,
+  UserRound,
   XCircle,
 } from "lucide-react";
 import { toast } from "react-toastify";
-import company from "../../config/company.json";
-import { COMPANY } from "../../config/site";
+import { DEFAULT_COMPANY_SETTINGS } from "../../config/site";
 import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 import { errorMessage, formatDate } from "../../lib/utils";
 import { RANGES } from "../../lib/analytics";
 import { mapSubmission } from "../../lib/mappers";
 import { useAuth } from "../../hooks/useAuth";
+import { useCompanySettings } from "../../hooks/useCompany";
 import { DashboardPrefs, useDashboardPrefs } from "../../hooks/useDashboardPrefs";
-import { Row } from "../../types";
+import { CompanySettings, Row } from "../../types";
+import { Avatar } from "../ui/Avatar";
 import { Spinner } from "../ui/Loader";
+import { avatarUrl, displayName } from "./ProfileModal";
 
 /** Tables the dashboard depends on, checked one by one so a missing migration is obvious. */
 const TABLES = [
@@ -29,7 +33,10 @@ const TABLES = [
   { name: "apprenticeships", label: "Apprenticeships" },
   { name: "contact_submissions", label: "Messages" },
   { name: "seo_settings", label: "SEO settings" },
+  { name: "company_settings", label: "Business details" },
 ];
+
+const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 interface TableStatus {
   name: string;
@@ -60,17 +67,53 @@ const Section: React.FC<{
   </section>
 );
 
-export const SettingsTab: React.FC = () => {
+/** One labelled input in the business-details form. */
+const Field: React.FC<{
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  hint?: string;
+  type?: string;
+  className?: string;
+}> = ({ id, label, value, onChange, placeholder, hint, type = "text", className }) => (
+  <div className={className}>
+    <label className="label" htmlFor={id}>
+      {label}
+    </label>
+    <input
+      id={id}
+      type={type}
+      className="input"
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+      placeholder={placeholder}
+    />
+    {hint && <p className="mt-1.5 text-xs text-slate-400">{hint}</p>}
+  </div>
+);
+
+const GroupHeading: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <h3 className="mb-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{children}</h3>
+);
+
+export const SettingsTab: React.FC<{ onEditProfile?: () => void }> = ({ onEditProfile }) => {
   const { user } = useAuth();
   const [prefs, setPrefs] = useDashboardPrefs();
+  const { settings: company, loading: companyLoading, reload: reloadCompany } = useCompanySettings();
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [changingPassword, setChangingPassword] = useState(false);
+  const [form, setForm] = useState<CompanySettings>(company);
+  const [savingCompany, setSavingCompany] = useState(false);
 
   const [statuses, setStatuses] = useState<TableStatus[]>([]);
   const [checking, setChecking] = useState(false);
   const [exporting, setExporting] = useState(false);
+
+  // Follows the loaded row, and re-syncs after every successful save.
+  useEffect(() => {
+    setForm(company);
+  }, [company]);
 
   const checkTables = useCallback(async () => {
     if (!isSupabaseConfigured) {
@@ -104,26 +147,75 @@ export const SettingsTab: React.FC = () => {
   const updatePref = <K extends keyof DashboardPrefs>(key: K, value: DashboardPrefs[K]) =>
     setPrefs({ ...prefs, [key]: value });
 
-  const changePassword = async () => {
-    if (password.length < 8) {
-      toast.error("Use at least 8 characters.");
+  const setField = <K extends keyof CompanySettings>(field: K, value: CompanySettings[K]) =>
+    setForm((current) => ({ ...current, [field]: value }));
+
+  const toggleDay = (day: string) =>
+    setForm((current) => ({
+      ...current,
+      // Kept in week order rather than click order, so the schema.org output is
+      // stable no matter how the admin ticked the boxes.
+      opening_days: DAYS.filter((name) =>
+        current.opening_days.includes(name) ? name !== day : name === day
+      ),
+    }));
+
+  const companyDirty = JSON.stringify({ ...form, updated_at: null })
+    !== JSON.stringify({ ...company, updated_at: null });
+
+  const saveCompany = async () => {
+    if (!isSupabaseConfigured) {
+      toast.error("Supabase is not connected, so business details cannot be saved.");
       return;
     }
-    if (password !== confirmPassword) {
-      toast.error("The two passwords do not match.");
+    if (!form.name.trim()) {
+      toast.error("The short name cannot be empty - it is used across the site.");
       return;
     }
-    setChangingPassword(true);
+
+    setSavingCompany(true);
     try {
-      const { error } = await supabase.auth.updateUser({ password });
+      const text = (value: string) => value.trim();
+      const { error } = await supabase.from("company_settings").upsert({
+        id: true,
+        name: text(form.name),
+        legal_name: text(form.legal_name),
+        tagline: text(form.tagline),
+        phone: text(form.phone),
+        phone_e164: text(form.phone_e164),
+        email: text(form.email),
+        address_street: text(form.address_street),
+        address_locality: text(form.address_locality),
+        address_region: text(form.address_region),
+        address_postal_code: text(form.address_postal_code),
+        address_country: text(form.address_country),
+        // Empty boxes clear the pin rather than storing 0, which would place the
+        // business off the coast of Africa.
+        geo_latitude: Number.isFinite(Number(form.geo_latitude)) && form.geo_latitude !== null
+          ? Number(form.geo_latitude)
+          : null,
+        geo_longitude: Number.isFinite(Number(form.geo_longitude)) && form.geo_longitude !== null
+          ? Number(form.geo_longitude)
+          : null,
+        hours: text(form.hours),
+        opening_days: form.opening_days,
+        opening_opens: text(form.opening_opens),
+        opening_closes: text(form.opening_closes),
+        google_place_query: text(form.google_place_query),
+        google_maps_url: text(form.google_maps_url),
+        social_instagram: text(form.social_instagram),
+        social_facebook: text(form.social_facebook),
+        social_linkedin: text(form.social_linkedin),
+        social_tiktok: text(form.social_tiktok),
+      });
       if (error) throw error;
-      toast.success("Password changed. It applies the next time you sign in.");
-      setPassword("");
-      setConfirmPassword("");
+
+      await reloadCompany();
+      toast.success("Business details saved. The website updates on the next page load.");
     } catch (error) {
-      toast.error(errorMessage(error, "Could not change the password."));
+      toast.error(errorMessage(error, "Could not save the business details."));
     } finally {
-      setChangingPassword(false);
+      setSavingCompany(false);
     }
   };
 
@@ -179,63 +271,306 @@ export const SettingsTab: React.FC = () => {
     }
   };
 
+  const numberValue = (value: number | null) => (value === null ? "" : String(value));
+  const parseNumber = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    const parsed = Number(trimmed);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+
   return (
     <div className="space-y-6">
       {/* Account */}
       <Section
-        icon={KeyRound}
+        icon={UserRound}
         title="Account"
         hint="The single admin account that can edit this site."
       >
-        <div className="rounded-xl bg-slate-50 p-4">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-            Signed in as
-          </p>
-          <p className="mt-0.5 text-sm font-semibold text-slate-800">
-            {user?.email ?? "admin@wisdomlingo.com"}
-          </p>
+        <div className="flex flex-wrap items-center gap-4 rounded-xl bg-slate-50 p-4">
+          <Avatar src={avatarUrl(user)} name={displayName(user)} className="h-12 w-12 text-base" />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-bold text-slate-900">{displayName(user)}</p>
+            <p className="truncate text-xs text-slate-500">
+              {user?.email ?? "admin@wisdomlingo.com"}
+            </p>
+          </div>
+          <button type="button" onClick={onEditProfile} className="btn-ghost !py-2.5 text-sm">
+            <UserRound className="h-4 w-4" /> Edit profile
+          </button>
+        </div>
+        <p className="mt-2.5 text-xs text-slate-400">
+          Your name, photo and password are changed in the profile dialog - also reachable from your
+          photo in the top-right corner.
+        </p>
+      </Section>
+
+      {/* Business details - editable, saved to company_settings */}
+      <Section
+        icon={Pencil}
+        title="Business details"
+        hint="Shown across the website and in the structured data Google reads."
+        action={
+          <div className="flex gap-2">
+            {companyDirty && (
+              <button
+                type="button"
+                onClick={() => setForm(company)}
+                className="btn-ghost !py-2.5 text-sm"
+              >
+                <RotateCcw className="h-4 w-4" /> Discard
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={saveCompany}
+              disabled={savingCompany || companyLoading || !companyDirty || !isSupabaseConfigured}
+              className="btn-primary !py-2.5 text-sm"
+            >
+              {savingCompany ? <Spinner /> : <Save className="h-4 w-4" />}
+              Save changes
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-7">
+          <div>
+            <GroupHeading>Identity</GroupHeading>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field
+                id="company-name"
+                label="Short name"
+                value={form.name}
+                onChange={(value) => setField("name", value)}
+                placeholder="WisdomLingo"
+                hint="Used in the footer, the WhatsApp greeting and the logo alt text."
+              />
+              <Field
+                id="company-tagline"
+                label="Tagline"
+                value={form.tagline}
+                onChange={(value) => setField("tagline", value)}
+                placeholder="Learn. Travel. Achieve."
+              />
+              <Field
+                id="company-legal-name"
+                label="Full legal name"
+                value={form.legal_name}
+                onChange={(value) => setField("legal_name", value)}
+                placeholder="Wisdomlingo German Language Academy and Consultancy"
+                hint="The name Google shows for the business listing."
+                className="sm:col-span-2"
+              />
+            </div>
+          </div>
+
+          <div>
+            <GroupHeading>Contact</GroupHeading>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field
+                id="company-phone"
+                label="Phone (as displayed)"
+                value={form.phone}
+                onChange={(value) => setField("phone", value)}
+                placeholder="03118526814"
+              />
+              <Field
+                id="company-phone-e164"
+                label="Phone (international)"
+                value={form.phone_e164}
+                onChange={(value) => setField("phone_e164", value)}
+                placeholder="+92-311-8526814"
+                hint="Call and WhatsApp links are built from this, so it must include the country code."
+              />
+              <Field
+                id="company-email"
+                label="Email"
+                type="email"
+                value={form.email}
+                onChange={(value) => setField("email", value)}
+                placeholder="info@wisdomlingo.com"
+                className="sm:col-span-2"
+              />
+            </div>
+          </div>
+
+          <div>
+            <GroupHeading>Address</GroupHeading>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field
+                id="company-street"
+                label="Street"
+                value={form.address_street}
+                onChange={(value) => setField("address_street", value)}
+                placeholder="House 3A, Park Road, F-8/1"
+                className="sm:col-span-2"
+              />
+              <Field
+                id="company-locality"
+                label="City"
+                value={form.address_locality}
+                onChange={(value) => setField("address_locality", value)}
+                placeholder="Islamabad"
+              />
+              <Field
+                id="company-region"
+                label="Region"
+                value={form.address_region}
+                onChange={(value) => setField("address_region", value)}
+                placeholder="Islamabad Capital Territory"
+              />
+              <Field
+                id="company-postal"
+                label="Postal code"
+                value={form.address_postal_code}
+                onChange={(value) => setField("address_postal_code", value)}
+                placeholder="44000"
+              />
+              <Field
+                id="company-country"
+                label="Country code"
+                value={form.address_country}
+                onChange={(value) => setField("address_country", value)}
+                placeholder="PK"
+                hint="Two letters, e.g. PK."
+              />
+            </div>
+          </div>
+
+          <div>
+            <GroupHeading>Map and opening hours</GroupHeading>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field
+                id="company-place-query"
+                label="Google listing name"
+                value={form.google_place_query}
+                onChange={(value) => setField("google_place_query", value)}
+                placeholder="Wisdomlingo German language Academy and consultancy"
+                hint="Exactly as listed on Google - the embedded map resolves the pin from this."
+                className="sm:col-span-2"
+              />
+              <Field
+                id="company-maps-url"
+                label="Google Maps link"
+                value={form.google_maps_url}
+                onChange={(value) => setField("google_maps_url", value)}
+                placeholder="https://share.google/..."
+                className="sm:col-span-2"
+              />
+              <Field
+                id="company-lat"
+                label="Latitude"
+                value={numberValue(form.geo_latitude)}
+                onChange={(value) => setField("geo_latitude", parseNumber(value))}
+                placeholder="33.7102734"
+              />
+              <Field
+                id="company-lng"
+                label="Longitude"
+                value={numberValue(form.geo_longitude)}
+                onChange={(value) => setField("geo_longitude", parseNumber(value))}
+                placeholder="73.0321496"
+              />
+              <Field
+                id="company-hours"
+                label="Opening hours (as displayed)"
+                value={form.hours}
+                onChange={(value) => setField("hours", value)}
+                placeholder="Mon - Sat, 9:00 AM - 8:00 PM"
+                hint="The sentence visitors read on the site."
+                className="sm:col-span-2"
+              />
+            </div>
+
+            <div className="mt-4">
+              <span className="label">Open on</span>
+              <div className="flex flex-wrap gap-2">
+                {DAYS.map((day) => {
+                  const active = form.opening_days.includes(day);
+                  return (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => toggleDay(day)}
+                      aria-pressed={active}
+                      className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${
+                        active
+                          ? "border-primary bg-primary text-white"
+                          : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-900"
+                      }`}
+                    >
+                      {day.slice(0, 3)}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="mt-1.5 text-xs text-slate-400">
+                These, with the two times below, are what Google reads as your opening hours.
+              </p>
+            </div>
+
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <Field
+                id="company-opens"
+                label="Opens"
+                type="time"
+                value={form.opening_opens}
+                onChange={(value) => setField("opening_opens", value)}
+              />
+              <Field
+                id="company-closes"
+                label="Closes"
+                type="time"
+                value={form.opening_closes}
+                onChange={(value) => setField("opening_closes", value)}
+              />
+            </div>
+          </div>
+
+          <div>
+            <GroupHeading>Social profiles</GroupHeading>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field
+                id="company-instagram"
+                label="Instagram"
+                value={form.social_instagram}
+                onChange={(value) => setField("social_instagram", value)}
+                placeholder="https://www.instagram.com/..."
+              />
+              <Field
+                id="company-facebook"
+                label="Facebook"
+                value={form.social_facebook}
+                onChange={(value) => setField("social_facebook", value)}
+                placeholder="https://www.facebook.com/..."
+              />
+              <Field
+                id="company-linkedin"
+                label="LinkedIn"
+                value={form.social_linkedin}
+                onChange={(value) => setField("social_linkedin", value)}
+                placeholder="https://www.linkedin.com/in/..."
+              />
+              <Field
+                id="company-tiktok"
+                label="TikTok"
+                value={form.social_tiktok}
+                onChange={(value) => setField("social_tiktok", value)}
+                placeholder="https://www.tiktok.com/@..."
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className="label" htmlFor="settings-password">
-              New password
-            </label>
-            <input
-              id="settings-password"
-              type="password"
-              className="input"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="At least 8 characters"
-              autoComplete="new-password"
-            />
-          </div>
-          <div>
-            <label className="label" htmlFor="settings-password-confirm">
-              Confirm new password
-            </label>
-            <input
-              id="settings-password-confirm"
-              type="password"
-              className="input"
-              value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              placeholder="Type it again"
-              autoComplete="new-password"
-            />
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={changePassword}
-          disabled={changingPassword || !password || !isSupabaseConfigured}
-          className="btn-primary mt-4 w-full sm:w-auto"
-        >
-          {changingPassword ? <Spinner /> : <KeyRound className="h-4 w-4" />}
-          Change password
-        </button>
+        <p className="mt-6 flex items-start gap-2 rounded-xl bg-slate-50 p-4 text-xs leading-relaxed text-slate-600">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+          <span>
+            Saved changes appear on the website as soon as a visitor loads a page. The
+            LocalBusiness markup Google reads is written into the static HTML at build time, so
+            those tags update on the next deploy - run{" "}
+            <code className="rounded bg-white px-1.5 py-0.5">npm run build</code> to refresh them.
+          </span>
+        </p>
       </Section>
 
       {/* Preferences */}
@@ -369,46 +704,9 @@ export const SettingsTab: React.FC = () => {
         </button>
       </Section>
 
-      {/* Business details - read only, with the honest reason why */}
-      <Section
-        icon={Pencil}
-        title="Business details"
-        hint="Shown across the website and in the structured data Google reads."
-      >
-        <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
-          {[
-            ["Name", COMPANY.legalName],
-            ["Phone", COMPANY.phone],
-            ["Email", COMPANY.email],
-            ["Address", COMPANY.address],
-            ["Opening hours", COMPANY.hours],
-            ["Tagline", COMPANY.tagline],
-          ].map(([label, value]) => (
-            <div key={label}>
-              <dt className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                {label}
-              </dt>
-              <dd className="mt-0.5 text-sm text-slate-800">{value}</dd>
-            </div>
-          ))}
-        </dl>
-
-        <p className="mt-5 flex items-start gap-2 rounded-xl bg-slate-50 p-4 text-xs leading-relaxed text-slate-600">
-          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
-          <span>
-            These are not editable here yet. They are read from{" "}
-            <code className="rounded bg-white px-1.5 py-0.5">
-              frontend/src/config/company.json
-            </code>{" "}
-            at build time - the same file the SEO script uses to write your LocalBusiness markup, so
-            the website and Google never disagree. Making them editable means moving them to the
-            database and rewiring every page that shows them; ask and I will do it properly.
-          </span>
-        </p>
-      </Section>
-
       <p className="px-1 text-xs text-slate-400">
-        {company.name} admin - {statuses.filter((s) => s.ok).length}/{TABLES.length} tables reachable
+        {form.name || DEFAULT_COMPANY_SETTINGS.name} admin -{" "}
+        {statuses.filter((s) => s.ok).length}/{TABLES.length} tables reachable
       </p>
     </div>
   );

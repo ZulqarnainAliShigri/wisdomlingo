@@ -13,15 +13,22 @@ export const EnquiryModal: React.FC<{
   title?: string;
   intro?: string;
   defaultSubject?: string;
+  defaultMessage?: string;
 }> = ({
   open,
   onClose,
   title = "Start your journey",
   intro = "Tell us where you are now and where you want to go. A counsellor replies within one working day.",
   defaultSubject,
+  defaultMessage,
 }) => (
   <Modal open={open} title={title} onClose={onClose} width="max-w-xl">
     <p className="mb-5 text-sm leading-relaxed text-slate-600">{intro}</p>
-    <ContactForm variant="bare" defaultSubject={defaultSubject} onSent={onClose} />
+    <ContactForm
+      variant="bare"
+      defaultSubject={defaultSubject}
+      defaultMessage={defaultMessage}
+      onSent={onClose}
+    />
   </Modal>
 );

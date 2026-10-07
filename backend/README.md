@@ -11,7 +11,8 @@ backend/supabase/
 │   ├── 20250101000000_init_tables.sql           tables, indexes, updated_at triggers
 │   ├── 20250101000100_rls_policies.sql          row level security
 │   ├── 20250101000200_storage_bucket.sql        course-images bucket + policies
-│   └── 20250101000300_seo_settings.sql          editable SEO settings (one row)
+│   ├── 20250101000300_seo_settings.sql          editable SEO settings (one row)
+│   └── 20250101000400_company_settings.sql      editable business details (one row)
 └── seed.sql                                     starter content (11 courses, 6 countries, 5 fields)
 ```
 
@@ -23,7 +24,8 @@ backend/supabase/
    2. `migrations/20250101000100_rls_policies.sql`
    3. `migrations/20250101000200_storage_bucket.sql`
    4. `migrations/20250101000300_seo_settings.sql`
-   5. `seed.sql`
+   5. `migrations/20250101000400_company_settings.sql`
+   6. `seed.sql`
 3. **Authentication → Users → Add user → Create new user**
    - Email `admin@wisdomlingo.com`, a strong password, tick **Auto Confirm User**.
 4. **Project Settings → API** — copy **Project URL** and the **anon public** key into
@@ -49,11 +51,24 @@ supabase db push                                # applies migrations/
 | `apprenticeships` | title, field, salary, duration, description, requirements[], benefits[], image_url, display_order, is_active | Apprenticeships page, admin Apprenticeships tab |
 | `contact_submissions` | name, email, phone, subject, message, is_read, created_at | About page form, admin Messages tab |
 | `seo_settings` | site_name, site_url, title_template, default_description, keywords, og_image_url, twitter_handle, google_verification, pages (jsonb) | every public page's `<head>`, admin SEO tab |
+| `company_settings` | name, legal_name, tagline, phone, phone_e164, email, address_*, geo_*, hours, opening_*, google_*, social_* | navbar, footer, contact blocks, maps, LocalBusiness markup, admin Settings tab |
 
-`seo_settings` holds exactly one row: its `id` is a boolean fixed to `true`, so a second row
-cannot be inserted and the app can always upsert against `id = true`. Unlike the content
-tables it is readable by `anon` regardless of any flag, because the public pages need it to
-build their meta tags.
+`seo_settings` and `company_settings` each hold exactly one row: their `id` is a boolean
+fixed to `true`, so a second row cannot be inserted and the app can always upsert against
+`id = true`. Unlike the content tables they are readable by `anon` regardless of any flag,
+because the public pages need them to build their meta tags and contact details.
+
+`company_settings` replaces what used to be hard-coded in `frontend/src/config/company.json`.
+That file stays in the repo as the fallback: the app renders it before the row loads and keeps
+using it if the table is missing or the project is unreachable, so a paused project degrades to
+the last known-good details instead of a site full of blanks. The post-build SEO script reads
+the same table with the same fallback, so the visible page and the LocalBusiness markup never
+disagree - but because that markup is baked into the static HTML, editing these details only
+reaches Google after the next `npm run build`.
+
+Admin profile photos are uploaded to an `avatars/` folder inside the existing `course-images`
+bucket, and the name and photo themselves live in the account's `user_metadata` (`full_name`,
+`avatar_url`) rather than in a table - so no extra migration is needed for them.
 
 `benefits` and `requirements` are Postgres `text[]`. The dashboard edits them as one item
 per line, so admins never touch array syntax.

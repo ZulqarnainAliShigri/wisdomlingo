@@ -8,6 +8,8 @@ export interface AuthContextValue {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  /** Re-reads the session after a profile edit, so the header updates at once. */
+  refreshUser: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -57,14 +59,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setSession(data.session);
   }, []);
 
+  const refreshUser = useCallback(async () => {
+    if (!isSupabaseConfigured) return;
+    const { data } = await supabase.auth.getSession();
+    setSession(data.session ?? null);
+  }, []);
+
   const signOut = useCallback(async () => {
     if (isSupabaseConfigured) await supabase.auth.signOut();
     setSession(null);
   }, []);
 
   const value = useMemo<AuthContextValue>(
-    () => ({ session, user: session?.user ?? null, loading, signIn, signOut }),
-    [session, loading, signIn, signOut]
+    () => ({ session, user: session?.user ?? null, loading, signIn, signOut, refreshUser }),
+    [session, loading, signIn, signOut, refreshUser]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,6 +1,6 @@
 import React from "react";
 import { Award, BadgeCheck, BookOpen, Briefcase, Building2, Compass, Croissant, FileCheck, FileText, Globe, GraduationCap, Landmark, Languages, Laptop, MapPin, MessageSquare, MessagesSquare, Mountain, Paintbrush, Plane, PlaneLanding, ShieldCheck, Sparkles, Star, Stethoscope, Sun, Users } from "lucide-react";
-import { ARTICLE_IMAGES, TESTIMONIAL_AVATARS } from "../config/media";
+import { ARTICLE_IMAGES, TESTIMONIAL_AVATARS, VIDEOS } from "../config/media";
 import { CourseCategory } from "../types";
 
 export const APPLICATION_STEPS = [
@@ -55,14 +55,14 @@ export const CATEGORY_TABS: {
 
 export const HOME_STATS = [
   { value: "2000+", label: "Students Guided", icon: Users },
-  { value: "15+", label: "Years of Experience", icon: Award },
+  { value: "5+", label: "Years of Experience", icon: Award },
   { value: "6", label: "Study Destinations", icon: Globe },
 ];
 
 /** The three figures printed under the home page hero copy. */
 export const HERO_STATS = [
-  { value: "15+", label: "Years Experience" },
-  { value: "5,000+", label: "Students Placed" },
+  { value: "5+", label: "Years Experience" },
+  { value: "500+", label: "Students Placed" },
   { value: "98%", label: "Visa Success" },
 ];
 
@@ -206,7 +206,27 @@ export const TESTIMONIALS = [
  * "Latest from WisdomLingo". There is no blog route yet, so each card links to
  * the programme page it belongs to - swap `to` for a real article URL later.
  */
-export const ARTICLES = [
+/** The clip that heads the blog page. Lives in `frontend/public/videos/`. */
+export const FEATURED_VIDEO = {
+  src: VIDEOS.germanAcademy,
+  category: "Campus tour",
+  date: "Aug 28, 2026",
+  duration: "1 min watch",
+  title: "Inside the WisdomLingo German academy",
+  excerpt:
+    "A short walk through our classrooms, the Goethe exam preparation sessions and the counselling desk where every study abroad file starts.",
+  points: [
+    "Live A1 to C2 classes taught by certified trainers",
+    "Goethe and OSD exam practice in the same building",
+    "Admission and visa counselling under one roof",
+  ],
+};
+
+/**
+ * Blog posts. The first three also feed the "Latest from WisdomLingo" section on
+ * the home page, so both lists stay in step.
+ */
+export const BLOG_POSTS = [
   {
     category: "Study Guide",
     date: "Aug 12, 2026",
@@ -237,4 +257,43 @@ export const ARTICLES = [
     image: ARTICLE_IMAGES.ausbildung,
     to: "/apprenticeships",
   },
+  {
+    category: "Visa & Documents",
+    date: "Jun 30, 2026",
+    readTime: "7 min read",
+    title: "Blocked Account, Insurance and APS: The Paperwork Checklist",
+    excerpt:
+      "Most refusals happen on documents, not merit. Here is the exact file an embassy expects from a Pakistani applicant.",
+    image: ARTICLE_IMAGES.visa,
+    to: "/study-abroad",
+  },
+  {
+    category: "Study Guide",
+    date: "Jun 18, 2026",
+    readTime: "5 min read",
+    title: "Cyprus, Hungary or Germany: Choosing Your First Destination",
+    excerpt:
+      "Tuition, language requirements and intake dates compared, so you apply where your profile actually stands a chance.",
+    image: ARTICLE_IMAGES.campus,
+    to: "/study-abroad",
+  },
+  {
+    category: "Student Life",
+    date: "Jun 02, 2026",
+    readTime: "4 min read",
+    title: "Your First Month Abroad: Registration, Bank and SIM",
+    excerpt:
+      "Anmeldung, a local bank account and health insurance - the three errands that decide how smoothly your semester starts.",
+    image: ARTICLE_IMAGES.life,
+    to: "/about",
+  },
 ];
+
+/** Filter chips on the blog page, built from whatever categories exist above. */
+export const BLOG_CATEGORIES = [
+  "All",
+  ...Array.from(new Set(BLOG_POSTS.map((post) => post.category))),
+];
+
+/** The three cards shown on the home page. */
+export const ARTICLES = BLOG_POSTS.slice(0, 3);

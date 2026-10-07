@@ -15,8 +15,9 @@
  * `/*  /index.html  200` rule in `public/_redirects`, so `/courses` gets
  * `build/courses/index.html` and deeper client routes still work.
  *
- * Values come from the `seo_settings` row the admin edits. If Supabase is not
- * reachable the built-in defaults are used and the script says so.
+ * Values come from the `seo_settings` and `company_settings` rows the admin
+ * edits. If Supabase is not reachable the built-in defaults are used - the SEO
+ * ones below and `src/config/company.json` - and the script says so.
  */
 
 import { readFile, writeFile, mkdir } from "node:fs/promises";
@@ -28,7 +29,10 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "..");
 const BUILD = path.join(ROOT, "build");
 
-const company = JSON.parse(await readFile(path.join(ROOT, "src/config/company.json"), "utf8"));
+/** The fallback business details, and the shape the schema builders below read. */
+const COMPANY_FALLBACK = JSON.parse(
+  await readFile(path.join(ROOT, "src/config/company.json"), "utf8")
+);
 
 /* ------------------------------------------------------------------ config */
 
@@ -37,13 +41,14 @@ const ROUTES = [
   { key: "courses", path: "/courses", label: "Courses" },
   { key: "studyAbroad", path: "/study-abroad", label: "Study Abroad" },
   { key: "apprenticeships", path: "/apprenticeships", label: "Apprenticeships" },
+  { key: "blog", path: "/blog", label: "Blog" },
   { key: "about", path: "/about", label: "About" },
 ];
 
 const DEFAULTS = {
-  site_name: company.name,
+  site_name: COMPANY_FALLBACK.name,
   site_url: "",
-  title_template: `%s | ${company.name}`,
+  title_template: `%s | ${COMPANY_FALLBACK.name}`,
   default_description:
     "WisdomLingo - German language courses (A1 to C2), IELTS and spoken English, study abroad counselling for six European countries, and paid apprenticeships in Germany.",
   keywords: "",
@@ -93,6 +98,75 @@ async function fetchSeoSettings(env) {
   }
 }
 
+/**
+ * The business details the admin edits, flattened back into the nested shape
+ * company.json uses so the schema builders below do not care where they came
+ * from. Any column that is missing or blank falls back to the JSON file.
+ */
+function mapCompanyRow(row) {
+  const base = COMPANY_FALLBACK;
+  const text = (value, fallback) =>
+    typeof value === "string" && value.trim() ? value : fallback;
+
+  return {
+    name: text(row.name, base.name),
+    legalName: text(row.legal_name, base.legalName),
+    tagline: text(row.tagline, base.tagline),
+    phone: text(row.phone, base.phone),
+    phoneE164: text(row.phone_e164, base.phoneE164),
+    email: text(row.email, base.email),
+    address: {
+      street: text(row.address_street, base.address.street),
+      locality: text(row.address_locality, base.address.locality),
+      region: text(row.address_region, base.address.region),
+      postalCode: text(row.address_postal_code, base.address.postalCode),
+      country: text(row.address_country, base.address.country),
+    },
+    geo: {
+      latitude: row.geo_latitude ?? base.geo.latitude,
+      longitude: row.geo_longitude ?? base.geo.longitude,
+    },
+    hours: text(row.hours, base.hours),
+    openingHours: {
+      days: Array.isArray(row.opening_days) && row.opening_days.length
+        ? row.opening_days
+        : base.openingHours.days,
+      opens: text(row.opening_opens, base.openingHours.opens),
+      closes: text(row.opening_closes, base.openingHours.closes),
+    },
+    googlePlaceQuery: text(row.google_place_query, base.googlePlaceQuery),
+    googleMapsUrl: text(row.google_maps_url, base.googleMapsUrl),
+    social: {
+      instagram: text(row.social_instagram, base.social.instagram),
+      facebook: text(row.social_facebook, base.social.facebook),
+      linkedin: text(row.social_linkedin, base.social.linkedin),
+      tiktok: text(row.social_tiktok, base.social.tiktok),
+    },
+  };
+}
+
+async function fetchCompanySettings(env) {
+  const url = env.REACT_APP_SUPABASE_URL;
+  const key = env.REACT_APP_SUPABASE_ANON_KEY;
+  if (!url || !key) {
+    return { company: COMPANY_FALLBACK, source: "company.json (no Supabase credentials)" };
+  }
+
+  try {
+    const response = await fetch(`${url}/rest/v1/company_settings?select=*&limit=1`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const rows = await response.json();
+    if (!Array.isArray(rows) || rows.length === 0) {
+      return { company: COMPANY_FALLBACK, source: "company.json (company_settings row is empty)" };
+    }
+    return { company: mapCompanyRow(rows[0]), source: "Supabase company_settings" };
+  } catch (error) {
+    return { company: COMPANY_FALLBACK, source: `company.json (${error.message})` };
+  }
+}
+
 const escapeAttr = (value) =>
   String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -119,7 +193,7 @@ function resolvePage(settings, key) {
 
 /* ------------------------------------------------- site-level structured data */
 
-function siteSchema(settings, siteUrl) {
+function siteSchema(settings, company, siteUrl) {
   const logo = siteUrl ? `${siteUrl}/images/logo.png` : undefined;
 
   const organisation = {
@@ -156,7 +230,15 @@ function siteSchema(settings, siteUrl) {
       },
     ],
     hasMap: company.googleMapsUrl,
-    sameAs: [company.googleMapsUrl],
+    // sameAs must list profiles for *this* entity. Instagram, Facebook and
+    // TikTok are the business accounts; the LinkedIn link is a personal
+    // profile, so it is shown in the footer but not claimed here as the company.
+    sameAs: [
+      company.googleMapsUrl,
+      company.social.instagram,
+      company.social.facebook,
+      company.social.tiktok,
+    ],
   };
 
   // WebSite tells Google the site's name for the result header.
@@ -202,7 +284,7 @@ function stripManagedTags(html) {
     .replace(/<script[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/gi, "");
 }
 
-function buildHead(settings, route, siteUrl) {
+function buildHead(settings, company, route, siteUrl) {
   const { title, description, noindex } = resolvePage(settings, route.key);
   const canonical = siteUrl ? `${siteUrl}${route.path === "/" ? "/" : route.path}` : "";
   const image = settings.og_image_url || (siteUrl ? `${siteUrl}/images/logo.png` : "");
@@ -246,7 +328,7 @@ function buildHead(settings, route, siteUrl) {
     tags.push(`<meta name="twitter:site" content="${escapeAttr(settings.twitter_handle.trim())}" />`);
   }
 
-  for (const block of siteSchema(settings, siteUrl)) {
+  for (const block of siteSchema(settings, company, siteUrl)) {
     tags.push(`<script type="application/ld+json">${jsonLd(block)}</script>`);
   }
   const crumbs = breadcrumbSchema(route, siteUrl);
@@ -300,9 +382,11 @@ async function main() {
 
   const env = await readEnv();
   const { settings, source } = await fetchSeoSettings(env);
+  const { company, source: companySource } = await fetchCompanySettings(env);
   const siteUrl = (settings.site_url || "").trim().replace(/\/+$/, "");
 
   console.log(`[seo] settings from: ${source}`);
+  console.log(`[seo] business details from: ${companySource}`);
   if (!siteUrl) {
     console.warn(
       "[seo] site_url is empty - canonical links, og:url and the sitemap will be skipped.\n" +
@@ -314,7 +398,7 @@ async function main() {
   const stripped = stripManagedTags(template);
 
   for (const route of ROUTES) {
-    const head = buildHead(settings, route, siteUrl);
+    const head = buildHead(settings, company, route, siteUrl);
     const html = stripped.replace(/<\/head>/i, `    ${head}\n  </head>`);
 
     const target =

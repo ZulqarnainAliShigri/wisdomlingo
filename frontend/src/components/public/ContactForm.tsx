@@ -1,7 +1,8 @@
 import React, { useId, useState } from "react";
 import { Send } from "lucide-react";
 import { toast } from "react-toastify";
-import { COMPANY, SUBJECT_OPTIONS } from "../../config/site";
+import { SUBJECT_OPTIONS } from "../../config/site";
+import { useCompany } from "../../hooks/useCompany";
 import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 import { emailPattern, errorMessage } from "../../lib/utils";
 import { Spinner } from "../ui/Loader";
@@ -27,6 +28,8 @@ interface ContactFormProps {
   variant?: "card" | "bare";
   /** Preselects the subject dropdown, e.g. when opened from a programme page. */
   defaultSubject?: string;
+  /** Prefills the message box, e.g. with the course the visitor clicked Enroll on. */
+  defaultMessage?: string;
   /** Called after the enquiry is stored, so a modal can close itself. */
   onSent?: () => void;
 }
@@ -34,11 +37,14 @@ interface ContactFormProps {
 export const ContactForm: React.FC<ContactFormProps> = ({
   variant = "card",
   defaultSubject = "",
+  defaultMessage = "",
   onSent,
 }) => {
+  const COMPANY = useCompany();
   const [form, setForm] = useState<ContactFormState>({
     ...EMPTY_CONTACT,
     subject: defaultSubject,
+    message: defaultMessage,
   });
   const [errors, setErrors] = useState<Partial<Record<keyof ContactFormState, string>>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -90,7 +96,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
       ]);
       if (error) throw error;
       toast.success("Thank you! Your message has been sent - we reply within one working day.");
-      setForm({ ...EMPTY_CONTACT, subject: defaultSubject });
+      setForm({ ...EMPTY_CONTACT, subject: defaultSubject, message: defaultMessage });
       onSent?.();
     } catch (error) {
       toast.error(errorMessage(error, "Could not send your message. Please try again."));

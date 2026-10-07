@@ -1,10 +1,13 @@
 import React from "react";
 import { ChevronRight, Clock } from "lucide-react";
-import { COMPANY } from "../../config/site";
 import { Course } from "../../types";
 import { MediaImage } from "../ui/MediaImage";
 
-export const CourseCard: React.FC<{ course: Course }> = ({ course }) => (
+export const CourseCard: React.FC<{
+  course: Course;
+  /** Opens the enquiry form for this course - the page owns the dialog. */
+  onEnroll: (course: Course) => void;
+}> = ({ course, onEnroll }) => (
   <article className="card flex flex-col overflow-hidden">
     <MediaImage src={course.image_url} alt={course.title} className="h-44 w-full" />
     <div className="flex flex-1 flex-col p-6">
@@ -20,14 +23,13 @@ export const CourseCard: React.FC<{ course: Course }> = ({ course }) => (
       <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{course.description}</p>
       <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
         <span className="text-base font-extrabold text-accent">{course.fee || "Contact us"}</span>
-        <a
-          href={COMPANY.whatsapp}
-          target="_blank"
-          rel="noreferrer"
+        <button
+          type="button"
+          onClick={() => onEnroll(course)}
           className="inline-flex items-center gap-1.5 text-sm font-bold text-primary transition hover:gap-2.5"
         >
           Enroll <ChevronRight className="h-4 w-4" />
-        </a>
+        </button>
       </div>
     </div>
   </article>

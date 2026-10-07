@@ -1,12 +1,13 @@
 import React, { useMemo, useState } from "react";
 import { BookOpen, Phone } from "lucide-react";
-import { COMPANY } from "../config/site";
+import { useCompany } from "../hooks/useCompany";
 import { CATEGORY_TABS } from "../data/content";
 import { SEED_COURSES } from "../data/seed";
 import { useRemoteList } from "../hooks/useRemoteList";
 import { mapCourse } from "../lib/mappers";
 import { Course, CourseCategory } from "../types";
 import { CourseCard } from "../components/public/CourseCard";
+import { EnquiryModal } from "../components/public/EnquiryModal";
 import { EmptyState } from "../components/ui/EmptyState";
 import { FullPageLoader } from "../components/ui/Loader";
 import { HERO_IMAGES } from "../config/media";
@@ -16,8 +17,17 @@ import { StructuredData } from "../components/StructuredData";
 import { courseListSchema } from "../lib/structuredData";
 import { useSeoSettings } from "../hooks/useSeo";
 
+/** Preselects the enquiry subject from the course the visitor clicked. */
+const SUBJECT_BY_CATEGORY: Record<CourseCategory, string> = {
+  german: "German Language Course",
+  english: "IELTS / Spoken English",
+  religious: "Quran, Arabic or Persian",
+};
+
 export const CoursesPage: React.FC = () => {
+  const COMPANY = useCompany();
   const [activeTab, setActiveTab] = useState<CourseCategory>("german");
+  const [enrollCourse, setEnrollCourse] = useState<Course | null>(null);
   const { items, loading } = useRemoteList<Course>("courses", SEED_COURSES, mapCourse);
 
   const filtered = useMemo(
@@ -28,8 +38,8 @@ export const CoursesPage: React.FC = () => {
 
   const { settings } = useSeoSettings();
   const courseSchemaData = useMemo(
-    () => courseListSchema(items, settings.site_url),
-    [items, settings.site_url]
+    () => courseListSchema(items, settings.site_url, COMPANY.legalName),
+    [items, settings.site_url, COMPANY.legalName]
   );
 
   return (
@@ -94,7 +104,7 @@ export const CoursesPage: React.FC = () => {
             ) : (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {filtered.map((course) => (
-                  <CourseCard key={course.id} course={course} />
+                  <CourseCard key={course.id} course={course} onEnroll={setEnrollCourse} />
                 ))}
               </div>
             )}
@@ -118,6 +128,20 @@ export const CoursesPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* The dialog renders nothing while closed, so the form resets per course */}
+      <EnquiryModal
+        open={Boolean(enrollCourse)}
+        onClose={() => setEnrollCourse(null)}
+        title={enrollCourse ? `Enroll: ${enrollCourse.title}` : "Enroll"}
+        intro="Send us your details and a counsellor will confirm the next batch, timings and seat availability."
+        defaultSubject={enrollCourse ? SUBJECT_BY_CATEGORY[enrollCourse.category] : ""}
+        defaultMessage={
+          enrollCourse
+            ? `I would like to enroll in ${enrollCourse.title}. Please share the next batch dates and timings.`
+            : ""
+        }
+      />
     </>
   );
 };

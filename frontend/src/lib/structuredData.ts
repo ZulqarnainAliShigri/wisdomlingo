@@ -1,4 +1,3 @@
-import { COMPANY } from "../config/site";
 import { Apprenticeship, Course, StudyCountry } from "../types";
 
 /**
@@ -11,13 +10,17 @@ import { Apprenticeship, Course, StudyCountry } from "../types";
  *
  * Nothing here invents data. A field is omitted rather than guessed, because
  * structured data that disagrees with the visible page is a manual-action risk.
+ *
+ * The organisation name is passed in rather than imported: it is editable in the
+ * dashboard, and this module runs outside React so it cannot read the hook
+ * itself. Callers pass `useCompany().legalName`.
  */
 
 type Json = Record<string, unknown>;
 
-const orgRef = (siteUrl: string): Json => ({
+const orgRef = (orgName: string, siteUrl: string): Json => ({
   "@type": "EducationalOrganization",
-  name: COMPANY.legalName,
+  name: orgName,
   ...(siteUrl ? { url: siteUrl } : {}),
 });
 
@@ -46,14 +49,14 @@ export function parseFee(fee: string | null | undefined): { price: string; curre
 }
 
 /** schema.org/Course - drives Google's course rich results. */
-export function courseSchema(course: Course, siteUrl: string): Json {
+export function courseSchema(course: Course, siteUrl: string, orgName: string): Json {
   const offer = parseFee(course.fee);
 
   return {
     "@type": "Course",
     name: course.title,
     ...(course.description ? { description: course.description } : {}),
-    provider: orgRef(siteUrl),
+    provider: orgRef(orgName, siteUrl),
     ...(course.level ? { educationalLevel: course.level } : {}),
     ...(course.image_url ? { image: course.image_url } : {}),
     hasCourseInstance: {
@@ -77,22 +80,26 @@ export function courseSchema(course: Course, siteUrl: string): Json {
 }
 
 /** A numbered list of courses, so the set is understood as one collection. */
-export function courseListSchema(courses: Course[], siteUrl: string): Json {
+export function courseListSchema(courses: Course[], siteUrl: string, orgName: string): Json {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Courses at WisdomLingo",
+    name: `Courses at ${orgName}`,
     numberOfItems: courses.length,
     itemListElement: courses.map((course, index) => ({
       "@type": "ListItem",
       position: index + 1,
-      item: courseSchema(course, siteUrl),
+      item: courseSchema(course, siteUrl, orgName),
     })),
   };
 }
 
 /** Destinations as a list of services rather than pretending they are products. */
-export function destinationListSchema(countries: StudyCountry[], siteUrl: string): Json {
+export function destinationListSchema(
+  countries: StudyCountry[],
+  siteUrl: string,
+  orgName: string
+): Json {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -106,14 +113,18 @@ export function destinationListSchema(countries: StudyCountry[], siteUrl: string
         name: `Study in ${country.name}`,
         ...(country.description ? { description: country.description } : {}),
         serviceType: "Study abroad counselling",
-        provider: orgRef(siteUrl),
+        provider: orgRef(orgName, siteUrl),
         areaServed: country.name,
       },
     })),
   };
 }
 
-export function apprenticeshipListSchema(items: Apprenticeship[], siteUrl: string): Json {
+export function apprenticeshipListSchema(
+  items: Apprenticeship[],
+  siteUrl: string,
+  orgName: string
+): Json {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -126,7 +137,7 @@ export function apprenticeshipListSchema(items: Apprenticeship[], siteUrl: strin
         "@type": "Course",
         name: item.title,
         ...(item.description ? { description: item.description } : {}),
-        provider: orgRef(siteUrl),
+        provider: orgRef(orgName, siteUrl),
         occupationalCategory: item.field,
         hasCourseInstance: {
           "@type": "CourseInstance",

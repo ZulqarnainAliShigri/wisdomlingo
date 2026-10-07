@@ -20,5 +20,11 @@
     "closes": "20:00"
   },
   "googlePlaceQuery": "Wisdomlingo German language Academy and consultancy",
-  "googleMapsUrl": "https://share.google/MD63jEY3xJEpiUtS2"
+  "googleMapsUrl": "https://share.google/MD63jEY3xJEpiUtS2",
+  "social": {
+    "instagram": "https://www.instagram.com/wisdomlingo",
+    "facebook": "https://www.facebook.com/share/1EMnwzS44J/",
+    "linkedin": "https://www.linkedin.com/in/muhammad-raza-abidi-79aa7937a",
+    "tiktok": "https://www.tiktok.com/@wisdomlingo_academy"
+  }
 }

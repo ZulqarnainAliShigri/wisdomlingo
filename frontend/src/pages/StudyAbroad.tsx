@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { ArrowRight } from "lucide-react";
-import { COMPANY } from "../config/site";
+import { useCompany } from "../hooks/useCompany";
 import { APPLICATION_STEPS } from "../data/content";
 import { SEED_COUNTRIES } from "../data/seed";
 import { useRemoteList } from "../hooks/useRemoteList";
@@ -17,13 +17,14 @@ import { destinationListSchema } from "../lib/structuredData";
 import { useSeoSettings } from "../hooks/useSeo";
 
 export const StudyAbroadPage: React.FC = () => {
+  const COMPANY = useCompany();
   const { items, loading } = useRemoteList<StudyCountry>("study_countries", SEED_COUNTRIES, mapCountry);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const { settings } = useSeoSettings();
   const destinationSchemaData = useMemo(
-    () => destinationListSchema(items, settings.site_url),
-    [items, settings.site_url]
+    () => destinationListSchema(items, settings.site_url, COMPANY.legalName),
+    [items, settings.site_url, COMPANY.legalName]
   );
 
   return (

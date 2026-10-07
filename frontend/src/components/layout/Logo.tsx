@@ -1,5 +1,5 @@
 import React from "react";
-import { COMPANY } from "../../config/site";
+import { useCompany } from "../../hooks/useCompany";
 
 /** Public path of the WL&C mark in `frontend/public/images`. */
 export const LOGO_SRC = `${process.env.PUBLIC_URL}/images/logo.png`;
@@ -27,43 +27,47 @@ export const Logo: React.FC<LogoProps> = ({
   markOnly = false,
   size = "md",
   showTagline = true,
-}) => (
-  <span className="flex items-center gap-2.5">
-    <span
-      className={
-        tone === "light"
-          ? "flex items-center rounded-xl bg-white px-2 py-1.5 shadow-sm"
-          : "flex items-center"
-      }
-    >
-      <img
-        src={LOGO_SRC}
-        alt={`${COMPANY.name} logo`}
-        width={538}
-        height={313}
-        className={MARK_SIZES[size]}
-      />
-    </span>
+}) => {
+  const COMPANY = useCompany();
 
-    {!markOnly && (
-      <span className="leading-none">
-        <span
-          className={`block text-base font-extrabold tracking-tight sm:text-lg ${
-            tone === "dark" ? "text-slate-900" : "text-white"
-          }`}
-        >
-          Wisdom<span className="text-accent">Lingo</span>
-        </span>
-        {showTagline && (
+  return (
+    <span className="flex items-center gap-2.5">
+      <span
+        className={
+          tone === "light"
+            ? "flex items-center rounded-xl bg-white px-2 py-1.5 shadow-sm"
+            : "flex items-center"
+        }
+      >
+        <img
+          src={LOGO_SRC}
+          alt={`${COMPANY.name} logo`}
+          width={538}
+          height={313}
+          className={MARK_SIZES[size]}
+        />
+      </span>
+
+      {!markOnly && (
+        <span className="leading-none">
           <span
-            className={`mt-0.5 block text-[9px] font-semibold uppercase tracking-[0.16em] ${
-              tone === "dark" ? "text-slate-500" : "text-blue-200"
+            className={`block text-base font-extrabold tracking-tight sm:text-lg ${
+              tone === "dark" ? "text-slate-900" : "text-white"
             }`}
           >
-            Education Consultancy
+            Wisdom<span className="text-accent">Lingo</span>
           </span>
-        )}
-      </span>
-    )}
-  </span>
-);
+          {showTagline && (
+            <span
+              className={`mt-0.5 block text-[9px] font-semibold uppercase tracking-[0.16em] ${
+                tone === "dark" ? "text-slate-500" : "text-blue-200"
+              }`}
+            >
+              Education Consultancy
+            </span>
+          )}
+        </span>
+      )}
+    </span>
+  );
+};

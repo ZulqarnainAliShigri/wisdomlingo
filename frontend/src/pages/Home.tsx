@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, CalendarDays, Check, Clock, Globe, MessageSquare, Quote, Star } from "lucide-react";
-import { COMPANY } from "../config/site";
+import { useCompany } from "../hooks/useCompany";
 import { HERO_IMAGES } from "../config/media";
 import {
   ARTICLES,
@@ -23,12 +23,13 @@ import { Seo } from "../components/Seo";
 
 /** Shown above the article grid on desktop, below it on phones. */
 const ViewAllArticles: React.FC<{ className?: string }> = ({ className = "" }) => (
-  <Link to="/about" className={`btn-ghost ${className}`}>
+  <Link to="/blog" className={`btn-ghost ${className}`}>
     View All Articles <ArrowRight className="h-4 w-4" />
   </Link>
 );
 
 export const HomePage: React.FC = () => {
+  const COMPANY = useCompany();
   const { items: countries } = useRemoteList<StudyCountry>("study_countries", SEED_COUNTRIES, mapCountry);
   const [enquiryOpen, setEnquiryOpen] = useState(false);
 

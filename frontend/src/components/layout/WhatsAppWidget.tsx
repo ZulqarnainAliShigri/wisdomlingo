@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Send, X } from "lucide-react";
-import { COMPANY } from "../../config/site";
+import { useCompany } from "../../hooks/useCompany";
 
 /** WhatsApp brand mark - lucide dropped brand icons, so the glyph lives here. */
 const WhatsAppGlyph: React.FC<{ className?: string }> = ({ className }) => (
@@ -9,8 +9,6 @@ const WhatsAppGlyph: React.FC<{ className?: string }> = ({ className }) => (
   </svg>
 );
 
-const DEFAULT_MESSAGE = `Hi ${COMPANY.name}, I would like to know more about your programmes.`;
-
 /**
  * Floating WhatsApp button with a small chat popup.
  *
@@ -18,6 +16,8 @@ const DEFAULT_MESSAGE = `Hi ${COMPANY.name}, I would like to know more about you
  * `lg` up, where that bar is hidden.
  */
 export const WhatsAppWidget: React.FC = () => {
+  const COMPANY = useCompany();
+  const DEFAULT_MESSAGE = `Hi ${COMPANY.name}, I would like to know more about your programmes.`;
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
