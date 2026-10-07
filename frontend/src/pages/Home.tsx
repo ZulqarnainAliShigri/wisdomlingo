@@ -1,10 +1,21 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, CalendarDays, Check, Clock, Globe, MessageSquare, Quote, Star } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  CalendarDays,
+  Check,
+  Clock,
+  Globe,
+  MessageSquare,
+  Quote,
+  Star,
+} from "lucide-react";
 import { useCompany } from "../hooks/useCompany";
 import { HERO_IMAGES } from "../config/media";
 import {
   ARTICLES,
+  CATEGORY_TABS,
   COUNTRY_ICONS,
   HERO_HIGHLIGHTS,
   HERO_STATS,
@@ -13,12 +24,13 @@ import {
   TESTIMONIALS,
   WHY_US,
 } from "../data/content";
-import { SEED_COUNTRIES } from "../data/seed";
+import { SEED_COUNTRIES, SEED_COURSES } from "../data/seed";
 import { useRemoteList } from "../hooks/useRemoteList";
-import { mapCountry } from "../lib/mappers";
-import { StudyCountry } from "../types";
+import { mapCountry, mapCourse } from "../lib/mappers";
+import { Course, CourseCategory, StudyCountry } from "../types";
 import { SectionHeading } from "../components/ui/SectionHeading";
 import { EnquiryModal } from "../components/public/EnquiryModal";
+import { CourseCard } from "../components/public/CourseCard";
 import { Seo } from "../components/Seo";
 
 /** Shown above the article grid on desktop, below it on phones. */
@@ -28,19 +40,30 @@ const ViewAllArticles: React.FC<{ className?: string }> = ({ className = "" }) =
   </Link>
 );
 
+
+
 export const HomePage: React.FC = () => {
   const COMPANY = useCompany();
   const { items: countries } = useRemoteList<StudyCountry>("study_countries", SEED_COUNTRIES, mapCountry);
+  const { items: allCourses } = useRemoteList<Course>("courses", SEED_COURSES, mapCourse);
   const [enquiryOpen, setEnquiryOpen] = useState(false);
+  const [enrollCourse, setEnrollCourse] = useState<Course | null>(null);
+  const [activeCourseTab, setActiveCourseTab] = useState<CourseCategory>("german");
+
+  const filteredCourses = useMemo(
+    () => allCourses.filter((c) => c.category === activeCourseTab).slice(0, 3),
+    [allCourses, activeCourseTab]
+  );
 
   return (
     <>
       <Seo page="home" />
 
-      {/* Hero - centred and single column on phones, split on desktop */}
-      <section className="relative isolate overflow-hidden bg-slate-50">
-        {/* Largest Contentful Paint element - fetched at high priority so the
-            hero paints early. Core Web Vitals feed into ranking. */}
+
+      {/* ══════════════════════════════════════════════════════
+          HERO
+      ══════════════════════════════════════════════════════ */}
+      <section className="relative isolate overflow-hidden">
         <img
           src={HERO_IMAGES.home}
           alt=""
@@ -49,62 +72,67 @@ export const HomePage: React.FC = () => {
           decoding="async"
           className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
         />
+
+        {/* Same light overlay on all screen sizes */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-white/85 lg:bg-transparent lg:bg-gradient-to-r lg:from-white lg:via-white/96 lg:to-white/45"
+          className="absolute inset-0 -z-10 bg-white/85 lg:bg-transparent lg:bg-gradient-to-r lg:from-white lg:via-white/96 lg:to-white/40"
         />
         <div
           aria-hidden="true"
           className="absolute inset-0 -z-10 bg-gradient-to-t from-white via-transparent to-white/30"
         />
 
-        <div className="container-page grid items-center gap-12 pb-12 pt-8 sm:pb-20 sm:pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:pb-24 lg:pt-16">
+        <div className="container-page grid items-center gap-10 pb-0 pt-8 sm:pb-20 sm:pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:pb-24 lg:pt-16">
           <div className="animate-fade-in-up text-center lg:text-left">
+
+            {/* Badge */}
             <span className="badge border border-primary-100 bg-primary-50 text-primary">
               <span aria-hidden="true" className="mr-2 h-1.5 w-1.5 rounded-full bg-accent" />
               Premium Education Consultancy
             </span>
 
-            <h1 className="mt-5 text-[2rem] font-extrabold leading-[1.12] tracking-tight text-slate-900 sm:text-5xl lg:text-[3.4rem]">
-              Your pathway to <span className="text-primary">Europe</span> starts with the right
-              guidance.
+            <h1 className="mt-4 text-[1.9rem] font-extrabold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-[3.4rem]">
+              Your pathway to{" "}
+              <span className="text-primary">Europe</span>{" "}
+              <span className="lg:block">starts here.</span>
             </h1>
 
-            <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-slate-600 lg:mx-0">
+            <p className="mx-auto mt-4 hidden max-w-xl text-base leading-relaxed text-slate-600 sm:block lg:mx-0">
               Navigate the complexities of studying, working, or learning a language abroad with our
               expert team. We handle the details so you can focus on your future.
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center lg:justify-start">
+            {/* CTAs */}
+            <div className="mt-5 flex gap-3 sm:justify-center sm:mt-8 lg:justify-start">
               <button
                 type="button"
                 onClick={() => setEnquiryOpen(true)}
-                className="btn-accent shadow-lg shadow-accent/20"
+                className="btn-accent flex-1 shadow-lg shadow-accent/20 sm:flex-none"
               >
                 Start Your Journey <ArrowRight className="h-4 w-4" />
               </button>
-              <Link to="/courses" className="btn-ghost">
-                Explore Programs
+              <Link to="/courses" className="btn-ghost flex-1 sm:flex-none">
+                Explore Courses
               </Link>
             </div>
 
-            {/* Stacked with hairline rules on phones, a single row from sm up */}
-            <div className="mt-8 divide-y divide-slate-200 border-y border-slate-200 sm:mt-10 sm:flex sm:flex-wrap sm:justify-center sm:gap-x-12 sm:gap-y-5 sm:divide-y-0 sm:border-0 lg:justify-start">
+            {/* Stats */}
+            <div className="mt-6 flex gap-5 overflow-x-auto pb-2 no-scrollbar sm:justify-center sm:gap-10 sm:overflow-visible sm:pb-0 lg:justify-start">
               {HERO_STATS.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="flex items-baseline justify-center gap-2.5 py-3 sm:block sm:py-0"
-                >
-                  <p className="text-2xl font-extrabold tracking-tight text-primary sm:text-3xl">
+                <div key={stat.label} className="shrink-0 text-center sm:text-left">
+                  <p className="text-xl font-extrabold tracking-tight text-primary sm:text-3xl">
                     {stat.value}
                   </p>
-                  <p className="text-xs font-medium text-slate-500 sm:mt-1">{stat.label}</p>
+                  <p className="mt-0.5 text-[11px] font-medium text-slate-500 sm:mt-1 sm:text-xs">
+                    {stat.label}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Not part of the phone layout - the call bar carries the mobile CTA instead */}
+          {/* Desktop side card */}
           <div className="hidden lg:block lg:justify-self-end lg:pl-8">
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl shadow-slate-900/10 lg:w-[22rem]">
               <h2 className="text-sm font-bold text-slate-900">Popular right now</h2>
@@ -133,18 +161,89 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Programs */}
+
+      {/* ══════════════════════════════════════════════════════
+          COURSES SHOWCASE — right after hero on all screens
+      ══════════════════════════════════════════════════════ */}
+      <section className="bg-slate-50 pb-14 pt-8 sm:py-20">
+        <div className="container-page">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <SectionHeading
+              align="left"
+              eyebrowTone="label"
+              eyebrow="Our Courses"
+              title="Learn a language, change your future"
+              subtitle="From German A1 to C2, IELTS, Quran, Arabic and Persian — all taught by certified teachers in small batches."
+              subtitleClassName="hidden sm:block"
+            />
+            <Link to="/courses" className="btn-ghost hidden shrink-0 sm:inline-flex">
+              View All Courses <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          {/* Category Tabs */}
+          <div
+            role="tablist"
+            aria-label="Course categories"
+            className="mx-auto mt-8 grid max-w-3xl grid-cols-3 gap-2 rounded-2xl bg-white p-2 shadow-sm"
+          >
+            {CATEGORY_TABS.map((tab) => {
+              const isActive = tab.key === activeCourseTab;
+              return (
+                <button
+                  key={tab.key}
+                  role="tab"
+                  aria-selected={isActive}
+                  type="button"
+                  onClick={() => setActiveCourseTab(tab.key)}
+                  className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition ${
+                    isActive
+                      ? "bg-primary text-white shadow-sm"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  <tab.icon className="h-4 w-4" />
+                  <span className="hidden sm:inline">{tab.label}</span>
+                  <span className={`rounded-full px-2 py-0.5 text-[11px] ${
+                    isActive ? "bg-white/20 text-white" : "bg-slate-200 text-slate-600"
+                  }`}>
+                    {allCourses.filter((c) => c.category === tab.key).length}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Course Cards */}
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+            {filteredCourses.map((course) => (
+              <CourseCard key={course.id} course={course} onEnroll={setEnrollCourse} />
+            ))}
+          </div>
+
+          <div className="mt-8 text-center">
+            <Link to="/courses" className="btn-primary">
+              View All Courses <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          PROGRAMS
+      ══════════════════════════════════════════════════════ */}
       <section className="section bg-white">
         <div className="container-page">
           <SectionHeading
             title="Three programs, one destination"
             subtitle="We specialize in creating tailored pathways for international students and professionals aiming for excellence in Europe."
+            subtitleClassName="hidden sm:block"
           />
-          <div className="mt-10 grid gap-5 sm:gap-6 md:grid-cols-3 lg:mt-12">
+          <div className="mt-8 grid gap-4 sm:grid-cols-3 sm:gap-6 lg:mt-12">
             {HOME_PROGRAMS.map((program) => (
               <article
                 key={program.title}
-                className={`relative flex flex-col rounded-2xl border bg-white p-6 transition hover:shadow-lg sm:p-7 ${
+                className={`relative flex flex-col rounded-2xl border bg-white p-5 transition hover:shadow-lg sm:p-7 ${
                   program.featured ? "border-accent/30 shadow-lg" : "border-slate-200 shadow-sm"
                 }`}
               >
@@ -153,24 +252,24 @@ export const HomePage: React.FC = () => {
                     Most popular
                   </span>
                 )}
-                <span
-                  className={`flex h-12 w-12 items-center justify-center rounded-xl ${program.tint}`}
-                >
-                  <program.icon className="h-6 w-6" />
-                </span>
-                <h3 className="mt-5 text-lg font-bold text-slate-900">{program.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-slate-600">{program.description}</p>
-                <ul className="mt-5 flex-1 space-y-2.5">
-                  {program.points.map((point) => (
-                    <li key={point} className="flex items-start gap-2.5 text-sm text-slate-700">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                      {point}
+                <div className="flex items-center gap-3 sm:block">
+                  <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl sm:h-12 sm:w-12 ${program.tint}`}>
+                    <program.icon className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </span>
+                  <h3 className="text-base font-bold text-slate-900 sm:mt-5 sm:text-lg">{program.title}</h3>
+                </div>
+                <p className="mt-2 hidden text-sm leading-relaxed text-slate-600 sm:block">{program.description}</p>
+                <ul className="mt-3 flex-1 space-y-2 sm:mt-5 sm:space-y-2.5">
+                  {program.points.slice(0, 3).map((point) => (
+                    <li key={point} className="flex items-start gap-2 text-xs text-slate-700 sm:gap-2.5 sm:text-sm">
+                      <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent sm:h-4 sm:w-4" />
+                      <span className="line-clamp-2 sm:line-clamp-none">{point}</span>
                     </li>
                   ))}
                 </ul>
                 <Link
                   to={program.to}
-                  className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-primary transition hover:gap-2.5 sm:mt-7"
+                  className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-primary transition hover:gap-2.5 sm:mt-7"
                 >
                   {program.cta} <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -180,34 +279,44 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Destinations - two up on phones */}
-      <section className="section bg-slate-50">
+
+
+      {/* ══════════════════════════════════════════════════════
+          DESTINATIONS
+      ══════════════════════════════════════════════════════ */}
+      <section className="section bg-white">
         <div className="container-page">
           <SectionHeading
             title="Six countries we know inside out"
             subtitle="Every country has its own rules and intakes. We match you to the one that fits."
+            subtitleClassName="hidden sm:block"
           />
-          <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-5 lg:mt-12 lg:grid-cols-3">
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:mt-12 lg:grid-cols-3">
             {countries.slice(0, 6).map((country) => {
               const Icon = COUNTRY_ICONS[country.name] ?? Globe;
               return (
                 <Link
                   key={country.id}
                   to="/study-abroad"
-                  className="group rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-primary-100 hover:shadow-lg sm:p-6"
+                  className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-primary/30 hover:shadow-xl sm:p-6"
                 >
+                  {/* Subtle gradient accent on hover */}
+                  <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary-50/0 to-primary-50/0 transition-all duration-300 group-hover:from-primary-50/60 group-hover:to-transparent" />
                   <div className="flex items-start justify-between gap-2">
-                    <span className="rounded-md bg-slate-100 px-2 py-1 text-[11px] font-bold tracking-widest text-slate-600">
+                    <span className="rounded-lg bg-slate-100 px-2.5 py-1.5 text-base sm:text-lg">
                       {country.flag}
                     </span>
-                    <Icon className="h-5 w-5 shrink-0 text-slate-400 transition group-hover:text-primary" />
+                    <Icon className="h-4 w-4 shrink-0 text-slate-300 transition group-hover:text-primary sm:h-5 sm:w-5" />
                   </div>
-                  <h3 className="mt-4 text-sm font-bold text-slate-900 sm:mt-5 sm:text-base">
+                  <h3 className="mt-3 text-sm font-bold text-slate-900 sm:mt-4 sm:text-base">
                     {country.name}
                   </h3>
-                  <p className="mt-1 text-xs leading-snug text-slate-500 sm:text-sm">
+                  <p className="mt-1 hidden text-xs leading-snug text-slate-500 sm:block sm:text-sm">
                     {country.tagline}
                   </p>
+                  <div className="mt-2 flex items-center gap-1 text-xs font-bold text-primary opacity-0 transition-opacity group-hover:opacity-100">
+                    Learn more <ArrowRight className="h-3 w-3" />
+                  </div>
                 </Link>
               );
             })}
@@ -215,7 +324,9 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Why us - icon beside the copy on phones, above it from sm up */}
+      {/* ══════════════════════════════════════════════════════
+          WHY US
+      ══════════════════════════════════════════════════════ */}
       <section className="section bg-primary-50">
         <div className="container-page grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-12">
           <div>
@@ -225,25 +336,26 @@ export const HomePage: React.FC = () => {
               eyebrow="Why WisdomLingo"
               title="Fifteen years of getting the details right"
               subtitle="Most applications are rejected on paperwork, not merit. That is where we focus."
+              subtitleClassName="hidden sm:block"
             />
             <a
               href={COMPANY.whatsapp}
               target="_blank"
               rel="noreferrer"
-              className="btn-primary mt-8 w-full sm:w-auto"
+              className="btn-primary mt-6 w-full sm:mt-8 sm:w-auto"
             >
               <MessageSquare className="h-4 w-4" /> Talk to a counsellor
             </a>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
+          <div className="grid grid-cols-2 gap-3 sm:gap-5">
             {WHY_US.map((item) => (
-              <div key={item.title} className="flex gap-4 rounded-2xl bg-white p-5 shadow-sm sm:block sm:p-6">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary">
-                  <item.icon className="h-5 w-5" />
+              <div key={item.title} className="flex gap-3 rounded-2xl bg-white p-4 shadow-sm sm:block sm:gap-4 sm:p-6">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary sm:h-10 sm:w-10">
+                  <item.icon className="h-4 w-4 sm:h-5 sm:w-5" />
                 </span>
                 <div className="sm:mt-4">
-                  <h3 className="font-bold text-slate-900">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.text}</p>
+                  <h3 className="text-sm font-bold text-slate-900 sm:text-base">{item.title}</h3>
+                  <p className="mt-1 hidden text-sm leading-relaxed text-slate-600 sm:mt-2 sm:block">{item.text}</p>
                 </div>
               </div>
             ))}
@@ -251,7 +363,9 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Process - vertical timeline on phones, horizontal from lg up */}
+      {/* ══════════════════════════════════════════════════════
+          PROCESS
+      ══════════════════════════════════════════════════════ */}
       <section className="section bg-white">
         <div className="container-page">
           <SectionHeading
@@ -259,34 +373,34 @@ export const HomePage: React.FC = () => {
             eyebrow="Our process"
             title="Your pathway to success"
             subtitle="A transparent, step-by-step approach to securing your future abroad. We are with you at every milestone."
+            subtitleClassName="hidden sm:block"
           />
           <div className="relative mt-10 lg:mt-14">
             <span
               aria-hidden="true"
               className="absolute left-[12.5%] right-[12.5%] top-8 hidden border-t border-dashed border-slate-300 lg:block"
             />
-            <ol className="relative grid gap-8 lg:grid-cols-4 lg:gap-10">
+            <ol className="relative grid gap-6 sm:gap-8 lg:grid-cols-4 lg:gap-10">
               {PROCESS_STEPS.map((step, index) => (
                 <li
                   key={step.title}
-                  className="relative flex gap-5 text-left lg:flex-col lg:items-center lg:gap-0 lg:text-center"
+                  className="relative flex gap-4 text-left lg:flex-col lg:items-center lg:gap-0 lg:text-center"
                 >
                   {index < PROCESS_STEPS.length - 1 && (
                     <span
                       aria-hidden="true"
-                      className="absolute -bottom-8 left-6 top-14 w-0 border-l border-dashed border-slate-300 lg:hidden"
+                      className="absolute -bottom-6 left-5 top-12 w-0 border-l border-dashed border-slate-300 lg:hidden"
                     />
                   )}
-                  {/* Phones show the step number in the circle, desktop the icon with a number badge */}
-                  <span className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-primary-100 bg-primary-50 text-primary shadow-sm lg:h-16 lg:w-16 lg:border-slate-200 lg:bg-white">
+                  <span className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-primary-100 bg-primary-50 text-primary shadow-sm lg:h-16 lg:w-16 lg:border-slate-200 lg:bg-white">
                     <step.icon className="hidden h-6 w-6 lg:block" />
-                    <span className="text-base font-extrabold lg:absolute lg:-right-1 lg:-top-1 lg:flex lg:h-6 lg:w-6 lg:items-center lg:justify-center lg:rounded-full lg:bg-primary lg:text-[11px] lg:font-bold lg:text-white">
+                    <span className="text-sm font-extrabold lg:absolute lg:-right-1 lg:-top-1 lg:flex lg:h-6 lg:w-6 lg:items-center lg:justify-center lg:rounded-full lg:bg-primary lg:text-[11px] lg:font-bold lg:text-white">
                       {index + 1}
                     </span>
                   </span>
                   <div className="lg:mt-5">
-                    <h3 className="font-bold text-slate-900">{step.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-slate-600">{step.description}</p>
+                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">{step.title}</h3>
+                    <p className="mt-1 hidden text-sm leading-relaxed text-slate-600 sm:mt-2 sm:block">{step.description}</p>
                   </div>
                 </li>
               ))}
@@ -295,7 +409,9 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* ══════════════════════════════════════════════════════
+          TESTIMONIALS
+      ══════════════════════════════════════════════════════ */}
       <section className="section bg-slate-50">
         <div className="container-page">
           <SectionHeading
@@ -303,31 +419,34 @@ export const HomePage: React.FC = () => {
             eyebrow="Success stories"
             title="Real journeys, real results"
             subtitle="Do not just take our word for it. Hear from the students and professionals who have built their futures with us."
+            subtitleClassName="hidden sm:block"
           />
-          <div className="mt-10 grid gap-5 sm:gap-6 lg:mt-12 lg:grid-cols-3">
-            {TESTIMONIALS.map((testimonial) => (
+          <div className="mt-8 grid gap-4 sm:gap-6 lg:mt-12 lg:grid-cols-3">
+            {TESTIMONIALS.map((testimonial, i) => (
               <figure
                 key={testimonial.name}
-                className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7"
+                className={`relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 ${
+                  i > 0 ? "hidden sm:block" : ""
+                }`}
               >
                 <Quote
                   aria-hidden="true"
-                  className="absolute right-5 top-5 h-12 w-12 fill-slate-100 text-slate-100"
+                  className="absolute right-5 top-5 h-10 w-10 fill-slate-100 text-slate-100 sm:h-12 sm:w-12"
                 />
                 <div className="flex gap-0.5 text-accent">
                   {Array.from({ length: 5 }).map((_, index) => (
-                    <Star key={index} className="h-4 w-4 fill-current" />
+                    <Star key={index} className="h-3.5 w-3.5 fill-current sm:h-4 sm:w-4" />
                   ))}
                 </div>
-                <blockquote className="relative mt-5 text-sm leading-relaxed text-slate-700">
+                <blockquote className="relative mt-4 text-sm leading-relaxed text-slate-700 sm:mt-5">
                   &ldquo;{testimonial.quote}&rdquo;
                 </blockquote>
-                <figcaption className="mt-6 flex items-center gap-3 border-t border-slate-100 pt-5">
+                <figcaption className="mt-4 flex items-center gap-3 border-t border-slate-100 pt-4 sm:mt-6 sm:pt-5">
                   <img
                     src={testimonial.avatar}
                     alt=""
                     loading="lazy"
-                    className="h-10 w-10 rounded-full object-cover"
+                    className="h-9 w-9 rounded-full object-cover sm:h-10 sm:w-10"
                   />
                   <span>
                     <span className="block text-sm font-bold text-slate-900">{testimonial.name}</span>
@@ -340,7 +459,36 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Insights - text-only list on phones, image cards from sm up */}
+      {/* ══════════════════════════════════════════════════════
+          MOBILE CTA BANNER — between testimonials & articles
+      ══════════════════════════════════════════════════════ */}
+      <div className="bg-primary px-4 py-8 sm:hidden">
+        <div className="text-center">
+          <BookOpen className="mx-auto h-8 w-8 text-white/60" />
+          <h2 className="mt-3 text-xl font-extrabold text-white">Ready to start?</h2>
+          <p className="mt-1 text-sm text-white/70">Get a free counselling session today.</p>
+          <div className="mt-4 flex gap-3">
+            <a
+              href={COMPANY.whatsapp}
+              target="_blank"
+              rel="noreferrer"
+              className="flex-1 rounded-xl bg-white py-3 text-center text-sm font-bold text-primary shadow transition hover:bg-white/90"
+            >
+              WhatsApp Us
+            </a>
+            <a
+              href={COMPANY.phoneHref}
+              className="flex-1 rounded-xl border border-white/30 py-3 text-center text-sm font-bold text-white transition hover:bg-white/10"
+            >
+              Call Now
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════
+          INSIGHTS / ARTICLES
+      ══════════════════════════════════════════════════════ */}
       <section className="section bg-white">
         <div className="container-page">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
@@ -350,11 +498,12 @@ export const HomePage: React.FC = () => {
               eyebrow="Insights & news"
               title="Latest from WisdomLingo"
               subtitle="Expert advice, university updates, and essential tips for your international education journey."
+              subtitleClassName="hidden sm:block"
             />
             <ViewAllArticles className="hidden shrink-0 sm:inline-flex" />
           </div>
 
-          <div className="mt-10 grid gap-5 sm:gap-6 md:grid-cols-3 lg:mt-12">
+          <div className="mt-8 grid gap-4 sm:gap-6 md:grid-cols-3 lg:mt-12">
             {ARTICLES.map((article) => (
               <article
                 key={article.title}
@@ -371,29 +520,29 @@ export const HomePage: React.FC = () => {
                     {article.category}
                   </span>
                 </div>
-                <div className="flex flex-1 flex-col p-5 sm:p-6">
-                  <span className="mb-3 w-fit rounded-md bg-primary-50 px-2.5 py-1 text-[11px] font-bold text-primary sm:hidden">
+                <div className="flex flex-1 flex-col p-4 sm:p-6">
+                  <span className="mb-2 w-fit rounded-md bg-primary-50 px-2.5 py-1 text-[11px] font-bold text-primary sm:hidden">
                     {article.category}
                   </span>
-                  <div className="flex items-center gap-4 text-xs text-slate-500">
+                  <div className="flex items-center gap-3 text-xs text-slate-500">
                     <span className="flex items-center gap-1.5">
-                      <CalendarDays className="h-3.5 w-3.5" /> {article.date}
+                      <CalendarDays className="h-3 w-3" /> {article.date}
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <Clock className="h-3.5 w-3.5" /> {article.readTime}
+                      <Clock className="h-3 w-3" /> {article.readTime}
                     </span>
                   </div>
-                  <h3 className="mt-3 text-base font-bold leading-snug text-slate-900">
+                  <h3 className="mt-2 text-sm font-bold leading-snug text-slate-900 sm:mt-3 sm:text-base">
                     {article.title}
                   </h3>
-                  <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">
+                  <p className="mt-2 hidden flex-1 text-sm leading-relaxed text-slate-600 sm:block">
                     {article.excerpt}
                   </p>
                   <Link
                     to={article.to}
-                    className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-primary transition hover:gap-2.5"
+                    className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-primary transition hover:gap-2.5 sm:mt-5 sm:text-sm"
                   >
-                    Read Article <ArrowRight className="h-4 w-4" />
+                    Read Article <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
               </article>
@@ -404,7 +553,20 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* Modals */}
       <EnquiryModal open={enquiryOpen} onClose={() => setEnquiryOpen(false)} />
+      <EnquiryModal
+        open={Boolean(enrollCourse)}
+        onClose={() => setEnrollCourse(null)}
+        title={enrollCourse ? `Enroll: ${enrollCourse.title}` : "Enroll"}
+        intro="Send us your details and a counsellor will confirm the next batch, timings and seat availability."
+        defaultSubject={enrollCourse ? enrollCourse.title : ""}
+        defaultMessage={
+          enrollCourse
+            ? `I would like to enroll in ${enrollCourse.title}. Please share the next batch dates and timings.`
+            : ""
+        }
+      />
     </>
   );
 };
