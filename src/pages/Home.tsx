@@ -167,11 +167,14 @@ export const HomePage: React.FC = () => {
       ══════════════════════════════════════════════════════ */}
       <section className="bg-slate-50 pb-12 pt-3 sm:pb-16 sm:pt-8">
         <div className="container-page">
-          {/* Courses Section Label */}
-          <div className="mb-5 sm:mb-6">
+          {/* Courses Section Header */}
+          <div className="mb-6 sm:mb-8">
             <SectionHeading
               align="center"
               eyebrow="Our Courses"
+              title="Language & Skill Programs"
+              subtitle="Certified training designed to take you from beginner to advanced fluency."
+              subtitleClassName="hidden sm:block"
             />
           </div>
 
@@ -215,28 +218,10 @@ export const HomePage: React.FC = () => {
             ))}
           </div>
 
-          {/* Course Trust Highlights */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5 text-xs font-semibold text-slate-600 sm:text-sm">
-            <span className="flex items-center gap-1.5">
-              <Check className="h-4 w-4 shrink-0 text-accent" /> Certified & Native Instructors
-            </span>
-            <span className="hidden h-3 w-px bg-slate-300 sm:inline-block" />
-            <span className="flex items-center gap-1.5">
-              <Check className="h-4 w-4 shrink-0 text-accent" /> Small Batches (Max 8–10 Students)
-            </span>
-            <span className="hidden h-3 w-px bg-slate-300 sm:inline-block" />
-            <span className="flex items-center gap-1.5">
-              <Check className="h-4 w-4 shrink-0 text-accent" /> Goethe, ÖSD & IELTS Exam Prep Included
-            </span>
-          </div>
-
-          <div className="mt-7 text-center">
+          <div className="mt-8 text-center">
             <Link to="/courses" className="btn-primary">
               View All Courses <ArrowRight className="h-4 w-4" />
             </Link>
-            <p className="mt-3 text-xs text-slate-500">
-              Need custom timings? Flexible morning, evening & weekend batches available upon request.
-            </p>
           </div>
         </div>
       </section>
