@@ -186,7 +186,7 @@ export const HomePage: React.FC = () => {
           <div
             role="tablist"
             aria-label="Course categories"
-            className="mx-auto grid max-w-3xl grid-cols-3 gap-2 rounded-2xl bg-white p-2 shadow-sm"
+            className="mx-auto grid max-w-3xl grid-cols-3 gap-1 rounded-2xl bg-white p-1.5 shadow-sm sm:gap-2 sm:p-2"
           >
             {CATEGORY_TABS.map((tab) => {
               const isActive = tab.key === activeCourseTab;
@@ -197,16 +197,16 @@ export const HomePage: React.FC = () => {
                   aria-selected={isActive}
                   type="button"
                   onClick={() => setActiveCourseTab(tab.key)}
-                  className={`flex items-center justify-center gap-1.5 rounded-xl px-2.5 py-2.5 text-xs font-bold transition sm:gap-2 sm:px-4 sm:py-3 sm:text-sm ${
+                  className={`flex items-center justify-center gap-1 rounded-xl px-1.5 py-2 text-[11px] font-bold transition sm:gap-2 sm:px-4 sm:py-3 sm:text-sm ${
                     isActive
                       ? "bg-primary text-white shadow-sm"
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-                  <tab.icon className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
-                  <span className="truncate">{tab.label}</span>
+                  <tab.icon className="h-3 w-3 shrink-0 sm:h-4 sm:w-4" />
+                  <span className="whitespace-nowrap">{tab.label}</span>
                   <span
-                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold sm:px-2 sm:text-[11px] ${
+                    className={`rounded-full px-1 py-0.5 text-[9px] font-semibold sm:px-2 sm:text-[11px] ${
                       isActive ? "bg-white/20 text-white" : "bg-slate-200 text-slate-600"
                     }`}
                   >
