@@ -9,6 +9,7 @@ import {
   Globe,
   MessageSquare,
   Quote,
+  Sparkles,
   Star,
 } from "lucide-react";
 import { useCompany } from "../hooks/useCompany";
@@ -167,6 +168,23 @@ export const HomePage: React.FC = () => {
       ══════════════════════════════════════════════════════ */}
       <section className="bg-slate-50 pb-12 pt-3 sm:pb-16 sm:pt-8">
         <div className="container-page">
+          {/* Attractive Featured Courses Badge */}
+          <div className="mb-5 flex items-center justify-center sm:mb-6">
+            <div className="inline-flex items-center gap-2.5 rounded-full border border-primary-200/80 bg-white/95 px-4 py-1.5 shadow-sm shadow-primary-900/5 backdrop-blur-sm transition-all duration-300 hover:border-primary-300 hover:shadow-md">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+              </span>
+              <span className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-primary sm:text-xs">
+                Featured Courses
+              </span>
+              <span className="hidden h-3.5 w-px bg-slate-200 sm:inline-block" />
+              <span className="hidden items-center gap-1.5 text-xs font-semibold text-slate-600 sm:inline-flex">
+                <Sparkles className="h-3.5 w-3.5 text-accent" /> Certified Batches & Flexible Schedules
+              </span>
+            </div>
+          </div>
+
           {/* Category Tabs */}
           <div
             role="tablist"
