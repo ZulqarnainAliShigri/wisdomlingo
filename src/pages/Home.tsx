@@ -92,7 +92,7 @@ export const HomePage: React.FC = () => {
               Premium Education Consultancy
             </span>
 
-            <h1 className="mt-4 text-[1.9rem] font-extrabold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-[3.4rem]">
+            <h1 className="mt-3 text-[1.45rem] font-extrabold leading-tight tracking-tight text-slate-900 sm:mt-4 sm:text-5xl lg:text-[3.4rem]">
               Your pathway to{" "}
               <span className="text-primary">Europe</span>{" "}
               <span className="lg:block">starts here.</span>
@@ -197,17 +197,19 @@ export const HomePage: React.FC = () => {
                   aria-selected={isActive}
                   type="button"
                   onClick={() => setActiveCourseTab(tab.key)}
-                  className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition ${
+                  className={`flex items-center justify-center gap-1.5 rounded-xl px-2.5 py-2.5 text-xs font-bold transition sm:gap-2 sm:px-4 sm:py-3 sm:text-sm ${
                     isActive
                       ? "bg-primary text-white shadow-sm"
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-                  <tab.icon className="h-4 w-4" />
-                  <span className="hidden sm:inline">{tab.label}</span>
-                  <span className={`rounded-full px-2 py-0.5 text-[11px] ${
-                    isActive ? "bg-white/20 text-white" : "bg-slate-200 text-slate-600"
-                  }`}>
+                  <tab.icon className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+                  <span className="truncate">{tab.label}</span>
+                  <span
+                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold sm:px-2 sm:text-[11px] ${
+                      isActive ? "bg-white/20 text-white" : "bg-slate-200 text-slate-600"
+                    }`}
+                  >
                     {allCourses.filter((c) => c.category === tab.key).length}
                   </span>
                 </button>
