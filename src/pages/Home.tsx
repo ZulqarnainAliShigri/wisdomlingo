@@ -73,34 +73,39 @@ export const HomePage: React.FC = () => {
           className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
         />
 
-        {/* Same light overlay on all screen sizes */}
+        {/* Crisp light overlay */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-white/85 lg:bg-transparent lg:bg-gradient-to-r lg:from-white lg:via-white/96 lg:to-white/40"
+          className="absolute inset-0 -z-10 bg-white/92 backdrop-blur-[1px] lg:bg-transparent lg:bg-gradient-to-r lg:from-white lg:via-white/96 lg:to-white/40"
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-gradient-to-t from-white via-transparent to-white/30"
+          className="absolute inset-0 -z-10 bg-gradient-to-t from-white via-transparent to-white/40"
         />
 
-        <div className="container-page grid items-center gap-10 pb-0 pt-8 sm:pb-10 sm:pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:pb-12 lg:pt-16">
+        <div className="container-page grid items-center gap-6 pb-2 pt-6 sm:gap-10 sm:pb-10 sm:pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:pb-12 lg:pt-16">
           <div className="animate-fade-in-up text-center lg:text-left">
 
             {/* Badge */}
-            <span className="badge border border-primary-100 bg-primary-50 text-primary">
-              <span aria-hidden="true" className="mr-2 h-1.5 w-1.5 rounded-full bg-accent" />
-              Premium Education Consultancy
-            </span>
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary-200/80 bg-white/90 px-3 py-1 text-[11px] font-semibold text-primary shadow-xs backdrop-blur-sm sm:px-3.5 sm:py-1 sm:text-xs">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+              </span>
+              <span>Premium Education Consultancy</span>
+            </div>
 
-            <h1 className="mt-3 text-[1.45rem] font-extrabold leading-tight tracking-tight text-slate-900 sm:mt-4 sm:text-5xl lg:text-[3.4rem]">
-              Your pathway to{" "}
-              <span className="text-primary">Europe</span>{" "}
-              <span className="lg:block">starts here.</span>
+            <h1 className="mt-3 text-[1.55rem] font-extrabold leading-[1.2] tracking-tight text-slate-900 sm:mt-4 sm:text-5xl lg:text-[3.4rem]">
+              Your pathway to <span className="text-primary">Europe</span>
+              <span className="block mt-0.5 text-slate-800">starts here.</span>
             </h1>
 
-            <p className="mx-auto mt-4 hidden max-w-xl text-base leading-relaxed text-slate-600 sm:block lg:mx-0">
-              Navigate the complexities of studying, working, or learning a language abroad with our
-              expert team. We handle the details so you can focus on your future.
+            <p className="mx-auto mt-2 max-w-sm text-xs font-medium leading-relaxed text-slate-600 sm:mt-4 sm:max-w-xl sm:text-base sm:font-normal lg:mx-0">
+              <span className="sm:hidden">German Language • Study Abroad • Paid Apprenticeships</span>
+              <span className="hidden sm:inline">
+                Navigate the complexities of studying, working, or learning a language abroad with our
+                expert team. We handle the details so you can focus on your future.
+              </span>
             </p>
 
             {/* CTAs (hidden on mobile, visible on sm and up) */}
@@ -120,18 +125,20 @@ export const HomePage: React.FC = () => {
               </Link>
             </div>
 
-            {/* Stats */}
-            <div className="mt-6 flex gap-5 overflow-x-auto pb-2 no-scrollbar sm:justify-center sm:gap-10 sm:overflow-visible sm:pb-0 lg:justify-start">
-              {HERO_STATS.map((stat) => (
-                <div key={stat.label} className="shrink-0 text-center sm:text-left">
-                  <p className="text-xl font-extrabold tracking-tight text-primary sm:text-3xl">
-                    {stat.value}
-                  </p>
-                  <p className="mt-0.5 text-[11px] font-medium text-slate-500 sm:mt-1 sm:text-xs">
-                    {stat.label}
-                  </p>
-                </div>
-              ))}
+            {/* Stats Card on Mobile / Clean Row on Desktop */}
+            <div className="mx-auto mt-4 max-w-sm rounded-2xl border border-slate-200/80 bg-white/90 p-3 shadow-xs backdrop-blur-sm sm:mx-0 sm:mt-8 sm:max-w-none sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none sm:backdrop-blur-none">
+              <div className="grid grid-cols-3 divide-x divide-slate-100 sm:flex sm:gap-10 sm:divide-x-0">
+                {HERO_STATS.map((stat) => (
+                  <div key={stat.label} className="px-1 text-center sm:px-0 sm:text-left">
+                    <p className="text-lg font-extrabold tracking-tight text-primary sm:text-3xl">
+                      {stat.value}
+                    </p>
+                    <p className="mt-0.5 text-[10px] font-semibold text-slate-500 sm:mt-1 sm:text-xs">
+                      {stat.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
