@@ -167,15 +167,12 @@ export const HomePage: React.FC = () => {
       ══════════════════════════════════════════════════════ */}
       <section className="bg-slate-50 pb-12 pt-3 sm:pb-16 sm:pt-8">
         <div className="container-page">
-          {/* Section Header with Accent Underline */}
-          <div className="mb-6 text-center sm:mb-8">
-            <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
-              Explore Our{" "}
-              <span className="relative inline-block text-primary">
-                Courses
-                <span className="absolute -bottom-1.5 left-0 h-1 w-full rounded-full bg-gradient-to-r from-primary to-accent" />
-              </span>
-            </h2>
+          {/* Courses Section Label */}
+          <div className="mb-5 sm:mb-6">
+            <SectionHeading
+              align="center"
+              eyebrow="Our Courses"
+            />
           </div>
 
           {/* Category Tabs */}
@@ -232,6 +229,7 @@ export const HomePage: React.FC = () => {
       <section className="section bg-white">
         <div className="container-page">
           <SectionHeading
+            eyebrow="Our Programs"
             title="Three programs, one destination"
             subtitle="We specialize in creating tailored pathways for international students and professionals aiming for excellence in Europe."
             subtitleClassName="hidden sm:block"
@@ -284,6 +282,7 @@ export const HomePage: React.FC = () => {
       <section className="section bg-white">
         <div className="container-page">
           <SectionHeading
+            eyebrow="Destinations"
             title="Six countries we know inside out"
             subtitle="Every country has its own rules and intakes. We match you to the one that fits."
             subtitleClassName="hidden sm:block"
@@ -329,7 +328,6 @@ export const HomePage: React.FC = () => {
           <div>
             <SectionHeading
               align="left"
-              eyebrowTone="label"
               eyebrow="Why WisdomLingo"
               title="Fifteen years of getting the details right"
               subtitle="Most applications are rejected on paperwork, not merit. That is where we focus."
@@ -366,8 +364,7 @@ export const HomePage: React.FC = () => {
       <section className="section bg-white">
         <div className="container-page">
           <SectionHeading
-            eyebrowTone="label"
-            eyebrow="Our process"
+            eyebrow="Our Process"
             title="Your pathway to success"
             subtitle="A transparent, step-by-step approach to securing your future abroad. We are with you at every milestone."
             subtitleClassName="hidden sm:block"
@@ -412,8 +409,7 @@ export const HomePage: React.FC = () => {
       <section className="section bg-slate-50">
         <div className="container-page">
           <SectionHeading
-            eyebrowTone="label"
-            eyebrow="Success stories"
+            eyebrow="Success Stories"
             title="Real journeys, real results"
             subtitle="Do not just take our word for it. Hear from the students and professionals who have built their futures with us."
             subtitleClassName="hidden sm:block"
@@ -491,8 +487,7 @@ export const HomePage: React.FC = () => {
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <SectionHeading
               align="left"
-              eyebrowTone="label"
-              eyebrow="Insights & news"
+              eyebrow="Insights & News"
               title="Latest from WisdomLingo"
               subtitle="Expert advice, university updates, and essential tips for your international education journey."
               subtitleClassName="hidden sm:block"
