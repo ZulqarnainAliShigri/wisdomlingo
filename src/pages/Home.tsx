@@ -9,6 +9,7 @@ import {
   Globe,
   MessageSquare,
   Quote,
+  Sparkles,
   Star,
 } from "lucide-react";
 import { useCompany } from "../hooks/useCompany";
@@ -147,8 +148,10 @@ export const HomePage: React.FC = () => {
                   {displayText}
                   <span
                     aria-hidden="true"
-                    className="inline-block ml-1.5 h-[0.78em] w-[3.5px] sm:w-[4.5px] lg:w-[5px] rounded-full bg-gradient-to-b from-accent to-red-500 align-baseline animate-pulse shadow-[0_0_10px_rgba(220,38,38,0.6)]"
-                  />
+                    className="inline-flex items-center justify-center ml-2 align-middle text-accent drop-shadow-[0_0_8px_rgba(220,38,38,0.6)] animate-pulse"
+                  >
+                    <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 fill-accent/20" />
+                  </span>
                 </span>
               </h1>
             </div>
