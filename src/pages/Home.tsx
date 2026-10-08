@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
@@ -42,6 +42,14 @@ const ViewAllArticles: React.FC<{ className?: string }> = ({ className = "" }) =
 
 
 
+const SHORT_SUBHEADINGS = [
+  "starts here.",
+  "begins today.",
+  "made simple.",
+  "starts now.",
+  "with us.",
+];
+
 export const HomePage: React.FC = () => {
   const COMPANY = useCompany();
   const { items: countries } = useRemoteList<StudyCountry>("study_countries", SEED_COUNTRIES, mapCountry);
@@ -49,6 +57,41 @@ export const HomePage: React.FC = () => {
   const [enquiryOpen, setEnquiryOpen] = useState(false);
   const [enrollCourse, setEnrollCourse] = useState<Course | null>(null);
   const [activeCourseTab, setActiveCourseTab] = useState<CourseCategory>("german");
+
+  // Constant Line 1 + Ultra-Short Line 2 Typewriter state
+  const [subIndex, setSubIndex] = useState(0);
+  const [displayText, setDisplayText] = useState(SHORT_SUBHEADINGS[0]);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const fullText = SHORT_SUBHEADINGS[subIndex];
+    let timer: NodeJS.Timeout;
+
+    if (!isDeleting && displayText.length < fullText.length) {
+      // Type forward char-by-char
+      timer = setTimeout(() => {
+        setDisplayText(fullText.slice(0, displayText.length + 1));
+      }, 55);
+    } else if (!isDeleting && displayText.length === fullText.length) {
+      // Pause at completed text
+      timer = setTimeout(() => {
+        setIsDeleting(true);
+      }, 2200);
+    } else if (isDeleting && displayText.length > 0) {
+      // Erase backward char-by-char
+      timer = setTimeout(() => {
+        setDisplayText(fullText.slice(0, displayText.length - 1));
+      }, 28);
+    } else if (isDeleting && displayText.length === 0) {
+      // Switch to next short subheading
+      timer = setTimeout(() => {
+        setIsDeleting(false);
+        setSubIndex((prev) => (prev + 1) % SHORT_SUBHEADINGS.length);
+      }, 250);
+    }
+
+    return () => clearTimeout(timer);
+  }, [displayText, isDeleting, subIndex]);
 
   const filteredCourses = useMemo(
     () => allCourses.filter((c) => c.category === activeCourseTab).slice(0, 3),
@@ -73,14 +116,14 @@ export const HomePage: React.FC = () => {
           className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
         />
 
-        {/* Crisp light overlay ensuring 100% text readability */}
+        {/* Balanced overlay that keeps the campus hero photo clearly visible */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-white/95 sm:bg-white/90 lg:bg-transparent lg:bg-gradient-to-r lg:from-white lg:via-white/95 lg:to-white/40"
+          className="absolute inset-0 -z-10 bg-white/45 sm:bg-white/35 lg:bg-transparent lg:bg-gradient-to-r lg:from-white/95 lg:via-white/85 lg:to-white/20"
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-gradient-to-b from-white via-white/85 to-white"
+          className="absolute inset-0 -z-10 bg-gradient-to-b from-white/80 via-white/25 to-white"
         />
 
         <div className="container-page grid items-center gap-6 pb-2 pt-6 sm:gap-10 sm:pb-10 sm:pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:pb-12 lg:pt-16">
@@ -95,18 +138,39 @@ export const HomePage: React.FC = () => {
               <span>Premium Education Consultancy</span>
             </div>
 
-            <h1 className="mt-3 text-[1.55rem] font-extrabold leading-[1.2] tracking-tight text-slate-900 sm:mt-4 sm:text-5xl lg:text-[3.4rem]">
-              Your pathway to <span className="text-primary">Europe</span>
-              <span className="block mt-0.5 text-accent sm:text-slate-800">starts here.</span>
-            </h1>
+            {/* Heading: Constant 1st line, strictly 2 lines, short rotating 2nd line */}
+            <div className="mt-2.5 min-h-[85px] flex flex-col justify-center sm:mt-4 sm:min-h-[120px] lg:min-h-[145px]">
+              <h1 className="text-[1.35rem] font-extrabold leading-[1.2] tracking-tight text-slate-900 drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)] sm:text-4xl lg:text-[2.85rem] sm:drop-shadow-none">
+                <span>Your pathway to </span>
+                <span className="text-primary">Europe</span>
+                <span className="block mt-0.5 text-accent drop-shadow-[0_1px_2px_rgba(255,255,255,0.95)] sm:text-accent sm:drop-shadow-none min-h-[1.25em]">
+                  {displayText}
+                  <span className="inline-block text-accent font-light ml-0.5 animate-pulse">|</span>
+                </span>
+              </h1>
+            </div>
 
-            <p className="mx-auto mt-2 max-w-sm text-xs font-semibold leading-relaxed text-slate-700 sm:mt-4 sm:max-w-xl sm:text-base sm:font-normal sm:text-slate-600 lg:mx-0">
+            {/* Static Subtitle / Tagline (stays stable, only heading types & erases) */}
+            <p className="mx-auto mt-2 max-w-sm text-[11px] font-bold leading-relaxed text-slate-800 drop-shadow-[0_1px_2px_rgba(255,255,255,0.95)] sm:mt-3 sm:max-w-xl sm:text-sm sm:font-normal sm:text-slate-600 sm:drop-shadow-none lg:mx-0">
               <span className="sm:hidden">German Language • Study Abroad • Paid Apprenticeships</span>
               <span className="hidden sm:inline">
                 Navigate the complexities of studying, working, or learning a language abroad with our
                 expert team. We handle the details so you can focus on your future.
               </span>
             </p>
+
+            {/* Trust feature pills ("more texts") */}
+            <div className="mt-2.5 flex flex-wrap items-center justify-center gap-1.5 text-[11px] font-semibold text-slate-700 sm:mt-4 sm:gap-2 sm:text-xs lg:justify-start">
+              <span className="inline-flex items-center gap-1 rounded-full border border-slate-200/80 bg-white/90 px-2.5 py-0.5 shadow-2xs backdrop-blur-xs">
+                <span className="font-bold text-emerald-600">✓</span> Free Assessment
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full border border-slate-200/80 bg-white/90 px-2.5 py-0.5 shadow-2xs backdrop-blur-xs">
+                <span className="font-bold text-emerald-600">✓</span> Goethe (A1–C2)
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full border border-slate-200/80 bg-white/90 px-2.5 py-0.5 shadow-2xs backdrop-blur-xs">
+                <span className="font-bold text-emerald-600">✓</span> 98% Visa Success
+              </span>
+            </div>
 
             {/* CTAs (hidden on mobile, visible on sm and up) */}
             <div className="hidden sm:flex sm:mt-8 sm:gap-3 sm:justify-center lg:justify-start">
