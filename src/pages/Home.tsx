@@ -97,7 +97,7 @@ export const HomePage: React.FC = () => {
 
             <h1 className="mt-3 text-[1.55rem] font-extrabold leading-[1.2] tracking-tight text-slate-900 sm:mt-4 sm:text-5xl lg:text-[3.4rem]">
               Your pathway to <span className="text-primary">Europe</span>
-              <span className="block mt-0.5 text-slate-800">starts here.</span>
+              <span className="block mt-0.5 text-accent sm:text-slate-800">starts here.</span>
             </h1>
 
             <p className="mx-auto mt-2 max-w-sm text-xs font-medium leading-relaxed text-slate-600 sm:mt-4 sm:max-w-xl sm:text-base sm:font-normal lg:mx-0">
