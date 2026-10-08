@@ -5,7 +5,7 @@ for course images. There is no server to run — this folder holds everything th
 so the whole backend can be rebuilt from scratch in a few minutes.
 
 ```
-backend/supabase/
+supabase/
 ├── config.toml                                  local CLI settings
 ├── migrations/
 │   ├── 20250101000000_init_tables.sql           tables, indexes, updated_at triggers
@@ -29,7 +29,7 @@ backend/supabase/
 3. **Authentication → Users → Add user → Create new user**
    - Email `admin@wisdomlingo.com`, a strong password, tick **Auto Confirm User**.
 4. **Project Settings → API** — copy **Project URL** and the **anon public** key into
-   `frontend/.env.local`, then restart the frontend.
+   `.env.local`, then restart the frontend.
 
 ## Setup — Supabase CLI (optional)
 
@@ -58,7 +58,7 @@ fixed to `true`, so a second row cannot be inserted and the app can always upser
 `id = true`. Unlike the content tables they are readable by `anon` regardless of any flag,
 because the public pages need them to build their meta tags and contact details.
 
-`company_settings` replaces what used to be hard-coded in `frontend/src/config/company.json`.
+`company_settings` replaces what used to be hard-coded in `src/config/company.json`.
 That file stays in the repo as the fallback: the app renders it before the row loads and keeps
 using it if the table is missing or the project is unreachable, so a paused project degrades to
 the last known-good details instead of a site full of blanks. The post-build SEO script reads
@@ -104,7 +104,7 @@ WEBP, GIF) and size (≤ 5 MB) before upload. Deleting a row also deletes its up
 ## Changing the schema
 
 Add a new timestamped file to `migrations/` rather than editing an applied one, then either
-run it in the SQL Editor or `supabase db push`. Keep `frontend/src/types/index.ts` in sync.
+run it in the SQL Editor or `npm run db:push`. Keep `src/types/index.ts` in sync.
 
 ---
 

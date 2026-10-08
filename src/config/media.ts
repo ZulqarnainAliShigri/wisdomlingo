@@ -4,7 +4,7 @@
  * These point at Unsplash so the site looks finished out of the box. To use your
  * own photos, upload them in the admin dashboard (any course image upload puts a
  * file in the `course-images` bucket) and paste the public URL here, or drop the
- * files into `frontend/public/images/` and use "/images/your-photo.jpg".
+ * files into `public/images/` and use "/images/your-photo.jpg".
  *
  * Every hero keeps a solid background underneath, so the design still holds up
  * if an image is slow or blocked.
@@ -22,7 +22,7 @@ export const HERO_IMAGES = {
   blog: unsplash("1434030216411-0b793f4b4173", 1600),
 };
 
-/** Video files served straight from `frontend/public/videos/`. */
+/** Video files served straight from `public/videos/`. */
 export const VIDEOS = {
   /** Campus tour clip shown as the featured post on the blog page. */
   germanAcademy: "/videos/german-academy-abroad.mp4",
@@ -39,7 +39,7 @@ export const ARTICLE_IMAGES = {
 };
 
 /**
- * Our own photography, served from `frontend/public/images/blog/`. Unlike the
+ * Our own photography, served from `public/images/blog/`. Unlike the
  * Unsplash entries above these are real WisdomLingo pictures, so they are the
  * ones to reach for first when a section needs to look like the actual academy.
  */

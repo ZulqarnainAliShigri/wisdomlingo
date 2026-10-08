@@ -649,7 +649,7 @@ export const SettingsTab: React.FC<{ onEditProfile?: () => void }> = ({ onEditPr
           <p className="flex items-start gap-2 rounded-xl bg-amber-50 p-4 text-sm text-amber-900">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             Supabase is not connected. Add the URL and anon key to{" "}
-            <code>frontend/.env.local</code> and restart.
+            <code>.env.local</code> and restart.
           </p>
         ) : (
           <ul className="space-y-2">

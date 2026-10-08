@@ -5,9 +5,13 @@ counselling and paid apprenticeships.
 
 ```
 wisdom/
-├── frontend/     React 18 + TypeScript + Tailwind (the website and admin dashboard)
-├── backend/      Supabase project: SQL migrations, seed data, security policies
-└── README.md     you are here
+├── src/             React 18 + TypeScript + Tailwind (website and admin dashboard)
+├── public/          Static assets, icons, videos, _redirects for Cloudflare Pages
+├── scripts/         Post-build SEO prerender script
+├── supabase/        Supabase config, SQL migrations, seed data
+├── package.json     App scripts and dependencies
+├── .env.example     Environment variables template
+└── README.md        You are here
 ```
 
 - **Brand:** blue `#1E40AF`, red `#DC2626`, Inter
@@ -17,20 +21,19 @@ wisdom/
 ## Quick start
 
 ```bash
-cd frontend
 npm install
 npm start            # http://localhost:3000
 ```
 
-The site runs immediately with bundled demo content. To make it editable, set up the backend
-(see [`backend/README.md`](backend/README.md)) and put the two keys in `frontend/.env.local`:
+The site runs immediately with bundled demo content. To connect your Supabase database,
+put your keys in `.env.local`:
 
 ```
 REACT_APP_SUPABASE_URL=https://YOUR-PROJECT-REF.supabase.co
 REACT_APP_SUPABASE_ANON_KEY=your-anon-public-key
 ```
 
-## Frontend
+## Application structure
 
 | Route | Page |
 |---|---|
@@ -42,35 +45,40 @@ REACT_APP_SUPABASE_ANON_KEY=your-anon-public-key
 | `/admin` | Admin login |
 | `/admin/dashboard` | Protected dashboard — Courses, Destinations, Apprenticeships, Messages |
 
-Structure:
+Directory layout:
 
 ```
-frontend/src/
+src/
 ├── components/
 │   ├── admin/      AdminList, form modals, image upload, tabs
 │   ├── layout/     Navbar, Footer, Logo, SiteLayout, ScrollToTop
 │   ├── public/     CourseCard, CountryCard, ApprenticeshipCard, ContactForm
 │   ├── ui/         Modal, ConfirmDialog, MediaImage, PageHero, EmptyState, Loader
 │   └── ProtectedRoute.tsx
-├── config/         company details, navigation
+├── config/         company details, navigation, media
 ├── data/           seed content, shared page content
-├── hooks/          useAuth, useRemoteList, useAdminCollection
+├── hooks/          useAuth, useRemoteList, useAdminCollection, useCompany, useSeo
 ├── lib/            supabase client, storage upload, mappers, utils
-├── pages/          the eight routes
+├── pages/          the public and admin routes
 ├── types/          shared data types
 └── App.tsx         routing only
 ```
 
-## Backend
+## Backend (Supabase)
 
-Supabase — Postgres + Auth + Storage. All of it is defined in
-[`backend/supabase/`](backend/supabase) as migrations plus a seed file, so it can be rebuilt
-from scratch. Public visitors can read active content and submit the contact form; only the
-signed-in admin can write. See [`backend/README.md`](backend/README.md).
+Supabase provides Postgres, Auth, and Storage. All configurations and migrations are in
+[`supabase/`](supabase) (see [`SUPABASE.md`](SUPABASE.md)):
+- `supabase/migrations/`: Database schema, tables, RLS policies, storage bucket
+- `supabase/seed.sql`: Starter content
+
+To push changes to your Supabase project:
+```bash
+npm run db:push
+```
 
 ## Admin dashboard
 
-Sign in at `/admin`. The dashboard has a left sidebar (a slide-in drawer on mobile) with four sections:
+Sign in at `/admin`. The dashboard has a left sidebar (slide-in drawer on mobile) with sections for:
 
 | Section | Actions |
 |---|---|
@@ -78,30 +86,27 @@ Sign in at `/admin`. The dashboard has a left sidebar (a slide-in drawer on mobi
 | **Destinations** | add / edit / delete countries, benefits and requirements one per line |
 | **Apprenticeships** | add / edit / delete fields, salary, duration, requirements, benefits |
 | **Messages** | read contact enquiries, mark read/unread, delete, reply by email or phone |
+| **SEO & Settings** | customize site metadata, company phone, address, and social links |
 
-Deleting asks for confirmation and also removes the uploaded image. Every action shows a toast.
-Without Supabase configured the dashboard still renders with demo data, clearly marked
-read-only.
+Deleting asks for confirmation and cleans up uploaded media. Without Supabase configured, the dashboard renders with demo data in read-only mode.
 
 ## Deployment (Cloudflare Pages)
 
+Because everything is consolidated in a single folder, Cloudflare Pages connects directly to the repository root:
+
 ```bash
-cd frontend
-npm run build        # output: frontend/build
+npm run build        # output: build/
 ```
 
-Upload `frontend/build` via **Workers & Pages → Create → Pages → Upload assets**, or connect
-the repo with:
+### Cloudflare Pages build settings
 
 | Setting | Value |
 |---|---|
-| Root directory | `frontend` |
-| Build command | `npm run build` |
-| Output directory | `build` |
+| **Framework preset** | `Create React App` (or None) |
+| **Root directory** | *(leave empty / root)* |
+| **Build command** | `npm run build` |
+| **Build output directory** | `build` |
 
-Add `REACT_APP_SUPABASE_URL` and `REACT_APP_SUPABASE_ANON_KEY` under Settings → Environment
-variables for both Production and Preview, then redeploy — CRA bakes them in at build time,
-so an existing deployment will not pick them up.
+Add `REACT_APP_SUPABASE_URL` and `REACT_APP_SUPABASE_ANON_KEY` under **Settings → Environment variables** for both Production and Preview.
 
-`frontend/public/_redirects` already routes every path to `index.html` so client-side routes
-survive a refresh.
+`public/_redirects` contains `/*  /index.html  200` to handle client-side routing on Cloudflare Pages.

@@ -1,7 +1,7 @@
 import React from "react";
 import { useCompany } from "../../hooks/useCompany";
 
-/** Public path of the WL&C mark in `frontend/public/images`. */
+/** Public path of the WL&C mark in `public/images`. */
 export const LOGO_SRC = `${process.env.PUBLIC_URL}/images/logo.png`;
 
 type LogoSize = "md" | "lg";

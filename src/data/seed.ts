@@ -1,5 +1,5 @@
 // Fallback content used when Supabase is unreachable or a table is still empty.
-// The same rows are inserted by backend/supabase/seed.sql.
+// The same rows are inserted by supabase/seed.sql.
 
 import { Apprenticeship, Course, StudyCountry } from "../types";
 

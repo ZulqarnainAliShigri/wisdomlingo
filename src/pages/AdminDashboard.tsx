@@ -216,7 +216,7 @@ export const AdminDashboardPage: React.FC = () => {
               <p>
                 Supabase is not connected, so the dashboard is in read-only demo mode. Add{" "}
                 <code>REACT_APP_SUPABASE_URL</code> and <code>REACT_APP_SUPABASE_ANON_KEY</code> to{" "}
-                <code>frontend/.env.local</code> and restart to enable saving.
+                <code>.env.local</code> and restart to enable saving.
               </p>
             </div>
           )}

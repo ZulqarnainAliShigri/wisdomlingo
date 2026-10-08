@@ -206,7 +206,7 @@ export const TESTIMONIALS = [
  * "Latest from WisdomLingo". There is no blog route yet, so each card links to
  * the programme page it belongs to - swap `to` for a real article URL later.
  */
-/** The clip that heads the blog page. Lives in `frontend/public/videos/`. */
+/** The clip that heads the blog page. Lives in `public/videos/`. */
 export const FEATURED_VIDEO = {
   src: VIDEOS.germanAcademy,
   category: "Campus tour",

@@ -1,4 +1,4 @@
-// Shared data types, mirrored by backend/supabase/migrations.
+// Shared data types, mirrored by supabase/migrations.
 
 
 export type CourseCategory = "german" | "english" | "religious";
