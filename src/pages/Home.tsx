@@ -83,7 +83,7 @@ export const HomePage: React.FC = () => {
           className="absolute inset-0 -z-10 bg-gradient-to-t from-white via-transparent to-white/30"
         />
 
-        <div className="container-page grid items-center gap-10 pb-0 pt-8 sm:pb-20 sm:pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:pb-24 lg:pt-16">
+        <div className="container-page grid items-center gap-10 pb-0 pt-8 sm:pb-10 sm:pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:pb-12 lg:pt-16">
           <div className="animate-fade-in-up text-center lg:text-left">
 
             {/* Badge */}
@@ -165,7 +165,7 @@ export const HomePage: React.FC = () => {
       {/* ══════════════════════════════════════════════════════
           COURSES SHOWCASE — right after hero on all screens
       ══════════════════════════════════════════════════════ */}
-      <section className="bg-slate-50 pb-14 pt-8 sm:py-20">
+      <section className="bg-slate-50 pb-12 pt-3 sm:pb-16 sm:pt-8">
         <div className="container-page">
           {/* Category Tabs */}
           <div
