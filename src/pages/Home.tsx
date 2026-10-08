@@ -215,10 +215,28 @@ export const HomePage: React.FC = () => {
             ))}
           </div>
 
-          <div className="mt-8 text-center">
+          {/* Course Trust Highlights */}
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5 text-xs font-semibold text-slate-600 sm:text-sm">
+            <span className="flex items-center gap-1.5">
+              <Check className="h-4 w-4 shrink-0 text-accent" /> Certified & Native Instructors
+            </span>
+            <span className="hidden h-3 w-px bg-slate-300 sm:inline-block" />
+            <span className="flex items-center gap-1.5">
+              <Check className="h-4 w-4 shrink-0 text-accent" /> Small Batches (Max 8–10 Students)
+            </span>
+            <span className="hidden h-3 w-px bg-slate-300 sm:inline-block" />
+            <span className="flex items-center gap-1.5">
+              <Check className="h-4 w-4 shrink-0 text-accent" /> Goethe, ÖSD & IELTS Exam Prep Included
+            </span>
+          </div>
+
+          <div className="mt-7 text-center">
             <Link to="/courses" className="btn-primary">
               View All Courses <ArrowRight className="h-4 w-4" />
             </Link>
+            <p className="mt-3 text-xs text-slate-500">
+              Need custom timings? Flexible morning, evening & weekend batches available upon request.
+            </p>
           </div>
         </div>
       </section>
