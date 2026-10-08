@@ -103,18 +103,18 @@ export const HomePage: React.FC = () => {
               expert team. We handle the details so you can focus on your future.
             </p>
 
-            {/* CTAs */}
-            <div className="mt-4 flex gap-2 sm:mt-8 sm:gap-3 sm:justify-center lg:justify-start">
+            {/* CTAs (hidden on mobile, visible on sm and up) */}
+            <div className="hidden sm:flex sm:mt-8 sm:gap-3 sm:justify-center lg:justify-start">
               <button
                 type="button"
                 onClick={() => setEnquiryOpen(true)}
-                className="btn-accent flex-1 px-3 py-2 text-xs font-bold shadow-md shadow-accent/20 sm:flex-none sm:px-5 sm:py-3 sm:text-sm"
+                className="btn-accent sm:flex-none sm:px-5 sm:py-3 sm:text-sm font-bold shadow-md shadow-accent/20"
               >
-                Start Your Journey <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                Start Your Journey <ArrowRight className="h-4 w-4" />
               </button>
               <Link
                 to="/courses"
-                className="btn-ghost flex-1 px-3 py-2 text-xs font-bold sm:flex-none sm:px-5 sm:py-3 sm:text-sm"
+                className="btn-ghost sm:flex-none sm:px-5 sm:py-3 sm:text-sm font-bold"
               >
                 Explore Courses
               </Link>
