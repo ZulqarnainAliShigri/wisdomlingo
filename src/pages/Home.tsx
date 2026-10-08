@@ -104,15 +104,18 @@ export const HomePage: React.FC = () => {
             </p>
 
             {/* CTAs */}
-            <div className="mt-5 flex gap-3 sm:justify-center sm:mt-8 lg:justify-start">
+            <div className="mt-4 flex gap-2 sm:mt-8 sm:gap-3 sm:justify-center lg:justify-start">
               <button
                 type="button"
                 onClick={() => setEnquiryOpen(true)}
-                className="btn-accent flex-1 shadow-lg shadow-accent/20 sm:flex-none"
+                className="btn-accent flex-1 px-3 py-2 text-xs font-bold shadow-md shadow-accent/20 sm:flex-none sm:px-5 sm:py-3 sm:text-sm"
               >
-                Start Your Journey <ArrowRight className="h-4 w-4" />
+                Start Your Journey <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </button>
-              <Link to="/courses" className="btn-ghost flex-1 sm:flex-none">
+              <Link
+                to="/courses"
+                className="btn-ghost flex-1 px-3 py-2 text-xs font-bold sm:flex-none sm:px-5 sm:py-3 sm:text-sm"
+              >
                 Explore Courses
               </Link>
             </div>
@@ -168,11 +171,12 @@ export const HomePage: React.FC = () => {
       <section className="bg-slate-50 pb-12 pt-3 sm:pb-16 sm:pt-8">
         <div className="container-page">
           {/* Courses Section Header */}
-          <div className="mb-6 sm:mb-8">
+          <div className="mb-4 sm:mb-8">
             <SectionHeading
               align="center"
               eyebrow="Our Courses"
               title="Language & Skill Programs"
+              titleClassName="hidden sm:block"
               subtitle="Certified training designed to take you from beginner to advanced fluency."
               subtitleClassName="hidden sm:block"
             />
