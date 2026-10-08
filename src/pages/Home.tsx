@@ -167,21 +167,11 @@ export const HomePage: React.FC = () => {
       ══════════════════════════════════════════════════════ */}
       <section className="bg-slate-50 pb-14 pt-8 sm:py-20">
         <div className="container-page">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <SectionHeading
-              align="left"
-              title="Our Courses"
-            />
-            <Link to="/courses" className="btn-ghost hidden shrink-0 sm:inline-flex">
-              View All Courses <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-
           {/* Category Tabs */}
           <div
             role="tablist"
             aria-label="Course categories"
-            className="mx-auto mt-8 grid max-w-3xl grid-cols-3 gap-2 rounded-2xl bg-white p-2 shadow-sm"
+            className="mx-auto grid max-w-3xl grid-cols-3 gap-2 rounded-2xl bg-white p-2 shadow-sm"
           >
             {CATEGORY_TABS.map((tab) => {
               const isActive = tab.key === activeCourseTab;
