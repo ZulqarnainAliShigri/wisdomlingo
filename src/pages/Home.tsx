@@ -170,11 +170,7 @@ export const HomePage: React.FC = () => {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <SectionHeading
               align="left"
-              eyebrowTone="label"
-              eyebrow="Our Courses"
-              title="Learn a language, change your future"
-              subtitle="From German A1 to C2, IELTS, Quran, Arabic and Persian — all taught by certified teachers in small batches."
-              subtitleClassName="hidden sm:block"
+              title="Our Courses"
             />
             <Link to="/courses" className="btn-ghost hidden shrink-0 sm:inline-flex">
               View All Courses <ArrowRight className="h-4 w-4" />
