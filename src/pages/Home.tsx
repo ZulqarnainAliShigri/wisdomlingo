@@ -73,14 +73,14 @@ export const HomePage: React.FC = () => {
           className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
         />
 
-        {/* Crisp light overlay */}
+        {/* Crisp light overlay ensuring 100% text readability */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-white/92 backdrop-blur-[1px] lg:bg-transparent lg:bg-gradient-to-r lg:from-white lg:via-white/96 lg:to-white/40"
+          className="absolute inset-0 -z-10 bg-white/95 sm:bg-white/90 lg:bg-transparent lg:bg-gradient-to-r lg:from-white lg:via-white/95 lg:to-white/40"
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-gradient-to-t from-white via-transparent to-white/40"
+          className="absolute inset-0 -z-10 bg-gradient-to-b from-white via-white/85 to-white"
         />
 
         <div className="container-page grid items-center gap-6 pb-2 pt-6 sm:gap-10 sm:pb-10 sm:pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:pb-12 lg:pt-16">
@@ -100,7 +100,7 @@ export const HomePage: React.FC = () => {
               <span className="block mt-0.5 text-accent sm:text-slate-800">starts here.</span>
             </h1>
 
-            <p className="mx-auto mt-2 max-w-sm text-xs font-medium leading-relaxed text-slate-600 sm:mt-4 sm:max-w-xl sm:text-base sm:font-normal lg:mx-0">
+            <p className="mx-auto mt-2 max-w-sm text-xs font-semibold leading-relaxed text-slate-700 sm:mt-4 sm:max-w-xl sm:text-base sm:font-normal sm:text-slate-600 lg:mx-0">
               <span className="sm:hidden">German Language • Study Abroad • Paid Apprenticeships</span>
               <span className="hidden sm:inline">
                 Navigate the complexities of studying, working, or learning a language abroad with our
