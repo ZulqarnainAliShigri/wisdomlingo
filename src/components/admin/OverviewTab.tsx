@@ -164,8 +164,8 @@ export const OverviewTab: React.FC<{ onNavigate: (tab: AdminTab) => void }> = ({
 
       const messageRows =
         submissionsRes.status === "fulfilled" &&
-        !submissionsRes.value.error &&
-        Array.isArray(submissionsRes.value.data)
+          !submissionsRes.value.error &&
+          Array.isArray(submissionsRes.value.data)
           ? (submissionsRes.value.data as Row[])
           : [];
 
@@ -480,9 +480,8 @@ export const OverviewTab: React.FC<{ onNavigate: (tab: AdminTab) => void }> = ({
                 </span>
                 {action.badge && (
                   <span
-                    className={`rounded-full px-1.5 py-0.2 text-[10px] font-black ${
-                      action.badgeColor || "bg-slate-100 text-slate-600"
-                    }`}
+                    className={`rounded-full px-1.5 py-0.2 text-[10px] font-black ${action.badgeColor || "bg-slate-100 text-slate-600"
+                      }`}
                   >
                     {action.badge}
                   </span>
@@ -522,11 +521,10 @@ export const OverviewTab: React.FC<{ onNavigate: (tab: AdminTab) => void }> = ({
                 type="button"
                 onClick={() => setRange(option.key)}
                 aria-pressed={range === option.key}
-                className={`flex-1 sm:flex-none whitespace-nowrap rounded-lg px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-bold transition text-center ${
-                  range === option.key
+                className={`flex-1 sm:flex-none whitespace-nowrap rounded-lg px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-bold transition text-center ${range === option.key
                     ? "bg-primary text-white shadow-xs"
                     : "text-slate-600 hover:text-slate-900"
-                }`}
+                  }`}
               >
                 {option.label}
               </button>
@@ -699,11 +697,10 @@ export const OverviewTab: React.FC<{ onNavigate: (tab: AdminTab) => void }> = ({
               type="button"
               onClick={() => setContentView("visual")}
               aria-pressed={contentView === "visual"}
-              className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold transition ${
-                contentView === "visual"
+              className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold transition ${contentView === "visual"
                   ? "bg-white text-primary shadow-xs"
                   : "text-slate-500 hover:text-slate-800"
-              }`}
+                }`}
             >
               <Layers className="h-3.5 w-3.5" />
               <span>Cards &amp; Charts</span>
@@ -712,11 +709,10 @@ export const OverviewTab: React.FC<{ onNavigate: (tab: AdminTab) => void }> = ({
               type="button"
               onClick={() => setContentView("list")}
               aria-pressed={contentView === "list"}
-              className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold transition ${
-                contentView === "list"
+              className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold transition ${contentView === "list"
                   ? "bg-white text-primary shadow-xs"
                   : "text-slate-500 hover:text-slate-800"
-              }`}
+                }`}
             >
               <List className="h-3.5 w-3.5" />
               <span>Full List View</span>

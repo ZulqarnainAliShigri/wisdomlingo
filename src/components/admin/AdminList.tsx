@@ -67,11 +67,10 @@ export function AdminList<T extends AdminEntity>({
       type="button"
       onClick={() => onToggleActive(item)}
       title="Toggle visibility on website"
-      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold transition hover:scale-105 active:scale-95 ${
-        item.is_active
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold transition hover:scale-105 active:scale-95 ${item.is_active
           ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
           : "bg-slate-100 text-slate-500 border border-slate-200"
-      }`}
+        }`}
     >
       <span
         className={`h-1.5 w-1.5 rounded-full ${item.is_active ? "bg-emerald-500" : "bg-slate-400"}`}
@@ -133,11 +132,10 @@ export function AdminList<T extends AdminEntity>({
               onClick={() => setViewMode("list")}
               aria-pressed={viewMode === "list"}
               title="List view"
-              className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition ${
-                viewMode === "list"
+              className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition ${viewMode === "list"
                   ? "bg-white text-primary shadow-xs"
                   : "text-slate-500 hover:text-slate-900"
-              }`}
+                }`}
             >
               <List className="h-3.5 w-3.5" />
               <span>List</span>
@@ -147,11 +145,10 @@ export function AdminList<T extends AdminEntity>({
               onClick={() => setViewMode("cards")}
               aria-pressed={viewMode === "cards"}
               title="Cards view"
-              className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition ${
-                viewMode === "cards"
+              className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition ${viewMode === "cards"
                   ? "bg-white text-primary shadow-xs"
                   : "text-slate-500 hover:text-slate-900"
-              }`}
+                }`}
             >
               <LayoutGrid className="h-3.5 w-3.5" />
               <span>Cards</span>

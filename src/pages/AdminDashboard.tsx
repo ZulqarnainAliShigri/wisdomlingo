@@ -1,6 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AlertTriangle, ChevronDown, ExternalLink, LogOut, Menu, UserRound } from "lucide-react";
+import {
+  AlertTriangle,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  LogOut,
+  Menu,
+  UserRound,
+} from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuth } from "../hooks/useAuth";
 import { ADMIN_EMAIL, isSupabaseConfigured, supabase } from "../lib/supabase";
@@ -226,39 +235,69 @@ export const AdminDashboardPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Mobile Fast-Switch Tab Strip (Swipeable) */}
-          <div
-            ref={tabStripRef}
-            className="flex gap-1 overflow-x-auto border-t border-slate-100 px-3 py-1.5 bg-slate-50/80 no-scrollbar scroll-smooth lg:hidden"
-          >
-            {ADMIN_TABS.map((item) => {
-              const isActive = item.key === tab;
-              return (
-                <button
-                  key={item.key}
-                  type="button"
-                  aria-current={isActive ? "page" : undefined}
-                  onClick={() => setTab(item.key)}
-                  className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition active:scale-95 ${
-                    isActive
-                      ? "bg-primary text-white shadow-xs"
-                      : "text-slate-600 hover:bg-slate-200/60 hover:text-slate-900"
-                  }`}
-                >
-                  <item.icon className={`h-3.5 w-3.5 ${isActive ? "text-white" : "text-slate-400"}`} />
-                  <span>{item.label}</span>
-                  {item.key === "messages" && unread > 0 && (
-                    <span
-                      className={`ml-0.5 rounded-full px-1.5 py-0.2 text-[10px] font-black ${
-                        isActive ? "bg-white text-primary" : "bg-accent text-white"
-                      }`}
-                    >
-                      {unread}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+          {/* Mobile Fast-Switch Tab Strip Carousel with Left & Right Arrow Icons and Thin Scrollbar */}
+          <div className="relative flex items-center border-t border-slate-100 bg-slate-50/90 px-1 py-1 lg:hidden">
+            <button
+              type="button"
+              onClick={() => {
+                if (tabStripRef.current) {
+                  tabStripRef.current.scrollBy({ left: -160, behavior: "smooth" });
+                }
+              }}
+              aria-label="Scroll tabs left"
+              title="Scroll left"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-white hover:text-primary active:scale-90"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+
+            <div
+              ref={tabStripRef}
+              className="flex flex-1 gap-1 overflow-x-auto px-1 py-0.5 thin-scrollbar scroll-smooth"
+            >
+              {ADMIN_TABS.map((item) => {
+                const isActive = item.key === tab;
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    aria-current={isActive ? "page" : undefined}
+                    onClick={() => setTab(item.key)}
+                    className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition active:scale-95 whitespace-nowrap ${
+                      isActive
+                        ? "bg-primary text-white shadow-xs"
+                        : "text-slate-600 hover:bg-slate-200/60 hover:text-slate-900"
+                    }`}
+                  >
+                    <item.icon className={`h-3.5 w-3.5 ${isActive ? "text-white" : "text-slate-400"}`} />
+                    <span>{item.label}</span>
+                    {item.key === "messages" && unread > 0 && (
+                      <span
+                        className={`ml-0.5 rounded-full px-1.5 py-0.2 text-[10px] font-black ${
+                          isActive ? "bg-white text-primary" : "bg-accent text-white"
+                        }`}
+                      >
+                        {unread}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (tabStripRef.current) {
+                  tabStripRef.current.scrollBy({ left: 160, behavior: "smooth" });
+                }
+              }}
+              aria-label="Scroll tabs right"
+              title="Scroll right"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-white hover:text-primary active:scale-90"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
           </div>
         </header>
 
