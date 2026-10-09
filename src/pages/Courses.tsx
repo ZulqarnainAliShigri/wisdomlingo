@@ -162,7 +162,7 @@ export const CoursesPage: React.FC = () => {
     if (isPaused || filtered.length === 0) return;
     const interval = setInterval(() => {
       setActiveCourseIdx((prev) => (prev + 1) % Math.max(1, filtered.length));
-    }, 3800);
+    }, 2000);
     return () => clearInterval(interval);
   }, [isPaused, filtered.length]);
 

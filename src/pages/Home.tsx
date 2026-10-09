@@ -89,7 +89,7 @@ export const HomePage: React.FC = () => {
     if (isProcessPaused) return;
     const interval = setInterval(() => {
       setActiveProcessStep((prev) => (prev + 1) % PROCESS_STEPS.length);
-    }, 5000);
+    }, 2000);
     return () => clearInterval(interval);
   }, [isProcessPaused]);
 
@@ -122,7 +122,7 @@ export const HomePage: React.FC = () => {
     if (isProgramsPaused || maxProgramIndex === 0) return;
     const interval = setInterval(() => {
       setActiveProgramIndex((prev) => (prev < maxProgramIndex ? prev + 1 : 0));
-    }, 5000);
+    }, 2000);
     return () => clearInterval(interval);
   }, [isProgramsPaused, maxProgramIndex]);
 
@@ -139,7 +139,7 @@ export const HomePage: React.FC = () => {
     if (isWhyPaused) return;
     const interval = setInterval(() => {
       setActiveWhyIndex((prev) => (prev + 1) % WHY_US.length);
-    }, 5000);
+    }, 2000);
     return () => clearInterval(interval);
   }, [isWhyPaused]);
 
@@ -151,7 +151,7 @@ export const HomePage: React.FC = () => {
     if (isTestimonialPaused) return;
     const interval = setInterval(() => {
       setActiveTestimonialIndex((prev) => (prev + 1) % Math.max(1, displayStories.length));
-    }, 5500);
+    }, 2000);
     return () => clearInterval(interval);
   }, [isTestimonialPaused, displayStories.length]);
 
@@ -163,7 +163,7 @@ export const HomePage: React.FC = () => {
     if (isArticlePaused) return;
     const interval = setInterval(() => {
       setActiveArticleIndex((prev) => (prev + 1) % Math.max(1, displayArticles.length));
-    }, 5500);
+    }, 2000);
     return () => clearInterval(interval);
   }, [isArticlePaused, displayArticles.length]);
 
@@ -215,7 +215,7 @@ export const HomePage: React.FC = () => {
     if (isCoursesPaused) return;
     const interval = setInterval(() => {
       setActiveCourseIndex((prev) => (prev + 1) % Math.max(1, filteredCourses.length));
-    }, 5000);
+    }, 2000);
     return () => clearInterval(interval);
   }, [isCoursesPaused, filteredCourses.length]);
 
@@ -230,13 +230,13 @@ export const HomePage: React.FC = () => {
     });
   }, [countries, destFilter]);
 
-  // Continuous loop auto-advance for Destinations Carousel (5000ms smooth loop)
+  // Continuous loop auto-advance for Destinations Carousel (2000ms smooth loop)
   useEffect(() => {
     if (isDestPaused || filteredDestinations.length === 0) return;
     const interval = setInterval(() => {
       const maxIdx = Math.max(0, filteredDestinations.length - destItemsPerView);
       setActiveDestIndex((prev) => (prev < maxIdx ? prev + 1 : 0));
-    }, 5000);
+    }, 2000);
     return () => clearInterval(interval);
   }, [isDestPaused, filteredDestinations.length, destItemsPerView]);
 
@@ -766,7 +766,7 @@ export const HomePage: React.FC = () => {
             {/* Carousel Overflow Viewport */}
             <div className="overflow-hidden py-3 -my-3 px-1 sm:px-2">
               <div
-                className="flex transition-transform duration-1000 ease-out"
+                className="flex transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
                 style={{
                   transform: `translateX(-${activeProgramIndex * (100 / programItemsPerView)}%)`,
                 }}
@@ -1069,7 +1069,7 @@ export const HomePage: React.FC = () => {
             {/* Sliding Carousel Track */}
             <div className="overflow-hidden py-3 -my-3 px-1 sm:px-2">
               <div
-                className="flex transition-transform duration-700 ease-out"
+                className="flex transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
                 style={{
                   transform: `translateX(-${activeDestIndex * (100 / destItemsPerView)}%)`,
                 }}
