@@ -7,6 +7,8 @@ import {
   Calendar,
   CalendarDays,
   Check,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Coins,
   Globe,
@@ -87,33 +89,47 @@ export const HomePage: React.FC = () => {
     if (isProcessPaused) return;
     const interval = setInterval(() => {
       setActiveProcessStep((prev) => (prev + 1) % PROCESS_STEPS.length);
-    }, 3200);
+    }, 5000);
     return () => clearInterval(interval);
   }, [isProcessPaused]);
 
-  // Animated Programs Showcase State
+  // Viewport width tracker for responsive carousels
+  const [viewportWidth, setViewportWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1200
+  );
+
+  useEffect(() => {
+    const handleResize = () => setViewportWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Animated Programs Showcase Carousel State (used on mobile/tablet)
   const [activeProgramIndex, setActiveProgramIndex] = useState(0);
   const [isProgramsPaused, setIsProgramsPaused] = useState(false);
+  const programItemsPerView = viewportWidth < 768 ? 1 : viewportWidth < 1024 ? 2 : 3;
+  const maxProgramIndex = Math.max(0, HOME_PROGRAMS.length - programItemsPerView);
+
+  const handlePrevProgram = () => {
+    setActiveProgramIndex((prev) => (prev > 0 ? prev - 1 : maxProgramIndex));
+  };
+
+  const handleNextProgram = () => {
+    setActiveProgramIndex((prev) => (prev < maxProgramIndex ? prev + 1 : 0));
+  };
 
   useEffect(() => {
-    if (isProgramsPaused) return;
+    if (isProgramsPaused || maxProgramIndex === 0) return;
     const interval = setInterval(() => {
-      setActiveProgramIndex((prev) => (prev + 1) % HOME_PROGRAMS.length);
-    }, 3400);
+      setActiveProgramIndex((prev) => (prev < maxProgramIndex ? prev + 1 : 0));
+    }, 5000);
     return () => clearInterval(interval);
-  }, [isProgramsPaused]);
+  }, [isProgramsPaused, maxProgramIndex]);
 
-  // Animated Destinations State
+  // Animated Destinations Carousel State
   const [activeDestIndex, setActiveDestIndex] = useState(0);
   const [isDestPaused, setIsDestPaused] = useState(false);
-
-  useEffect(() => {
-    if (isDestPaused) return;
-    const interval = setInterval(() => {
-      setActiveDestIndex((prev) => (prev + 1) % 6);
-    }, 3600);
-    return () => clearInterval(interval);
-  }, [isDestPaused]);
+  const destItemsPerView = viewportWidth < 640 ? 1 : viewportWidth < 1024 ? 2 : 3;
 
   // Animated Why Us State
   const [activeWhyIndex, setActiveWhyIndex] = useState(0);
@@ -123,7 +139,7 @@ export const HomePage: React.FC = () => {
     if (isWhyPaused) return;
     const interval = setInterval(() => {
       setActiveWhyIndex((prev) => (prev + 1) % WHY_US.length);
-    }, 3000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [isWhyPaused]);
 
@@ -135,7 +151,7 @@ export const HomePage: React.FC = () => {
     if (isTestimonialPaused) return;
     const interval = setInterval(() => {
       setActiveTestimonialIndex((prev) => (prev + 1) % Math.max(1, displayStories.length));
-    }, 3500);
+    }, 5500);
     return () => clearInterval(interval);
   }, [isTestimonialPaused, displayStories.length]);
 
@@ -147,7 +163,7 @@ export const HomePage: React.FC = () => {
     if (isArticlePaused) return;
     const interval = setInterval(() => {
       setActiveArticleIndex((prev) => (prev + 1) % Math.max(1, displayArticles.length));
-    }, 3500);
+    }, 5500);
     return () => clearInterval(interval);
   }, [isArticlePaused, displayArticles.length]);
 
@@ -199,7 +215,7 @@ export const HomePage: React.FC = () => {
     if (isCoursesPaused) return;
     const interval = setInterval(() => {
       setActiveCourseIndex((prev) => (prev + 1) % Math.max(1, filteredCourses.length));
-    }, 3400);
+    }, 5000);
     return () => clearInterval(interval);
   }, [isCoursesPaused, filteredCourses.length]);
 
@@ -213,6 +229,16 @@ export const HomePage: React.FC = () => {
       return perk?.category?.includes(destFilter);
     });
   }, [countries, destFilter]);
+
+  // Continuous loop auto-advance for Destinations Carousel (5000ms smooth loop)
+  useEffect(() => {
+    if (isDestPaused || filteredDestinations.length === 0) return;
+    const interval = setInterval(() => {
+      const maxIdx = Math.max(0, filteredDestinations.length - destItemsPerView);
+      setActiveDestIndex((prev) => (prev < maxIdx ? prev + 1 : 0));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [isDestPaused, filteredDestinations.length, destItemsPerView]);
 
   return (
     <>
@@ -494,12 +520,14 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          PROGRAMS SHOWCASE
+          PROGRAMS SHOWCASE (STATIC GRID ON DESKTOP, CAROUSEL ON MOBILE)
       ══════════════════════════════════════════════════════ */}
       <section
         className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50/80 to-white py-16 sm:py-24"
         onMouseEnter={() => setIsProgramsPaused(true)}
         onMouseLeave={() => setIsProgramsPaused(false)}
+        onTouchStart={() => setIsProgramsPaused(true)}
+        onTouchEnd={() => setIsProgramsPaused(false)}
       >
         {/* Soft decorative background glows */}
         <div
@@ -511,20 +539,45 @@ export const HomePage: React.FC = () => {
         </div>
 
         <div className="container-page relative">
-          <div className="mx-auto max-w-3xl text-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-primary-50 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-primary shadow-2xs">
-              <Sparkles className="h-3.5 w-3.5 text-accent" /> Accredited Pathways
-            </span>
-            <h2 className="mt-3 text-2xl font-black tracking-tight text-slate-900 sm:text-4xl lg:text-[2.5rem]">
-              Three Programs, <span className="text-primary">One Future</span>
-            </h2>
-            <p className="mt-2 text-sm sm:text-base leading-relaxed text-slate-600 max-w-xl mx-auto">
-              Language mastery, tuition-free degrees, and paid Ausbildung contracts in Germany.
-            </p>
+          <div className="flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-primary-50 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-primary shadow-2xs">
+                <Sparkles className="h-3.5 w-3.5 text-accent" /> Accredited Pathways
+              </span>
+              <h2 className="mt-3 text-2xl font-black tracking-tight text-slate-900 sm:text-4xl lg:text-[2.5rem]">
+                Three Programs, <span className="text-primary">One Future</span>
+              </h2>
+              <p className="mt-2 text-sm sm:text-base leading-relaxed text-slate-600">
+                Language mastery, tuition-free degrees, and paid Ausbildung contracts in Germany.
+              </p>
+            </div>
+
+            {/* Clear Left / Right Carousel Controls on Mobile / Tablet */}
+            <div className="flex items-center gap-2 lg:hidden">
+              <button
+                type="button"
+                onClick={handlePrevProgram}
+                aria-label="Previous pathway"
+                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <div className="px-2 text-xs font-black tracking-wider text-slate-500">
+                0{activeProgramIndex + 1} / 0{HOME_PROGRAMS.length}
+              </div>
+              <button
+                type="button"
+                onClick={handleNextProgram}
+                aria-label="Next pathway"
+                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
           </div>
 
-          {/* Animated Runner Beam Track */}
-          <div className="relative mt-10 mb-4 hidden lg:block overflow-hidden h-0.5">
+          {/* Animated Runner Beam Track on Desktop */}
+          <div className="relative mt-8 mb-4 hidden lg:block overflow-hidden h-0.5">
             <div className="h-full w-full border-t-2 border-dashed border-slate-300" />
             <div
               className="absolute left-0 top-0 h-full bg-gradient-to-r from-primary via-primary-500 to-accent transition-all duration-700 ease-out"
@@ -538,7 +591,8 @@ export const HomePage: React.FC = () => {
             />
           </div>
 
-          <div className="mt-8 grid gap-6 lg:grid-cols-3 lg:gap-8 items-stretch">
+          {/* DESKTOP VIEW: Clean 3-Column Grid (No Carousel) */}
+          <div className="mt-8 hidden lg:grid lg:grid-cols-3 lg:gap-8 items-stretch">
             {HOME_PROGRAMS.map((program, index) => {
               const isActive = activeProgramIndex === index;
 
@@ -547,7 +601,7 @@ export const HomePage: React.FC = () => {
                   key={program.title}
                   onClick={() => setActiveProgramIndex(index)}
                   onMouseEnter={() => setActiveProgramIndex(index)}
-                  className={`group relative flex flex-col rounded-3xl border transition-all duration-500 overflow-hidden bg-white cursor-pointer ${
+                  className={`group relative flex h-full flex-col rounded-3xl border transition-all duration-500 overflow-hidden bg-white cursor-pointer ${
                     isActive
                       ? "border-primary/60 shadow-2xl -translate-y-2 ring-2 ring-primary/30 scale-101"
                       : program.featured
@@ -568,25 +622,32 @@ export const HomePage: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
 
                     {/* Top Floating Badges */}
-                    <div className="absolute inset-x-4 top-3.5 flex items-center justify-between gap-2">
-                      <span
-                        className={`flex h-10 w-10 items-center justify-center rounded-2xl shadow-lg backdrop-blur-md transition-all duration-300 ${
-                          isActive
-                            ? "bg-primary text-white scale-110 shadow-primary/30"
-                            : "bg-white/95 text-primary group-hover:bg-primary group-hover:text-white"
-                        }`}
-                      >
-                        <program.icon className={`h-5 w-5 ${isActive ? "animate-wiggle" : ""}`} />
-                      </span>
+                    <div className="absolute inset-x-4 top-3.5 flex items-center justify-between gap-2 z-10">
                       <span
                         className={`rounded-full px-3 py-1 text-[11px] font-bold tracking-wide shadow-md backdrop-blur-md ${program.badgeColor}`}
                       >
                         {program.badge}
                       </span>
+                      <span className="rounded-md bg-white/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                        Verified
+                      </span>
+                    </div>
+
+                    {/* Beautiful Center Icon in Products Card */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                      <div
+                        className={`flex h-14 w-14 items-center justify-center rounded-2xl border border-white/50 shadow-2xl backdrop-blur-md transition-all duration-500 ${
+                          isActive
+                            ? "bg-primary text-white scale-110 shadow-primary/50 ring-4 ring-primary/20 rotate-3"
+                            : "bg-white/95 text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-white"
+                        }`}
+                      >
+                        <program.icon className="h-7 w-7 transition-transform duration-300" />
+                      </div>
                     </div>
 
                     {/* Bottom Stat Ribbon */}
-                    <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between rounded-xl border border-white/20 bg-slate-950/50 px-3 py-1.5 backdrop-blur-md text-white shadow-md">
+                    <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between rounded-xl border border-white/20 bg-slate-950/60 px-3 py-1.5 backdrop-blur-md text-white shadow-md z-10">
                       <div>
                         <span className="block text-[10px] uppercase font-semibold tracking-wider text-slate-300">
                           {program.statLabel}
@@ -595,8 +656,8 @@ export const HomePage: React.FC = () => {
                           {program.stat}
                         </span>
                       </div>
-                      <span className="rounded-md bg-white/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
-                        Verified
+                      <span className="text-[11px] font-bold text-emerald-400">
+                        Active Pathway
                       </span>
                     </div>
                   </div>
@@ -680,32 +741,219 @@ export const HomePage: React.FC = () => {
             })}
           </div>
 
-          {/* Interactive Step Dots */}
-          <div className="mt-8 flex items-center justify-center gap-2">
-            {HOME_PROGRAMS.map((program, idx) => (
-              <button
-                key={program.title}
-                type="button"
-                onClick={() => setActiveProgramIndex(idx)}
-                className={`h-2 rounded-full transition-all duration-500 ${
-                  activeProgramIndex === idx
-                    ? "w-8 bg-primary"
-                    : "w-2 bg-slate-300 hover:bg-slate-400"
-                }`}
-                aria-label={`Go to ${program.title}`}
-              />
-            ))}
+          {/* MOBILE & TABLET VIEW: Responsive Carousel */}
+          <div className="relative mt-6 block lg:hidden">
+            {/* Left Floating Arrow */}
+            <button
+              type="button"
+              onClick={handlePrevProgram}
+              aria-label="Previous pathway"
+              className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </button>
+
+            {/* Right Floating Arrow */}
+            <button
+              type="button"
+              onClick={handleNextProgram}
+              aria-label="Next pathway"
+              className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </button>
+
+            {/* Carousel Overflow Viewport */}
+            <div className="overflow-hidden py-3 -my-3 px-1 sm:px-2">
+              <div
+                className="flex transition-transform duration-1000 ease-out"
+                style={{
+                  transform: `translateX(-${activeProgramIndex * (100 / programItemsPerView)}%)`,
+                }}
+              >
+                {HOME_PROGRAMS.map((program, index) => {
+                  const isActive = activeProgramIndex === index;
+
+                  return (
+                    <div
+                      key={program.title}
+                      className="shrink-0 p-2 sm:p-3"
+                      style={{ width: `${100 / programItemsPerView}%` }}
+                    >
+                      <article
+                        onClick={() => setActiveProgramIndex(index)}
+                        onMouseEnter={() => setActiveProgramIndex(index)}
+                        className={`group relative flex h-full flex-col rounded-3xl border transition-all duration-500 overflow-hidden bg-white cursor-pointer ${
+                          isActive
+                            ? "border-primary/60 shadow-2xl -translate-y-2 ring-2 ring-primary/30"
+                            : program.featured
+                            ? "border-primary/30 shadow-md ring-1 ring-primary/20"
+                            : "border-slate-200/90 shadow-sm hover:border-slate-300 hover:-translate-y-1"
+                        }`}
+                      >
+                        {/* Visual Image Header */}
+                        <div className="relative h-44 w-full overflow-hidden bg-slate-900">
+                          <img
+                            src={program.image}
+                            alt={program.title}
+                            loading="lazy"
+                            className={`h-full w-full object-cover transition-transform duration-700 ease-out ${
+                              isActive ? "scale-108 opacity-95" : "opacity-85 group-hover:scale-105"
+                            }`}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+
+                          {/* Top Floating Badges */}
+                          <div className="absolute inset-x-4 top-3.5 flex items-center justify-between gap-2 z-10">
+                            <span
+                              className={`rounded-full px-3 py-1 text-[11px] font-bold tracking-wide shadow-md backdrop-blur-md ${program.badgeColor}`}
+                            >
+                              {program.badge}
+                            </span>
+                            <span className="rounded-md bg-white/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                              Verified
+                            </span>
+                          </div>
+
+                          {/* Beautiful Center Icon in Products Card */}
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                            <div
+                              className={`flex h-14 w-14 items-center justify-center rounded-2xl border border-white/50 shadow-2xl backdrop-blur-md transition-all duration-500 ${
+                                isActive
+                                  ? "bg-primary text-white scale-110 shadow-primary/50 ring-4 ring-primary/20 rotate-3"
+                                  : "bg-white/95 text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-white"
+                              }`}
+                            >
+                              <program.icon className="h-7 w-7 transition-transform duration-300" />
+                            </div>
+                          </div>
+
+                          {/* Bottom Stat Ribbon */}
+                          <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between rounded-xl border border-white/20 bg-slate-950/60 px-3 py-1.5 backdrop-blur-md text-white shadow-md z-10">
+                            <div>
+                              <span className="block text-[10px] uppercase font-semibold tracking-wider text-slate-300">
+                                {program.statLabel}
+                              </span>
+                              <span className="block text-xs sm:text-sm font-black text-white tracking-tight">
+                                {program.stat}
+                              </span>
+                            </div>
+                            <span className="text-[11px] font-bold text-emerald-400">
+                              Active Pathway
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Card Content Body */}
+                        <div className="flex flex-1 flex-col p-5 sm:p-6">
+                          <h3
+                            className={`text-lg sm:text-xl font-bold tracking-tight transition-colors ${
+                              isActive ? "text-primary font-black" : "text-slate-900 group-hover:text-primary"
+                            }`}
+                          >
+                            {program.title}
+                          </h3>
+                          <p className="mt-1 text-xs font-bold uppercase tracking-wide text-accent">
+                            {program.tagline}
+                          </p>
+                          <p className="mt-2 text-xs sm:text-sm leading-relaxed text-slate-600 line-clamp-2">
+                            {program.description}
+                          </p>
+
+                          {/* Micro Pills */}
+                          <div className="mt-3 flex flex-wrap gap-1.5">
+                            {program.pills.map((pill) => (
+                              <span
+                                key={pill}
+                                className="inline-flex items-center rounded-md bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700"
+                              >
+                                {pill}
+                              </span>
+                            ))}
+                          </div>
+
+                          {/* Card CTA Actions: Details Popup + Explore */}
+                          <div className="mt-5 pt-3 border-t border-slate-100 flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDetailData({
+                                  title: program.title,
+                                  subtitle: program.tagline,
+                                  category: "Core Pathway",
+                                  badge: program.badge,
+                                  badgeColor: program.badgeColor,
+                                  image: program.image,
+                                  description: program.description,
+                                  metrics: [
+                                    { label: program.statLabel, value: program.stat },
+                                    { label: "Format", value: "Campus & Online" },
+                                    { label: "Visa Support", value: "Complete File" },
+                                  ],
+                                  points: program.points,
+                                  primaryCtaText: program.cta,
+                                  onPrimaryCta: () => {
+                                    window.location.href = program.to;
+                                  },
+                                  secondaryCtaText: "WhatsApp Us",
+                                  secondaryCtaLink: COMPANY.whatsapp,
+                                });
+                              }}
+                              className="flex-1 rounded-xl border border-slate-200 bg-slate-50 py-2.5 px-3 text-xs sm:text-sm font-bold text-slate-700 transition-colors hover:border-primary hover:bg-primary-50 hover:text-primary"
+                            >
+                              Details
+                            </button>
+                            <Link
+                              to={program.to}
+                              onClick={(e) => e.stopPropagation()}
+                              className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2.5 px-3 text-xs sm:text-sm font-bold transition-all ${
+                                isActive || program.featured
+                                  ? "bg-primary text-white shadow-md shadow-primary/20 hover:bg-blue-800"
+                                  : "bg-slate-900 text-white hover:bg-primary"
+                              }`}
+                            >
+                              <span>Explore</span>
+                              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                            </Link>
+                          </div>
+                        </div>
+                      </article>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Interactive Step Dots for Mobile/Tablet */}
+            <div className="mt-6 flex items-center justify-center gap-2">
+              {HOME_PROGRAMS.map((program, idx) => (
+                <button
+                  key={program.title}
+                  type="button"
+                  onClick={() => setActiveProgramIndex(idx)}
+                  className={`h-2 rounded-full transition-all duration-500 ${
+                    activeProgramIndex === idx
+                      ? "w-8 bg-primary"
+                      : "w-2 bg-slate-300 hover:bg-slate-400"
+                  }`}
+                  aria-label={`Go to ${program.title}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          DESTINATIONS SHOWCASE
+          DESTINATIONS SHOWCASE (INTERACTIVE CAROUSEL)
       ══════════════════════════════════════════════════════ */}
       <section
         className="relative overflow-hidden bg-white py-16 sm:py-24 border-t border-slate-200/80"
         onMouseEnter={() => setIsDestPaused(true)}
         onMouseLeave={() => setIsDestPaused(false)}
+        onTouchStart={() => setIsDestPaused(true)}
+        onTouchEnd={() => setIsDestPaused(false)}
       >
         <div className="container-page">
           <div className="mx-auto max-w-3xl text-center">
@@ -730,7 +978,10 @@ export const HomePage: React.FC = () => {
                 <button
                   key={filterTab.id}
                   type="button"
-                  onClick={() => setDestFilter(filterTab.id as any)}
+                  onClick={() => {
+                    setDestFilter(filterTab.id as any);
+                    setActiveDestIndex(0);
+                  }}
                   className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${
                     destFilter === filterTab.id
                       ? "bg-primary text-white shadow-md shadow-primary/25 scale-105"
@@ -741,10 +992,39 @@ export const HomePage: React.FC = () => {
                 </button>
               ))}
             </div>
+
+            {/* Clear Left / Right Carousel Controls */}
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  const maxIdx = Math.max(0, filteredDestinations.length - destItemsPerView);
+                  setActiveDestIndex((prev) => (prev > 0 ? prev - 1 : maxIdx));
+                }}
+                aria-label="Previous destination"
+                className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <span className="text-xs font-black tracking-wider text-slate-500">
+                0{activeDestIndex + 1} / 0{Math.max(1, filteredDestinations.length)}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  const maxIdx = Math.max(0, filteredDestinations.length - destItemsPerView);
+                  setActiveDestIndex((prev) => (prev < maxIdx ? prev + 1 : 0));
+                }}
+                aria-label="Next destination"
+                className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
           </div>
 
           {/* Animated Runner Beam Track */}
-          <div className="relative mt-10 mb-2 hidden lg:block overflow-hidden h-0.5">
+          <div className="relative mt-8 mb-2 hidden lg:block overflow-hidden h-0.5">
             <div className="h-full w-full border-t-2 border-dashed border-slate-300" />
             <div
               className="h-full bg-gradient-to-r from-primary via-primary-500 to-accent transition-all duration-700 ease-out"
@@ -758,154 +1038,208 @@ export const HomePage: React.FC = () => {
             />
           </div>
 
-          {/* Destination Cards Grid */}
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredDestinations.map((country, index) => {
-              const isActive = activeDestIndex === index;
-              const photo = COUNTRY_PHOTOS[country.name] || HERO_IMAGES.studyAbroad;
-              const flag = COUNTRY_FLAGS[country.name] || country.flag;
-              const perk = COUNTRY_PERKS[country.name] || {
-                tag: "Study Abroad",
-                tone: "bg-primary text-white",
-                visaRate: "98% Visa Rate",
-                category: ["schengen"],
-              };
+          {/* Carousel Viewport with Floating Left and Right Navigation Buttons */}
+          <div className="relative mt-6">
+            {/* Left Floating Arrow */}
+            <button
+              type="button"
+              onClick={() => {
+                const maxIdx = Math.max(0, filteredDestinations.length - destItemsPerView);
+                setActiveDestIndex((prev) => (prev > 0 ? prev - 1 : maxIdx));
+              }}
+              aria-label="Previous destination"
+              className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </button>
 
-              return (
-                <article
-                  key={country.id}
-                  onClick={() => setActiveDestIndex(index)}
-                  onMouseEnter={() => setActiveDestIndex(index)}
-                  className={`group relative flex flex-col rounded-3xl border transition-all duration-500 overflow-hidden bg-white cursor-pointer ${
-                    isActive
-                      ? "border-primary/60 ring-2 ring-primary/30 shadow-2xl -translate-y-2 scale-101"
-                      : "border-slate-200/90 shadow-sm hover:border-slate-300 hover:-translate-y-1"
-                  }`}
-                >
-                  {/* Photo Header */}
-                  <div className="relative h-44 w-full overflow-hidden bg-slate-900">
-                    <img
-                      src={photo}
-                      alt={country.name}
-                      loading="lazy"
-                      className={`h-full w-full object-cover transition-transform duration-700 ease-out ${
-                        isActive ? "scale-108 opacity-100" : "opacity-90 group-hover:scale-105"
-                      }`}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+            {/* Right Floating Arrow */}
+            <button
+              type="button"
+              onClick={() => {
+                const maxIdx = Math.max(0, filteredDestinations.length - destItemsPerView);
+                setActiveDestIndex((prev) => (prev < maxIdx ? prev + 1 : 0));
+              }}
+              aria-label="Next destination"
+              className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </button>
 
-                    {/* Top Floating Flag & Perk Badge */}
-                    <div className="absolute inset-x-3.5 top-3 flex items-center justify-between gap-2">
-                      <span
-                        className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black shadow-md backdrop-blur-md transition-all duration-300 ${
+            {/* Sliding Carousel Track */}
+            <div className="overflow-hidden py-3 -my-3 px-1 sm:px-2">
+              <div
+                className="flex transition-transform duration-700 ease-out"
+                style={{
+                  transform: `translateX(-${activeDestIndex * (100 / destItemsPerView)}%)`,
+                }}
+              >
+                {filteredDestinations.map((country, index) => {
+                  const isActive = activeDestIndex === index;
+                  const photo = COUNTRY_PHOTOS[country.name] || HERO_IMAGES.studyAbroad;
+                  const flag = COUNTRY_FLAGS[country.name] || country.flag;
+                  const perk = COUNTRY_PERKS[country.name] || {
+                    tag: "Study Abroad",
+                    tone: "bg-primary text-white",
+                    visaRate: "98% Visa Rate",
+                    category: ["schengen"],
+                  };
+
+                  return (
+                    <div
+                      key={country.id}
+                      className="shrink-0 p-2 sm:p-3"
+                      style={{ width: `${100 / destItemsPerView}%` }}
+                    >
+                      <article
+                        onClick={() => setActiveDestIndex(index)}
+                        onMouseEnter={() => setActiveDestIndex(index)}
+                        className={`group relative flex h-full flex-col rounded-3xl border transition-all duration-500 overflow-hidden bg-white cursor-pointer ${
                           isActive
-                            ? "bg-white text-primary ring-2 ring-primary-100 scale-105"
-                            : "bg-white/95 text-slate-900"
+                            ? "border-primary/60 ring-2 ring-primary/30 shadow-2xl -translate-y-2 scale-101"
+                            : "border-slate-200/90 shadow-sm hover:border-slate-300 hover:-translate-y-1"
                         }`}
                       >
-                        <span className="text-base leading-none">{flag}</span>
-                        <span>{country.name}</span>
-                      </span>
-                      <span
-                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm backdrop-blur-md ${perk.tone}`}
-                      >
-                        {perk.tag}
-                      </span>
-                    </div>
+                        {/* Photo Header */}
+                        <div className="relative h-44 w-full overflow-hidden bg-slate-900">
+                          <img
+                            src={photo}
+                            alt={country.name}
+                            loading="lazy"
+                            className={`h-full w-full object-cover transition-transform duration-700 ease-out ${
+                              isActive ? "scale-108 opacity-100" : "opacity-90 group-hover:scale-105"
+                            }`}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
 
-                    {/* Bottom overlay text on image */}
-                    <div className="absolute bottom-3 left-4 right-4">
-                      <p className="flex items-center gap-1 text-[11px] font-semibold text-emerald-400">
-                        <Sparkles className={`h-3 w-3 ${isActive ? "animate-wiggle" : ""}`} /> {perk.visaRate}
-                      </p>
-                      <h3 className="mt-0.5 text-sm sm:text-base font-extrabold text-white leading-tight truncate">
-                        {country.tagline}
-                      </h3>
-                    </div>
-                  </div>
+                          {/* Top Floating Flag & Perk Badge */}
+                          <div className="absolute inset-x-3.5 top-3 flex items-center justify-between gap-2 z-10">
+                            <span
+                              className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black shadow-md backdrop-blur-md transition-all duration-300 ${
+                                isActive
+                                  ? "bg-white text-primary ring-2 ring-primary-100 scale-105"
+                                  : "bg-white/95 text-slate-900"
+                              }`}
+                            >
+                              <span className="text-base leading-none">{flag}</span>
+                              <span>{country.name}</span>
+                            </span>
+                            <span
+                              className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm backdrop-blur-md ${perk.tone}`}
+                            >
+                              {perk.tag}
+                            </span>
+                          </div>
 
-                  {/* Body Details */}
-                  <div className="flex flex-1 flex-col p-5">
-                    <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed">
-                      {country.description}
-                    </p>
+                          {/* Beautiful Center Icon in Products Card */}
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                            <div
+                              className={`flex h-14 w-14 items-center justify-center rounded-2xl border border-white/50 shadow-2xl backdrop-blur-md transition-all duration-500 ${
+                                isActive
+                                  ? "bg-primary text-white scale-110 shadow-primary/50 ring-4 ring-primary/20 rotate-3"
+                                  : "bg-white/95 text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-white"
+                              }`}
+                            >
+                              <Globe className="h-7 w-7 transition-transform duration-300" />
+                            </div>
+                          </div>
 
-                    {/* Metrics Grid */}
-                    <div className="mt-3.5 grid grid-cols-2 gap-2 rounded-2xl border border-slate-100 bg-slate-50 p-2.5">
-                      <div className="min-w-0">
-                        <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                          <Coins className="h-3 w-3 text-accent" /> Tuition
-                        </span>
-                        <span
-                          className="mt-0.5 block truncate text-xs font-bold text-slate-900"
-                          title={country.tuition || "Varies"}
-                        >
-                          {country.tuition || "Varies"}
-                        </span>
-                      </div>
-                      <div className="min-w-0">
-                        <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                          <Calendar className="h-3 w-3 text-primary" /> Intakes
-                        </span>
-                        <span
-                          className="mt-0.5 block truncate text-xs font-bold text-slate-900"
-                          title={country.intake || "Varies"}
-                        >
-                          {country.intake || "Varies"}
-                        </span>
-                      </div>
-                    </div>
+                          {/* Bottom overlay text on image */}
+                          <div className="absolute bottom-3 left-4 right-4 z-10">
+                            <p className="flex items-center gap-1 text-[11px] font-semibold text-emerald-400">
+                              <Sparkles className={`h-3 w-3 ${isActive ? "animate-wiggle" : ""}`} /> {perk.visaRate}
+                            </p>
+                            <h3 className="mt-0.5 text-sm sm:text-base font-extrabold text-white leading-tight truncate">
+                              {country.tagline}
+                            </h3>
+                          </div>
+                        </div>
 
-                    {/* Card Actions: Details Modal + Explore */}
-                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setDetailData({
-                            title: `${country.name} Study Pathway`,
-                            subtitle: country.tagline,
-                            category: "European Destination",
-                            badge: perk.tag,
-                            badgeColor: perk.tone,
-                            image: photo,
-                            description: country.description,
-                            metrics: [
-                              { label: "Tuition", value: country.tuition || "Free / Low" },
-                              { label: "Intakes", value: country.intake || "Fall / Spring" },
-                              { label: "Visa Success", value: perk.visaRate },
-                            ],
-                            points: [
-                              ...country.benefits,
-                              ...country.requirements.map((r) => `Requirement: ${r}`),
-                            ],
-                            primaryCtaText: `Apply for ${country.name}`,
-                            onPrimaryCta: () => {
-                              window.location.href = "/study-abroad";
-                            },
-                            secondaryCtaText: "WhatsApp Us",
-                            secondaryCtaLink: COMPANY.whatsapp,
-                          });
-                        }}
-                        className="flex-1 rounded-xl border border-slate-200 bg-slate-50 py-2 px-3 text-xs sm:text-sm font-bold text-slate-700 transition-colors hover:border-primary hover:bg-primary-50 hover:text-primary"
-                      >
-                        Details
-                      </button>
-                      <Link
-                        to="/study-abroad"
-                        onClick={(e) => e.stopPropagation()}
-                        className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2 px-3 text-xs sm:text-sm font-bold text-white transition-colors ${
-                          isActive ? "bg-primary hover:bg-blue-800" : "bg-slate-900 hover:bg-primary"
-                        }`}
-                      >
-                        <span>Explore</span>
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </Link>
+                        {/* Body Details */}
+                        <div className="flex flex-1 flex-col p-5">
+                          <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed">
+                            {country.description}
+                          </p>
+
+                          {/* Metrics Grid */}
+                          <div className="mt-3.5 grid grid-cols-2 gap-2 rounded-2xl border border-slate-100 bg-slate-50 p-2.5">
+                            <div className="min-w-0">
+                              <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                <Coins className="h-3 w-3 text-accent" /> Tuition
+                              </span>
+                              <span
+                                className="mt-0.5 block truncate text-xs font-bold text-slate-900"
+                                title={country.tuition || "Varies"}
+                              >
+                                {country.tuition || "Varies"}
+                              </span>
+                            </div>
+                            <div className="min-w-0">
+                              <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                <Calendar className="h-3 w-3 text-primary" /> Intakes
+                              </span>
+                              <span
+                                className="mt-0.5 block truncate text-xs font-bold text-slate-900"
+                                title={country.intake || "Varies"}
+                              >
+                                {country.intake || "Varies"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Card Actions: Details Modal + Explore */}
+                          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDetailData({
+                                  title: `${country.name} Study Pathway`,
+                                  subtitle: country.tagline,
+                                  category: "European Destination",
+                                  badge: perk.tag,
+                                  badgeColor: perk.tone,
+                                  image: photo,
+                                  description: country.description,
+                                  metrics: [
+                                    { label: "Tuition", value: country.tuition || "Free / Low" },
+                                    { label: "Intakes", value: country.intake || "Fall / Spring" },
+                                    { label: "Visa Success", value: perk.visaRate },
+                                  ],
+                                  points: [
+                                    ...country.benefits,
+                                    ...country.requirements.map((r) => `Requirement: ${r}`),
+                                  ],
+                                  primaryCtaText: `Apply for ${country.name}`,
+                                  onPrimaryCta: () => {
+                                    window.location.href = "/study-abroad";
+                                  },
+                                  secondaryCtaText: "WhatsApp Us",
+                                  secondaryCtaLink: COMPANY.whatsapp,
+                                });
+                              }}
+                              className="flex-1 rounded-xl border border-slate-200 bg-slate-50 py-2 px-3 text-xs sm:text-sm font-bold text-slate-700 transition-colors hover:border-primary hover:bg-primary-50 hover:text-primary"
+                            >
+                              Details
+                            </button>
+                            <Link
+                              to="/study-abroad"
+                              onClick={(e) => e.stopPropagation()}
+                              className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2 px-3 text-xs sm:text-sm font-bold text-white transition-colors ${
+                                isActive ? "bg-primary hover:bg-blue-800" : "bg-slate-900 hover:bg-primary"
+                              }`}
+                            >
+                              <span>Explore</span>
+                              <ArrowRight className="h-3.5 w-3.5" />
+                            </Link>
+                          </div>
+                        </div>
+                      </article>
                     </div>
-                  </div>
-                </article>
-              );
-            })}
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
           {/* Interactive Step Dots */}
