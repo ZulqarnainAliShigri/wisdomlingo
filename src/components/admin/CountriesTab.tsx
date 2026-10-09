@@ -7,7 +7,7 @@ import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { AdminList } from "./AdminList";
 import { CountryFormModal } from "./CountryFormModal";
 
-export const CountriesTab: React.FC = () => {
+export const CountriesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
   const { items, loading, saving, deleting, save, remove, toggleActive } =
     useAdminCollection<StudyCountry>("study_countries", mapCountry, SEED_COUNTRIES);
 
@@ -35,13 +35,19 @@ export const CountriesTab: React.FC = () => {
         secondary={(country) => country.tagline || ""}
         image={(country) => country.image_url}
         columns={[
-          { header: "Code", render: (country) => country.flag || "-" },
-          { header: "Tuition", render: (country) => country.tuition || "-" },
-          { header: "Intakes", render: (country) => country.intake || "-" },
           {
-            header: "Lists",
-            render: (country) => `${country.benefits.length} benefits, ${country.requirements.length} requirements`,
+            header: "Flag",
+            render: (country) => (
+              <span className="inline-block rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-semibold text-slate-800">
+                {country.flag || "🌍"}
+              </span>
+            ),
           },
+          {
+            header: "Tuition",
+            render: (country) => <span className="font-semibold text-slate-800">{country.tuition || "-"}</span>,
+          },
+          { header: "Intakes", render: (country) => <span className="text-slate-600">{country.intake || "-"}</span> },
         ]}
         search={search}
         onSearchChange={setSearch}
@@ -57,6 +63,7 @@ export const CountriesTab: React.FC = () => {
         }}
         onDelete={setPendingDelete}
         onToggleActive={toggleActive}
+        onBack={onBack}
         emptyTitle="No destinations found"
         emptyHint="Add a study destination to show it on the Study Abroad page."
       />

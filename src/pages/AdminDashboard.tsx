@@ -1,6 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AlertTriangle, ChevronDown, ExternalLink, LogOut, Menu, UserRound } from "lucide-react";
+import {
+  AlertTriangle,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  LogOut,
+  Menu,
+  UserRound,
+} from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuth } from "../hooks/useAuth";
 import { ADMIN_EMAIL, isSupabaseConfigured, supabase } from "../lib/supabase";
@@ -93,6 +102,16 @@ export const AdminDashboardPage: React.FC = () => {
     }
   };
 
+  const tabStripRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!tabStripRef.current) return;
+    const activeButton = tabStripRef.current.querySelector<HTMLButtonElement>('[aria-current="page"]');
+    if (activeButton) {
+      activeButton.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  }, [tab]);
+
   const address = user?.email || ADMIN_EMAIL;
   const name = displayName(user);
   const photo = avatarUrl(user);
@@ -110,32 +129,36 @@ export const AdminDashboardPage: React.FC = () => {
       />
 
       <div className="lg:pl-64">
-        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
-          <div className="flex h-16 items-center gap-3 px-4 sm:px-6">
+        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur-md">
+          <div className="flex h-14 sm:h-16 items-center gap-2.5 px-3.5 sm:px-6">
             <button
               type="button"
               onClick={() => setDrawerOpen(true)}
-              aria-label="Open menu"
-              className="rounded-lg p-2 text-slate-700 transition hover:bg-slate-100 lg:hidden"
+              aria-label="Open navigation menu"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-700 transition hover:border-primary hover:bg-primary hover:text-white active:scale-95 lg:hidden"
             >
-              <Menu className="h-6 w-6" />
+              <Menu className="h-5 w-5" />
             </button>
 
             <div className="flex min-w-0 items-center gap-2">
-              {activeTab && <activeTab.icon className="hidden h-5 w-5 text-primary sm:block" />}
-              <h1 className="truncate text-base font-extrabold text-slate-900 sm:text-lg">
+              {activeTab && (
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary">
+                  <activeTab.icon className="h-4 w-4" />
+                </span>
+              )}
+              <h1 className="truncate text-sm sm:text-base font-black text-slate-900">
                 {headingTitle}
               </h1>
             </div>
 
-            {/* Account controls live here now, not in the sidebar footer. */}
+            {/* Account controls */}
             <div className="ml-auto flex items-center gap-2 sm:gap-3">
               <Link
                 to="/"
-                className="inline-flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-slate-50 px-2.5 py-1.5 text-xs font-bold text-slate-700 transition hover:border-primary hover:bg-primary-50 hover:text-primary active:scale-95"
                 title="View website"
               >
-                <ExternalLink className="h-4 w-4 text-slate-400" />
+                <ExternalLink className="h-3.5 w-3.5 text-slate-500" />
                 <span className="hidden sm:inline">View website</span>
               </Link>
 
@@ -149,19 +172,19 @@ export const AdminDashboardPage: React.FC = () => {
                   aria-haspopup="menu"
                   aria-expanded={menuOpen}
                   aria-label="Account menu"
-                  className="flex items-center gap-2.5 rounded-lg p-1 pr-2 transition hover:bg-slate-100"
+                  className="flex items-center gap-2 rounded-xl p-1 transition hover:bg-slate-100"
                 >
-                  <Avatar src={photo} name={name} className="h-9 w-9 text-sm" />
+                  <Avatar src={photo} name={name} className="h-8 w-8 sm:h-9 sm:w-9 text-xs sm:text-sm ring-1 ring-slate-200" />
                   <span className="hidden min-w-0 text-left md:block">
-                    <span className="block max-w-[13rem] truncate text-xs font-bold text-slate-800">
+                    <span className="block max-w-[12rem] truncate text-xs font-bold text-slate-800">
                       {name}
                     </span>
-                    <span className="block max-w-[13rem] truncate text-[11px] text-slate-400">
+                    <span className="block max-w-[12rem] truncate text-[10px] text-slate-400">
                       {address}
                     </span>
                   </span>
                   <ChevronDown
-                    className={`hidden h-4 w-4 shrink-0 text-slate-400 transition md:block ${
+                    className={`hidden h-3.5 w-3.5 shrink-0 text-slate-400 transition md:block ${
                       menuOpen ? "rotate-180" : ""
                     }`}
                   />
@@ -170,7 +193,7 @@ export const AdminDashboardPage: React.FC = () => {
                 {menuOpen && (
                   <div
                     role="menu"
-                    className="absolute right-0 top-full z-30 mt-2 w-60 animate-fade-in-up overflow-hidden rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl"
+                    className="absolute right-0 top-full z-30 mt-2 w-60 animate-fade-in-up overflow-hidden rounded-2xl border border-slate-200 bg-white py-1.5 shadow-2xl"
                   >
                     <div className="border-b border-slate-100 px-4 py-3">
                       <p className="truncate text-sm font-bold text-slate-900">{name}</p>
@@ -211,30 +234,94 @@ export const AdminDashboardPage: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Mobile Fast-Switch Tab Strip Carousel with Left & Right Arrow Icons and Thin Scrollbar */}
+          <div className="relative flex items-center border-t border-slate-100 bg-slate-50/90 px-1 py-1 lg:hidden">
+            <button
+              type="button"
+              onClick={() => {
+                if (tabStripRef.current) {
+                  tabStripRef.current.scrollBy({ left: -160, behavior: "smooth" });
+                }
+              }}
+              aria-label="Scroll tabs left"
+              title="Scroll left"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-white hover:text-primary active:scale-90"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+
+            <div
+              ref={tabStripRef}
+              className="flex flex-1 gap-1 overflow-x-auto px-1 py-0.5 thin-scrollbar scroll-smooth"
+            >
+              {ADMIN_TABS.map((item) => {
+                const isActive = item.key === tab;
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    aria-current={isActive ? "page" : undefined}
+                    onClick={() => setTab(item.key)}
+                    className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition active:scale-95 whitespace-nowrap ${
+                      isActive
+                        ? "bg-primary text-white shadow-xs"
+                        : "text-slate-600 hover:bg-slate-200/60 hover:text-slate-900"
+                    }`}
+                  >
+                    <item.icon className={`h-3.5 w-3.5 ${isActive ? "text-white" : "text-slate-400"}`} />
+                    <span>{item.label}</span>
+                    {item.key === "messages" && unread > 0 && (
+                      <span
+                        className={`ml-0.5 rounded-full px-1.5 py-0.2 text-[10px] font-black ${
+                          isActive ? "bg-white text-primary" : "bg-accent text-white"
+                        }`}
+                      >
+                        {unread}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (tabStripRef.current) {
+                  tabStripRef.current.scrollBy({ left: 160, behavior: "smooth" });
+                }
+              }}
+              aria-label="Scroll tabs right"
+              title="Scroll right"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-white hover:text-primary active:scale-90"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
         </header>
 
-        <main className="px-4 py-6 sm:px-6 sm:py-8">
+        <main className="px-3 py-4 sm:px-6 sm:py-8">
           {!isSupabaseConfigured && (
-            <div className="mb-6 flex gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+            <div className="mb-4 sm:mb-6 flex gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-3.5 sm:p-4 text-xs sm:text-sm text-amber-900 shadow-2xs">
+              <AlertTriangle className="mt-0.5 h-4 w-4 sm:h-5 sm:w-5 shrink-0 text-amber-600" />
               <p>
-                Supabase is not connected, so the dashboard is in read-only demo mode. Add{" "}
-                <code>REACT_APP_SUPABASE_URL</code> and <code>REACT_APP_SUPABASE_ANON_KEY</code> to{" "}
-                <code>.env.local</code> and restart to enable saving.
+                Supabase is in read-only demo mode. Add{" "}
+                <code className="font-mono text-[11px] bg-amber-100/80 px-1 py-0.5 rounded">REACT_APP_SUPABASE_URL</code> to enable live updates.
               </p>
             </div>
           )}
 
-          <div className="rounded-2xl bg-white p-5 shadow-sm sm:p-7">
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-3.5 shadow-2xs sm:p-7">
             {tab === "overview" && <OverviewTab onNavigate={setTab} />}
-            {tab === "courses" && <CoursesTab />}
-            {tab === "countries" && <CountriesTab />}
-            {tab === "apprenticeships" && <ApprenticeshipsTab />}
-            {tab === "stories" && <StoriesTab />}
-            {tab === "articles" && <ArticlesTab />}
-            {tab === "messages" && <MessagesTab onUnreadCountChange={setUnread} />}
-            {tab === "seo" && <SeoTab />}
-            {tab === "settings" && <SettingsTab onEditProfile={() => setProfileOpen(true)} />}
+            {tab === "courses" && <CoursesTab onBack={() => setTab("overview")} />}
+            {tab === "countries" && <CountriesTab onBack={() => setTab("overview")} />}
+            {tab === "apprenticeships" && <ApprenticeshipsTab onBack={() => setTab("overview")} />}
+            {tab === "stories" && <StoriesTab onBack={() => setTab("overview")} />}
+            {tab === "articles" && <ArticlesTab onBack={() => setTab("overview")} />}
+            {tab === "messages" && <MessagesTab onUnreadCountChange={setUnread} onBack={() => setTab("overview")} />}
+            {tab === "seo" && <SeoTab onBack={() => setTab("overview")} />}
+            {tab === "settings" && <SettingsTab onEditProfile={() => setProfileOpen(true)} onBack={() => setTab("overview")} />}
           </div>
         </main>
       </div>

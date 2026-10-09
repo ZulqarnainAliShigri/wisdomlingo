@@ -36,7 +36,7 @@ export function useAdminCollection<T extends AdminEntity>(
   map: (row: Row) => T,
   demoItems: T[] = []
 ): AdminCollection<T> {
-  const [items, setItems] = useState<T[]>([]);
+  const [items, setItems] = useState<T[]>(demoItems);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -48,19 +48,28 @@ export function useAdminCollection<T extends AdminEntity>(
       return;
     }
     setLoading(true);
-    const { data, error } = await supabase
-      .from(table)
-      .select("*")
-      .order("display_order", { ascending: true, nullsFirst: false })
-      .order("created_at", { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from(table)
+        .select("*")
+        .order("display_order", { ascending: true, nullsFirst: false })
+        .order("created_at", { ascending: false });
 
-    if (error) {
-      toast.error(errorMessage(error, `Could not load ${table}.`));
-      setItems([]);
-    } else {
-      setItems((data as Row[]).map(map));
+      if (error) {
+        // Table may not have been created yet in user's Supabase instance
+        console.warn(`Could not load ${table} from Supabase, using demo fallback:`, error.message);
+        setItems(demoItems);
+      } else if (!data || data.length === 0) {
+        setItems(demoItems);
+      } else {
+        setItems((data as Row[]).map(map));
+      }
+    } catch (err) {
+      console.warn(`Exception loading ${table}:`, err);
+      setItems(demoItems);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [table]);
 

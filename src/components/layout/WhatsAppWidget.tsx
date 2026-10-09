@@ -51,19 +51,19 @@ export const WhatsAppWidget: React.FC = () => {
       ref={containerRef}
       className="fixed bottom-20 right-4 z-50 flex flex-col items-end gap-2.5 sm:bottom-24 sm:right-6 lg:bottom-6"
     >
-      {/* Optional Desktop Quick Chat Pill */}
+      {/* Clean Desktop Pill */}
       {!open && (
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="group hidden items-center gap-2 rounded-full border border-slate-200/90 bg-white/95 px-3.5 py-1.5 shadow-md shadow-slate-900/5 backdrop-blur-sm transition-all duration-300 hover:border-emerald-300 hover:bg-white hover:shadow-lg sm:flex"
+          className="group hidden items-center gap-2 rounded-full border border-slate-200/90 bg-white px-3.5 py-1.5 shadow-sm transition-all duration-200 hover:border-emerald-500/40 hover:shadow-md sm:flex"
         >
           <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#25D366]" />
           </span>
-          <span className="text-xs font-bold text-slate-700 transition group-hover:text-emerald-700">
-            Chat with us
+          <span className="text-xs font-semibold text-slate-700 transition group-hover:text-slate-900">
+            Chat on WhatsApp
           </span>
         </button>
       )}
@@ -72,45 +72,41 @@ export const WhatsAppWidget: React.FC = () => {
         <div
           role="dialog"
           aria-label={`Chat with ${COMPANY.name} on WhatsApp`}
-          className="w-[19.5rem] animate-fade-in-up overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-2xl shadow-slate-900/20"
+          className="w-[19rem] animate-fade-in-up overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl"
         >
-          {/* WhatsApp Header */}
-          <div className="flex items-center gap-3 bg-gradient-to-r from-[#075E54] to-[#128C7E] px-4 py-3.5 text-white">
-            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 backdrop-blur-xs">
+          {/* Header */}
+          <div className="flex items-center gap-3 bg-[#075E54] px-4 py-3 text-white">
+            <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/15">
               <WhatsAppGlyph className="h-5 w-5 text-white" />
-              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#075E54] bg-emerald-400" />
+              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#075E54] bg-[#25D366]" />
             </div>
             <div className="min-w-0 flex-1">
-              <span className="block truncate text-sm font-bold">{COMPANY.name}</span>
-              <span className="flex items-center gap-1.5 text-[11px] text-emerald-100">
-                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-emerald-300 animate-pulse" />
-                Online • Typically replies instantly
+              <span className="block truncate text-sm font-semibold">{COMPANY.name}</span>
+              <span className="block text-[11px] text-emerald-100/90">
+                Online • Typically replies in minutes
               </span>
             </div>
             <button
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close chat"
-              className="rounded-lg p-1.5 text-white/80 transition hover:bg-white/10 hover:text-white"
+              className="rounded-lg p-1 text-white/70 transition hover:bg-white/10 hover:text-white"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
 
-          {/* Chat Body */}
-          <div className="bg-[#EFEAE2] bg-opacity-95 p-4">
-            <div className="max-w-[90%] rounded-2xl rounded-tl-xs bg-white p-3 text-xs leading-relaxed text-slate-700 shadow-xs">
+          {/* Message Prompt */}
+          <div className="bg-slate-50 p-4">
+            <div className="rounded-xl border border-slate-100 bg-white p-3 text-xs leading-relaxed text-slate-700 shadow-2xs">
               <p>
-                Hi there 👋 Ask us about German courses, university admissions or paid Ausbildung programs. We are online and happy to help!
+                Hello! How can we help you with German language courses, study abroad or Ausbildung?
               </p>
-              <span className="mt-1 block text-right text-[10px] text-slate-400">
-                Just now • ✓✓
-              </span>
             </div>
           </div>
 
-          {/* Chat Footer */}
-          <div className="flex items-center gap-2 border-t border-slate-100 bg-white p-3">
+          {/* Input & Direct Send */}
+          <div className="flex items-center gap-2 border-t border-slate-100 bg-white p-2.5">
             <input
               value={message}
               onChange={(event) => setMessage(event.target.value)}
@@ -122,7 +118,7 @@ export const WhatsAppWidget: React.FC = () => {
               }}
               placeholder="Type your message..."
               aria-label="Your message"
-              className="input !h-10 !rounded-full !border-slate-200 !px-4 !py-2 !text-xs !shadow-none focus:!border-emerald-500 focus:!ring-emerald-500/20"
+              className="input !h-9 !rounded-full !border-slate-200 !px-3.5 !py-1.5 !text-xs !shadow-none focus:!border-emerald-500 focus:!ring-emerald-500/20"
             />
             <a
               ref={sendRef}
@@ -130,36 +126,32 @@ export const WhatsAppWidget: React.FC = () => {
               target="_blank"
               rel="noreferrer"
               aria-label="Send via WhatsApp"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-[#1EBE5A] to-[#25D366] text-white shadow-md shadow-emerald-500/20 transition hover:scale-105 hover:from-[#1EBE5A] hover:to-[#22c55e] active:scale-95"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xs transition hover:bg-[#20ba59] active:scale-95"
             >
-              <Send className="h-4 w-4" />
+              <Send className="h-3.5 w-3.5" />
             </a>
           </div>
         </div>
       )}
 
-      {/* Floating Action Button */}
+      {/* Floating Action Button: Clean, Crisp, and Subtly Animated */}
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
         aria-label={open ? "Close WhatsApp chat" : `Chat with ${COMPANY.name} on WhatsApp`}
-        className="group relative flex h-13 w-13 items-center justify-center rounded-full bg-gradient-to-tr from-[#128C7E] via-[#25D366] to-[#34D399] p-3 text-white shadow-lg shadow-emerald-600/30 ring-4 ring-emerald-500/15 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-emerald-600/40 hover:ring-emerald-500/25 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2 sm:h-14 sm:w-14"
+        className="group relative flex h-13 w-13 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-emerald-950/15 transition-all duration-300 hover:scale-105 hover:bg-[#20ba59] hover:shadow-xl active:scale-95 focus:outline-none sm:h-14 sm:w-14"
       >
-        {/* Live Online Badge Indicator */}
         {!open && (
-          <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-white shadow-xs">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-            </span>
+          <span className="absolute right-0.5 top-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-white shadow-2xs">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
           </span>
         )}
 
         {open ? (
-          <X className="relative h-6 w-6 transition-transform duration-200" />
+          <X className="h-6 w-6 transition-transform duration-200" />
         ) : (
-          <WhatsAppGlyph className="relative h-6 w-6 drop-shadow-xs transition-transform duration-200 group-hover:scale-105 sm:h-7 sm:w-7" />
+          <WhatsAppGlyph className="h-7 w-7 drop-shadow-2xs transition-transform duration-200 group-hover:scale-105" />
         )}
       </button>
     </div>

@@ -7,7 +7,7 @@ import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { AdminList } from "./AdminList";
 import { ArticleFormModal } from "./ArticleFormModal";
 
-export const ArticlesTab: React.FC = () => {
+export const ArticlesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
   const { items, loading, saving, deleting, save, remove, toggleActive } =
     useAdminCollection<Article>("articles", mapArticle, SEED_ARTICLES);
 
@@ -37,10 +37,16 @@ export const ArticlesTab: React.FC = () => {
         secondary={(art) => `${art.category} • ${art.author || "WisdomLingo"} • ${art.read_time || "5 min"}`}
         image={(art) => art.image_url}
         columns={[
-          { header: "Category", render: (art) => art.category },
-          { header: "Read Time", render: (art) => art.read_time || "-" },
-          { header: "Tags", render: (art) => (art.tags.length ? art.tags.join(", ") : "-") },
-          { header: "Link", render: (art) => art.link_url || "/blog" },
+          {
+            header: "Category",
+            render: (art) => (
+              <span className="inline-block rounded-md bg-blue-50 px-1.5 py-0.5 text-[11px] font-bold text-blue-700 border border-blue-200/60">
+                {art.category}
+              </span>
+            ),
+          },
+          { header: "Read Time", render: (art) => <span className="text-slate-600">{art.read_time || "5 min"}</span> },
+          { header: "Author", render: (art) => <span className="text-slate-600 font-medium">{art.author || "WisdomLingo"}</span> },
         ]}
         search={search}
         onSearchChange={setSearch}
@@ -56,6 +62,7 @@ export const ArticlesTab: React.FC = () => {
         }}
         onDelete={setPendingDelete}
         onToggleActive={toggleActive}
+        onBack={onBack}
         emptyTitle="No articles found"
         emptyHint="Write and publish educational guides, visa intel, and news articles."
       />

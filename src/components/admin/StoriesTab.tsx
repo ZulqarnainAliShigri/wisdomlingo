@@ -7,7 +7,7 @@ import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { AdminList } from "./AdminList";
 import { StoryFormModal } from "./StoryFormModal";
 
-export const StoriesTab: React.FC = () => {
+export const StoriesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
   const { items, loading, saving, deleting, save, remove, toggleActive } =
     useAdminCollection<Story>("success_stories", mapStory, SEED_STORIES);
 
@@ -37,10 +37,31 @@ export const StoriesTab: React.FC = () => {
         secondary={(story) => `${story.role} • ${story.institution}`}
         image={(story) => story.avatar_url}
         columns={[
-          { header: "Country", render: (story) => `${story.destination_country}` },
-          { header: "Badge", render: (story) => story.status_badge || "Approved" },
-          { header: "Highlight", render: (story) => story.highlight || "-" },
-          { header: "Rating", render: (story) => "★".repeat(story.rating || 5) },
+          {
+            header: "Country",
+            render: (story) => (
+              <span className="inline-flex items-center gap-1 font-medium text-slate-800">
+                <span>{story.flag || "🎓"}</span>
+                <span>{story.destination_country}</span>
+              </span>
+            ),
+          },
+          {
+            header: "Status",
+            render: (story) => (
+              <span className="inline-block rounded-md bg-emerald-50 px-1.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200/60">
+                {story.status_badge || "Visa Approved"}
+              </span>
+            ),
+          },
+          {
+            header: "University",
+            render: (story) => (
+              <span className="text-slate-600 truncate max-w-[150px] block">
+                {story.institution || story.role}
+              </span>
+            ),
+          },
         ]}
         search={search}
         onSearchChange={setSearch}
@@ -56,6 +77,7 @@ export const StoriesTab: React.FC = () => {
         }}
         onDelete={setPendingDelete}
         onToggleActive={toggleActive}
+        onBack={onBack}
         emptyTitle="No success stories found"
         emptyHint="Add real alumni and student success stories to showcase on the homepage."
       />

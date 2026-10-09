@@ -1,7 +1,83 @@
-# Everything on this site is meant to be indexed.
+# Allow all search engines and AI web crawlers to read and index WisdomLingo
+
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /api/private
 
-# Replace the host below with your live domain after deploying.
+# OpenAI (ChatGPT / SearchGPT)
+User-agent: GPTBot
+Allow: /
+Disallow: /admin
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /admin
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /admin
+
+# Google (Gemini, Google-Extended, Googlebot)
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /admin
+
+# Anthropic (Claude)
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /admin
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin
+
+# Apple (Apple Intelligence)
+User-agent: Applebot
+Allow: /
+Disallow: /admin
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /admin
+
+# Meta AI
+User-agent: FacebookBot
+Allow: /
+Disallow: /admin
+
+User-agent: Meta-ExternalAgent
+Allow: /
+Disallow: /admin
+
+# Microsoft (Bing / Copilot)
+User-agent: Bingbot
+Allow: /
+Disallow: /admin
+
+# Common Crawl (Foundation model training dataset)
+User-agent: CCBot
+Allow: /
+Disallow: /admin
+
+# Cohere AI
+User-agent: cohere-ai
+Allow: /
+Disallow: /admin
+
+# Mistral AI
+User-agent: MistralBot
+Allow: /
+Disallow: /admin
+
+# Sitemaps and AI Documentation
 Sitemap: https://wisdomlingo.com/sitemap.xml

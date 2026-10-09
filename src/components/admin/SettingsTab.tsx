@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
   AlertTriangle,
+  ArrowLeft,
   CheckCircle2,
   Database,
   Download,
@@ -31,6 +32,8 @@ const TABLES = [
   { name: "courses", label: "Courses" },
   { name: "study_countries", label: "Destinations" },
   { name: "apprenticeships", label: "Ausbildung" },
+  { name: "success_stories", label: "Success Stories" },
+  { name: "articles", label: "Articles" },
   { name: "contact_submissions", label: "Messages" },
   { name: "seo_settings", label: "SEO settings" },
   { name: "company_settings", label: "Business details" },
@@ -53,17 +56,17 @@ const Section: React.FC<{
   action?: React.ReactNode;
   children: React.ReactNode;
 }> = ({ icon: Icon, title, hint, action, children }) => (
-  <section className="rounded-2xl border border-slate-200 p-5">
-    <div className="flex flex-wrap items-start justify-between gap-3">
+  <section className="rounded-2xl border border-slate-200 p-4 sm:p-5">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div className="min-w-0">
-        <h2 className="flex items-center gap-2 text-base font-bold text-slate-900">
+        <h2 className="flex items-center gap-2 text-sm sm:text-base font-bold text-slate-900">
           <Icon className="h-4 w-4 text-primary" /> {title}
         </h2>
-        {hint && <p className="mt-1 text-sm text-slate-500">{hint}</p>}
+        {hint && <p className="mt-0.5 text-xs sm:text-sm text-slate-500">{hint}</p>}
       </div>
-      {action}
+      {action && <div className="shrink-0">{action}</div>}
     </div>
-    <div className="mt-5">{children}</div>
+    <div className="mt-4 sm:mt-5">{children}</div>
   </section>
 );
 
@@ -98,7 +101,10 @@ const GroupHeading: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   <h3 className="mb-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{children}</h3>
 );
 
-export const SettingsTab: React.FC<{ onEditProfile?: () => void }> = ({ onEditProfile }) => {
+export const SettingsTab: React.FC<{ onEditProfile?: () => void; onBack?: () => void }> = ({
+  onEditProfile,
+  onBack,
+}) => {
   const { user } = useAuth();
   const [prefs, setPrefs] = useDashboardPrefs();
   const { settings: company, loading: companyLoading, reload: reloadCompany } = useCompanySettings();
@@ -281,6 +287,17 @@ export const SettingsTab: React.FC<{ onEditProfile?: () => void }> = ({ onEditPr
 
   return (
     <div className="space-y-6">
+      {onBack && (
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onBack}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:border-primary hover:bg-primary-50 hover:text-primary active:scale-95"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" /> Back to Dashboard
+          </button>
+        </div>
+      )}
       {/* Account */}
       <Section
         icon={UserRound}

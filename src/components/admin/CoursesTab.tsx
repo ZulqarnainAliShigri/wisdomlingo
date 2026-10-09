@@ -8,7 +8,7 @@ import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { AdminList } from "./AdminList";
 import { CourseFormModal } from "./CourseFormModal";
 
-export const CoursesTab: React.FC = () => {
+export const CoursesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
   const { items, loading, saving, deleting, save, remove, toggleActive } =
     useAdminCollection<Course>("courses", mapCourse, SEED_COURSES);
 
@@ -38,12 +38,25 @@ export const CoursesTab: React.FC = () => {
         primary={(course) => course.title}
         image={(course) => course.image_url}
         columns={[
-          { header: "Category", render: (course) => <span className="capitalize">{course.category}</span> },
-          { header: "Level", render: (course) => course.level || "-" },
-          { header: "Duration", render: (course) => course.duration || "-" },
+          {
+            header: "Category",
+            render: (course) => (
+              <span className="inline-block rounded-md bg-slate-100 px-1.5 py-0.5 text-[11px] font-semibold capitalize text-slate-700">
+                {course.category}
+              </span>
+            ),
+          },
+          {
+            header: "Level",
+            render: (course) => (
+              <span className="inline-block rounded-md bg-primary-50 px-1.5 py-0.5 text-[11px] font-bold text-primary">
+                {course.level || "-"}
+              </span>
+            ),
+          },
           {
             header: "Fee",
-            render: (course) => <span className="font-semibold text-slate-800">{course.fee || "-"}</span>,
+            render: (course) => <span className="font-bold text-slate-800">{course.fee || "-"}</span>,
           },
         ]}
         search={search}
@@ -60,6 +73,7 @@ export const CoursesTab: React.FC = () => {
         }}
         onDelete={setPendingDelete}
         onToggleActive={toggleActive}
+        onBack={onBack}
         emptyTitle="No courses found"
         emptyHint="Add your first course, or clear the filters above."
         filter={

@@ -169,7 +169,7 @@ export const BlogPage: React.FC = () => {
           />
 
           {/* Chips scroll sideways on phones */}
-          <div className="-mx-4 mt-6 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:justify-center sm:px-0 sm:pb-0">
+          <div className="-mx-4 mt-6 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:justify-start sm:px-0 sm:pb-0">
             {categories.map((item) => (
               <button
                 key={item}
@@ -335,7 +335,7 @@ export const BlogPage: React.FC = () => {
       </section>
 
       <section className="section bg-primary-50">
-        <div className="container-page text-center">
+        <div className="container-page text-center lg:text-left">
           <SectionHeading
             eyebrowTone="label"
             eyebrow="Consultation"
@@ -345,7 +345,7 @@ export const BlogPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setEnquiryOpen(true)}
-            className="btn-primary mx-auto mt-6 w-full sm:w-auto"
+            className="btn-primary mt-6 w-full sm:w-auto"
           >
             <MessageSquare className="h-4 w-4" /> Talk to a Counsellor
           </button>

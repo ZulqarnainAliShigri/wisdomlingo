@@ -7,10 +7,10 @@ import { WhatsAppWidget } from "./WhatsAppWidget";
 
 export const SiteLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   // The bottom padding keeps the footer clear of the fixed mobile call bar.
-  <div className="flex min-h-screen flex-col pb-[4.75rem] lg:pb-0">
+  <div className="flex min-h-screen flex-col pb-[4.75rem] lg:pb-0 w-full max-w-full overflow-x-hidden">
     <TopBar />
     <Navbar />
-    <main className="flex-1">{children}</main>
+    <main className="flex-1 w-full max-w-full overflow-x-hidden">{children}</main>
     <Footer />
     <MobileCallBar />
     <WhatsAppWidget />

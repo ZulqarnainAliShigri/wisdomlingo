@@ -7,7 +7,7 @@ import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { AdminList } from "./AdminList";
 import { ApprenticeshipFormModal } from "./ApprenticeshipFormModal";
 
-export const ApprenticeshipsTab: React.FC = () => {
+export const ApprenticeshipsTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
   const { items, loading, saving, deleting, save, remove, toggleActive } =
     useAdminCollection<Apprenticeship>("apprenticeships", mapApprenticeship, SEED_APPRENTICESHIPS);
 
@@ -34,16 +34,19 @@ export const ApprenticeshipsTab: React.FC = () => {
         secondary={(item) => item.field}
         image={(item) => item.image_url}
         columns={[
-          { header: "Field", render: (item) => item.field },
           {
-            header: "Salary",
+            header: "Field",
+            render: (item) => (
+              <span className="inline-block rounded-md bg-primary-50 px-1.5 py-0.5 text-[11px] font-bold text-primary">
+                {item.field}
+              </span>
+            ),
+          },
+          {
+            header: "Stipend",
             render: (item) => <span className="font-semibold text-slate-800">{item.salary || "-"}</span>,
           },
-          { header: "Duration", render: (item) => item.duration || "-" },
-          {
-            header: "Lists",
-            render: (item) => `${item.requirements.length} requirements, ${item.benefits.length} benefits`,
-          },
+          { header: "Duration", render: (item) => <span className="text-slate-600">{item.duration || "-"}</span> },
         ]}
         search={search}
         onSearchChange={setSearch}
@@ -59,6 +62,7 @@ export const ApprenticeshipsTab: React.FC = () => {
         }}
         onDelete={setPendingDelete}
         onToggleActive={toggleActive}
+        onBack={onBack}
         emptyTitle="No Ausbildung programs found"
         emptyHint="Add a field to show it on the Ausbildung page."
       />
