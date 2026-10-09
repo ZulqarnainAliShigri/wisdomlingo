@@ -19,23 +19,30 @@ jobs:
             echo "Secrets SUPABASE_URL or SUPABASE_ANON_KEY not set. Skipping ping."
             exit 0
           fi
-          # Clean BASE_URL so it works whether user entered https://xyz.supabase.co or https://xyz.supabase.co/rest/v1/
+          # Clean BASE_URL
           CLEAN_URL=$(echo "$SUPABASE_URL" | sed 's|/rest/v1/*$||' | sed 's|/*$||')
           echo "Target URL: $CLEAN_URL"
-          echo "Pinging Supabase database to keep it active..."
+          echo "Pinging Supabase to keep project active..."
           
-          # Ping the PostgREST root endpoint (which returns OpenAPI spec with 200 OK and keeps PostgREST warm)
+          # 1. Ping Auth Health (wakes up the Supabase project container)
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
             -H "apikey: $SUPABASE_ANON_KEY" \
-            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
-            "$CLEAN_URL/rest/v1/")
+            "$CLEAN_URL/auth/v1/health")
           
-          echo "Response HTTP Status: $STATUS"
+          echo "Auth Health HTTP Status: $STATUS"
+          
+          # 2. Ping Database REST API table/rpc query
+          DB_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            "$CLEAN_URL/rest/v1/courses?select=id&limit=1")
+          
+          echo "Database REST HTTP Status: $DB_STATUS"
+          
           if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 400 ]; then
-            echo "Supabase ping successful! Database is active and warm."
+            echo "Supabase ping successful! Project and database are active and warm."
+          elif [ "$DB_STATUS" -ge 200 ] && [ "$DB_STATUS" -lt 400 ]; then
+            echo "Supabase database ping successful! Active and warm."
           else
-            echo "Warning: Received HTTP $STATUS from Supabase."
-            # Also print response body for easy debugging if not 200
-            curl -s -H "apikey: $SUPABASE_ANON_KEY" "$CLEAN_URL/rest/v1/" | head -c 200
-            echo ""
+            echo "Warning: Response status Auth=$STATUS, DB=$DB_STATUS"
           fi
