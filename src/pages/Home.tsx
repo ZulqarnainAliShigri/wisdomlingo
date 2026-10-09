@@ -21,7 +21,6 @@ import {
 import { useCompany } from "../hooks/useCompany";
 import { HERO_IMAGES } from "../config/media";
 import {
-  ARTICLES,
   CATEGORY_TABS,
   COUNTRY_FLAGS,
   COUNTRY_PERKS,
@@ -30,7 +29,6 @@ import {
   HERO_STATS,
   HOME_PROGRAMS,
   PROCESS_STEPS,
-  TESTIMONIALS,
   WHY_US,
 } from "../data/content";
 import { SEED_ARTICLES, SEED_COUNTRIES, SEED_COURSES, SEED_STORIES } from "../data/seed";
@@ -267,8 +265,8 @@ export const HomePage: React.FC = () => {
               </h1>
             </div>
 
-            {/* Static Subtitle / Tagline */}
-            <p className="mx-auto mt-2 max-w-sm text-xs font-semibold text-slate-800 sm:mt-3 sm:max-w-xl sm:text-sm sm:font-normal sm:text-slate-600 lg:mx-0">
+            {/* Static Subtitle / Tagline - hidden on mobile view */}
+            <p className="hidden sm:block mx-auto mt-2 max-w-sm text-xs font-semibold text-slate-800 sm:mt-3 sm:max-w-xl sm:text-sm sm:font-normal sm:text-slate-600 lg:mx-0">
               Expert guidance for German language, university admissions, and paid Ausbildung.
             </p>
 
