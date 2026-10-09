@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { AlertTriangle, CheckCircle2, Code2, Globe, Info, Save, Search } from "lucide-react";
+import { AlertTriangle, ArrowLeft, CheckCircle2, Code2, Globe, Info, Save, Search } from "lucide-react";
 import { toast } from "react-toastify";
 import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 import { errorMessage } from "../../lib/utils";
@@ -49,7 +49,7 @@ const SerpPreview: React.FC<{ url: string; title: string; description: string }>
   </div>
 );
 
-export const SeoTab: React.FC = () => {
+export const SeoTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
   const { settings, reload } = useSeoSettings();
   const [form, setForm] = useState<SeoSettings>(DEFAULT_SEO);
   const [saving, setSaving] = useState(false);
@@ -180,7 +180,18 @@ export const SeoTab: React.FC = () => {
   const passed = checks.filter((check) => check.ok).length;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
+      {onBack && (
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onBack}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:border-primary hover:bg-primary-50 hover:text-primary active:scale-95"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" /> Back to Dashboard
+          </button>
+        </div>
+      )}
       {/* What this can and cannot do */}
       <div className="flex gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
         <Info className="mt-0.5 h-5 w-5 shrink-0 text-primary" />

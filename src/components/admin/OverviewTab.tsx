@@ -134,52 +134,70 @@ export const OverviewTab: React.FC<{ onNavigate: (tab: AdminTab) => void }> = ({
     }
     setLoading(true);
     try {
-      const [courses, countries, apprenticeships, stories, articles, submissions] = await Promise.all([
-        supabase.from("courses").select("id, category, is_active, image_url"),
-        supabase.from("study_countries").select("id, is_active"),
-        supabase.from("apprenticeships").select("id, is_active, field"),
-        supabase.from("success_stories").select("id, is_active"),
-        supabase.from("articles").select("id, is_active"),
-        supabase.from("contact_submissions").select("*").order("created_at", { ascending: false }),
-      ]);
+      const [coursesRes, countriesRes, apprenticeshipsRes, storiesRes, articlesRes, submissionsRes] =
+        await Promise.allSettled([
+          supabase.from("courses").select("id, category, is_active, image_url"),
+          supabase.from("study_countries").select("id, is_active"),
+          supabase.from("apprenticeships").select("id, is_active, field"),
+          supabase.from("success_stories").select("id, is_active"),
+          supabase.from("articles").select("id, is_active"),
+          supabase.from("contact_submissions").select("*").order("created_at", { ascending: false }),
+        ]);
 
-      const firstError =
-        courses.error ||
-        countries.error ||
-        apprenticeships.error ||
-        stories.error ||
-        articles.error ||
-        submissions.error;
-      if (firstError) throw firstError;
+      const getRows = (res: PromiseSettledResult<{ data: unknown; error: unknown }>, fallback: unknown[]) => {
+        if (
+          res.status === "fulfilled" &&
+          !res.value.error &&
+          Array.isArray(res.value.data) &&
+          res.value.data.length > 0
+        ) {
+          return res.value.data as Row[];
+        }
+        return fallback as Row[];
+      };
+
+      const courseRows = getRows(coursesRes, SEED_COURSES);
+      const countryRows = getRows(countriesRes, SEED_COUNTRIES);
+      const apprenticeshipRows = getRows(apprenticeshipsRes, SEED_APPRENTICESHIPS);
+      const storyRows = getRows(storiesRes, SEED_STORIES);
+      const articleRows = getRows(articlesRes, SEED_ARTICLES);
+
+      const messageRows =
+        submissionsRes.status === "fulfilled" &&
+        !submissionsRes.value.error &&
+        Array.isArray(submissionsRes.value.data)
+          ? (submissionsRes.value.data as Row[])
+          : [];
 
       setData({
-        courses: ((courses.data as Row[]) || []).map((row) => ({
+        courses: courseRows.map((row) => ({
           id: String(row.id),
           category: row.category ?? "",
           is_active: row.is_active !== false,
           image_url: row.image_url ?? null,
         })),
-        countries: ((countries.data as Row[]) || []).map((row) => ({
+        countries: countryRows.map((row) => ({
           id: String(row.id),
           is_active: row.is_active !== false,
         })),
-        apprenticeships: ((apprenticeships.data as Row[]) || []).map((row) => ({
+        apprenticeships: apprenticeshipRows.map((row) => ({
           id: String(row.id),
           is_active: row.is_active !== false,
           field: row.field ?? null,
         })),
-        stories: ((stories.data as Row[]) || []).map((row) => ({
+        stories: storyRows.map((row) => ({
           id: String(row.id),
           is_active: row.is_active !== false,
         })),
-        articles: ((articles.data as Row[]) || []).map((row) => ({
+        articles: articleRows.map((row) => ({
           id: String(row.id),
           is_active: row.is_active !== false,
         })),
-        messages: ((submissions.data as Row[]) || []).map(toMessage),
+        messages: messageRows.map(toMessage),
       });
     } catch (error) {
-      toast.error(errorMessage(error, "Could not load the dashboard summary."));
+      console.warn("Could not load full dashboard summary from Supabase, using demo fallback:", error);
+      setData(demoData());
     } finally {
       setLoading(false);
     }

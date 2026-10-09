@@ -7,7 +7,7 @@ import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { AdminList } from "./AdminList";
 import { CountryFormModal } from "./CountryFormModal";
 
-export const CountriesTab: React.FC = () => {
+export const CountriesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
   const { items, loading, saving, deleting, save, remove, toggleActive } =
     useAdminCollection<StudyCountry>("study_countries", mapCountry, SEED_COUNTRIES);
 
@@ -57,6 +57,7 @@ export const CountriesTab: React.FC = () => {
         }}
         onDelete={setPendingDelete}
         onToggleActive={toggleActive}
+        onBack={onBack}
         emptyTitle="No destinations found"
         emptyHint="Add a study destination to show it on the Study Abroad page."
       />

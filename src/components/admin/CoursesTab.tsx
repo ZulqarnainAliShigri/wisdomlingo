@@ -8,7 +8,7 @@ import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { AdminList } from "./AdminList";
 import { CourseFormModal } from "./CourseFormModal";
 
-export const CoursesTab: React.FC = () => {
+export const CoursesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
   const { items, loading, saving, deleting, save, remove, toggleActive } =
     useAdminCollection<Course>("courses", mapCourse, SEED_COURSES);
 
@@ -60,6 +60,7 @@ export const CoursesTab: React.FC = () => {
         }}
         onDelete={setPendingDelete}
         onToggleActive={toggleActive}
+        onBack={onBack}
         emptyTitle="No courses found"
         emptyHint="Add your first course, or clear the filters above."
         filter={

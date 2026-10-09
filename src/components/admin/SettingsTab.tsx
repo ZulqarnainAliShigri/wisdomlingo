@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
   AlertTriangle,
+  ArrowLeft,
   CheckCircle2,
   Database,
   Download,
@@ -98,7 +99,10 @@ const GroupHeading: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   <h3 className="mb-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">{children}</h3>
 );
 
-export const SettingsTab: React.FC<{ onEditProfile?: () => void }> = ({ onEditProfile }) => {
+export const SettingsTab: React.FC<{ onEditProfile?: () => void; onBack?: () => void }> = ({
+  onEditProfile,
+  onBack,
+}) => {
   const { user } = useAuth();
   const [prefs, setPrefs] = useDashboardPrefs();
   const { settings: company, loading: companyLoading, reload: reloadCompany } = useCompanySettings();
@@ -281,6 +285,17 @@ export const SettingsTab: React.FC<{ onEditProfile?: () => void }> = ({ onEditPr
 
   return (
     <div className="space-y-6">
+      {onBack && (
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onBack}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:border-primary hover:bg-primary-50 hover:text-primary active:scale-95"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" /> Back to Dashboard
+          </button>
+        </div>
+      )}
       {/* Account */}
       <Section
         icon={UserRound}

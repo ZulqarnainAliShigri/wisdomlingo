@@ -7,7 +7,7 @@ import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { AdminList } from "./AdminList";
 import { ArticleFormModal } from "./ArticleFormModal";
 
-export const ArticlesTab: React.FC = () => {
+export const ArticlesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
   const { items, loading, saving, deleting, save, remove, toggleActive } =
     useAdminCollection<Article>("articles", mapArticle, SEED_ARTICLES);
 
@@ -56,6 +56,7 @@ export const ArticlesTab: React.FC = () => {
         }}
         onDelete={setPendingDelete}
         onToggleActive={toggleActive}
+        onBack={onBack}
         emptyTitle="No articles found"
         emptyHint="Write and publish educational guides, visa intel, and news articles."
       />

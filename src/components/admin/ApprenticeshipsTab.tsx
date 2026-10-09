@@ -7,7 +7,7 @@ import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { AdminList } from "./AdminList";
 import { ApprenticeshipFormModal } from "./ApprenticeshipFormModal";
 
-export const ApprenticeshipsTab: React.FC = () => {
+export const ApprenticeshipsTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
   const { items, loading, saving, deleting, save, remove, toggleActive } =
     useAdminCollection<Apprenticeship>("apprenticeships", mapApprenticeship, SEED_APPRENTICESHIPS);
 
@@ -59,6 +59,7 @@ export const ApprenticeshipsTab: React.FC = () => {
         }}
         onDelete={setPendingDelete}
         onToggleActive={toggleActive}
+        onBack={onBack}
         emptyTitle="No Ausbildung programs found"
         emptyHint="Add a field to show it on the Ausbildung page."
       />

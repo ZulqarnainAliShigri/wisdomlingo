@@ -7,7 +7,7 @@ import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { AdminList } from "./AdminList";
 import { StoryFormModal } from "./StoryFormModal";
 
-export const StoriesTab: React.FC = () => {
+export const StoriesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
   const { items, loading, saving, deleting, save, remove, toggleActive } =
     useAdminCollection<Story>("success_stories", mapStory, SEED_STORIES);
 
@@ -56,6 +56,7 @@ export const StoriesTab: React.FC = () => {
         }}
         onDelete={setPendingDelete}
         onToggleActive={toggleActive}
+        onBack={onBack}
         emptyTitle="No success stories found"
         emptyHint="Add real alumni and student success stories to showcase on the homepage."
       />

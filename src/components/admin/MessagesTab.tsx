@@ -39,9 +39,10 @@ interface PendingDelete {
 interface MessagesTabProps {
   /** Lets the sidebar badge update the moment a conversation is opened. */
   onUnreadCountChange?: (count: number) => void;
+  onBack?: () => void;
 }
 
-export const MessagesTab: React.FC<MessagesTabProps> = ({ onUnreadCountChange }) => {
+export const MessagesTab: React.FC<MessagesTabProps> = ({ onUnreadCountChange, onBack }) => {
   const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
@@ -179,18 +180,31 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ onUnreadCountChange })
 
   return (
     <div>
-      {/* Filters - one row, scoping the list below */}
+      {/* Filters & Navigation toolbar */}
       <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search name, email, phone or message..."
-            aria-label="Search messages"
-            className="input !py-2 sm:!py-2.5 !pl-9 text-xs sm:text-sm"
-          />
+        <div className="flex flex-1 items-center gap-2">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              title="Back to Dashboard"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-700 transition hover:border-primary hover:bg-primary-50 hover:text-primary active:scale-95"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </button>
+          )}
+
+          <div className="relative flex-1 min-w-[140px]">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search name, email, phone or message..."
+              aria-label="Search messages"
+              className="input !py-1.5 sm:!py-2 !pl-9 text-xs sm:text-sm"
+            />
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">

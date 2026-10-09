@@ -275,14 +275,14 @@ export const AdminDashboardPage: React.FC = () => {
 
           <div className="rounded-2xl border border-slate-200/80 bg-white p-3.5 shadow-2xs sm:p-7">
             {tab === "overview" && <OverviewTab onNavigate={setTab} />}
-            {tab === "courses" && <CoursesTab />}
-            {tab === "countries" && <CountriesTab />}
-            {tab === "apprenticeships" && <ApprenticeshipsTab />}
-            {tab === "stories" && <StoriesTab />}
-            {tab === "articles" && <ArticlesTab />}
-            {tab === "messages" && <MessagesTab onUnreadCountChange={setUnread} />}
-            {tab === "seo" && <SeoTab />}
-            {tab === "settings" && <SettingsTab onEditProfile={() => setProfileOpen(true)} />}
+            {tab === "courses" && <CoursesTab onBack={() => setTab("overview")} />}
+            {tab === "countries" && <CountriesTab onBack={() => setTab("overview")} />}
+            {tab === "apprenticeships" && <ApprenticeshipsTab onBack={() => setTab("overview")} />}
+            {tab === "stories" && <StoriesTab onBack={() => setTab("overview")} />}
+            {tab === "articles" && <ArticlesTab onBack={() => setTab("overview")} />}
+            {tab === "messages" && <MessagesTab onUnreadCountChange={setUnread} onBack={() => setTab("overview")} />}
+            {tab === "seo" && <SeoTab onBack={() => setTab("overview")} />}
+            {tab === "settings" && <SettingsTab onEditProfile={() => setProfileOpen(true)} onBack={() => setTab("overview")} />}
           </div>
         </main>
       </div>
