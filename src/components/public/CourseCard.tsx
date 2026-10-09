@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRight, BookOpen, CheckCircle2, ChevronRight, Clock, GraduationCap, Languages, Sparkles, Star, Users } from "lucide-react";
+import { BookOpen, CheckCircle2, ChevronRight, Clock, Languages, Star, Users } from "lucide-react";
 import { Course } from "../../types";
 
 const FALLBACK_COURSE_IMAGES: Record<string, string> = {

@@ -2,20 +2,16 @@ import React, { useMemo, useState, useEffect } from "react";
 import {
   Award,
   BookOpen,
-  CheckCircle2,
   ChevronDown,
   Clock,
   Compass,
   FileCheck,
-  GraduationCap,
   HelpCircle,
-  Languages,
   MessageCircle,
   Phone,
   Search,
   ShieldCheck,
   Sparkles,
-  Star,
   Users,
 } from "lucide-react";
 import { useCompany } from "../hooks/useCompany";
