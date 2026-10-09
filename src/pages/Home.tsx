@@ -33,10 +33,10 @@ import {
   TESTIMONIALS,
   WHY_US,
 } from "../data/content";
-import { SEED_COUNTRIES, SEED_COURSES } from "../data/seed";
+import { SEED_ARTICLES, SEED_COUNTRIES, SEED_COURSES, SEED_STORIES } from "../data/seed";
 import { useRemoteList } from "../hooks/useRemoteList";
-import { mapCountry, mapCourse } from "../lib/mappers";
-import { Course, CourseCategory, StudyCountry } from "../types";
+import { mapArticle, mapCountry, mapCourse, mapStory } from "../lib/mappers";
+import { Article, Course, CourseCategory, Story, StudyCountry } from "../types";
 import { SectionHeading } from "../components/ui/SectionHeading";
 import { EnquiryModal } from "../components/public/EnquiryModal";
 import { CourseCard } from "../components/public/CourseCard";
@@ -64,6 +64,12 @@ export const HomePage: React.FC = () => {
   const COMPANY = useCompany();
   const { items: countries } = useRemoteList<StudyCountry>("study_countries", SEED_COUNTRIES, mapCountry);
   const { items: allCourses } = useRemoteList<Course>("courses", SEED_COURSES, mapCourse);
+  const { items: storiesList } = useRemoteList<Story>("success_stories", SEED_STORIES, mapStory);
+  const { items: articlesList } = useRemoteList<Article>("articles", SEED_ARTICLES, mapArticle);
+
+  const displayStories = storiesList.length > 0 ? storiesList : SEED_STORIES;
+  const displayArticles = (articlesList.length > 0 ? articlesList : SEED_ARTICLES).slice(0, 3);
+
   const [enquiryOpen, setEnquiryOpen] = useState(false);
   const [enrollCourse, setEnrollCourse] = useState<Course | null>(null);
   const [detailData, setDetailData] = useState<DetailModalData | null>(null);
@@ -124,10 +130,10 @@ export const HomePage: React.FC = () => {
   useEffect(() => {
     if (isTestimonialPaused) return;
     const interval = setInterval(() => {
-      setActiveTestimonialIndex((prev) => (prev + 1) % TESTIMONIALS.length);
+      setActiveTestimonialIndex((prev) => (prev + 1) % Math.max(1, displayStories.length));
     }, 3500);
     return () => clearInterval(interval);
-  }, [isTestimonialPaused]);
+  }, [isTestimonialPaused, displayStories.length]);
 
   // Animated Articles State
   const [activeArticleIndex, setActiveArticleIndex] = useState(0);
@@ -136,10 +142,10 @@ export const HomePage: React.FC = () => {
   useEffect(() => {
     if (isArticlePaused) return;
     const interval = setInterval(() => {
-      setActiveArticleIndex((prev) => (prev + 1) % ARTICLES.length);
+      setActiveArticleIndex((prev) => (prev + 1) % Math.max(1, displayArticles.length));
     }, 3500);
     return () => clearInterval(interval);
-  }, [isArticlePaused]);
+  }, [isArticlePaused, displayArticles.length]);
 
   // Constant Line 1 + Ultra-Short Line 2 Typewriter state
   const [subIndex, setSubIndex] = useState(0);
@@ -1241,7 +1247,7 @@ export const HomePage: React.FC = () => {
             <div
               className="h-full bg-gradient-to-r from-primary via-primary-500 to-accent transition-all duration-700 ease-out"
               style={{
-                width: `${((activeTestimonialIndex + 1) / TESTIMONIALS.length) * 100}%`,
+                width: `${((activeTestimonialIndex + 1) / Math.max(1, displayStories.length)) * 100}%`,
               }}
             />
             <div
@@ -1251,12 +1257,12 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="mt-8 grid gap-6 sm:gap-8 lg:grid-cols-3">
-            {TESTIMONIALS.map((testimonial, index) => {
+            {displayStories.map((story, index) => {
               const isActive = activeTestimonialIndex === index;
 
               return (
                 <figure
-                  key={testimonial.name}
+                  key={story.id || story.name}
                   onClick={() => setActiveTestimonialIndex(index)}
                   onMouseEnter={() => setActiveTestimonialIndex(index)}
                   className={`group relative flex flex-col justify-between overflow-hidden rounded-3xl border bg-white p-5 transition-all duration-500 cursor-pointer sm:p-6 ${
@@ -1275,8 +1281,8 @@ export const HomePage: React.FC = () => {
                     {/* Top Bar: Country Flag + Verified Pill */}
                     <div className="flex items-center justify-between gap-2">
                       <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-800">
-                        <span className="text-base leading-none">{testimonial.flag}</span>
-                        {testimonial.destinationCountry}
+                        <span className="text-base leading-none">{story.flag || "🎓"}</span>
+                        {story.destination_country}
                       </span>
                       <span
                         className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold transition-all duration-300 ${
@@ -1286,30 +1292,30 @@ export const HomePage: React.FC = () => {
                         }`}
                       >
                         <BadgeCheck className={`h-3.5 w-3.5 ${isActive ? "animate-wiggle" : ""}`} />
-                        {testimonial.statusBadge}
+                        {story.status_badge || "Visa Approved"}
                       </span>
                     </div>
 
                     {/* Rating Stars & Intake */}
                     <div className="mt-4 flex items-center justify-between">
                       <div className="flex gap-1 text-amber-500">
-                        {Array.from({ length: testimonial.rating }).map((_, rIdx) => (
+                        {Array.from({ length: story.rating || 5 }).map((_, rIdx) => (
                           <Star key={rIdx} className="h-3.5 w-3.5 fill-current" />
                         ))}
                       </div>
                       <span className="text-[11px] font-semibold text-slate-500">
-                        {testimonial.intake}
+                        {story.intake || "Recent Graduate"}
                       </span>
                     </div>
 
                     {/* Quote - clamped to 2 lines */}
                     <blockquote className="mt-3 text-xs sm:text-sm leading-relaxed text-slate-700 line-clamp-2">
-                      &ldquo;{testimonial.quote}&rdquo;
+                      &ldquo;{story.quote}&rdquo;
                     </blockquote>
 
                     {/* Highlight pill */}
                     <div className="mt-3.5 rounded-xl border border-primary-100 bg-primary-50/60 px-3 py-1.5 text-xs font-semibold text-primary truncate">
-                      <span className="font-extrabold">Highlight:</span> {testimonial.highlight}
+                      <span className="font-extrabold">Highlight:</span> {story.highlight}
                     </div>
                   </div>
 
@@ -1319,8 +1325,8 @@ export const HomePage: React.FC = () => {
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="relative shrink-0">
                           <img
-                            src={testimonial.avatar}
-                            alt={testimonial.name}
+                            src={story.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&q=80"}
+                            alt={story.name}
                             loading="lazy"
                             className={`h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm transition-all duration-300 ${
                               isActive ? "ring-2 ring-primary scale-105" : "ring-1 ring-primary-100"
@@ -1339,10 +1345,10 @@ export const HomePage: React.FC = () => {
                               isActive ? "text-primary font-black" : "text-slate-900"
                             }`}
                           >
-                            {testimonial.name}
+                            {story.name}
                           </span>
                           <span className="block truncate text-[11px] text-slate-500">
-                            {testimonial.role} • {testimonial.institution}
+                            {story.role} • {story.institution}
                           </span>
                         </div>
                       </div>
@@ -1351,21 +1357,21 @@ export const HomePage: React.FC = () => {
                         onClick={(e) => {
                           e.stopPropagation();
                           setDetailData({
-                            title: testimonial.name,
-                            subtitle: `${testimonial.role} • ${testimonial.destinationCountry}`,
+                            title: story.name,
+                            subtitle: `${story.role} • ${story.destination_country}`,
                             category: "Success Story",
-                            badge: testimonial.statusBadge,
+                            badge: story.status_badge || "Visa Approved",
                             badgeColor: "bg-emerald-50 text-emerald-700",
-                            image: testimonial.avatar,
-                            description: `"${testimonial.quote}"`,
+                            image: story.avatar_url,
+                            description: `"${story.quote}"`,
                             metrics: [
-                              { label: "Intake", value: testimonial.intake },
-                              { label: "Destination", value: testimonial.destinationCountry },
-                              { label: "Outcome", value: testimonial.metric },
+                              { label: "Intake", value: story.intake || "Recent" },
+                              { label: "Destination", value: story.destination_country },
+                              { label: "Outcome", value: story.metric || "Verified Admission" },
                             ],
                             points: [
-                              `Institution: ${testimonial.institution}`,
-                              `Key Achievement: ${testimonial.highlight}`,
+                              `Institution: ${story.institution}`,
+                              `Key Achievement: ${story.highlight}`,
                               `Verified Alumnus placed through WisdomLingo`,
                             ],
                             primaryCtaText: "Start Similar Journey",
@@ -1387,9 +1393,9 @@ export const HomePage: React.FC = () => {
 
           {/* Interactive Step Dots */}
           <div className="mt-8 flex items-center justify-center gap-2">
-            {TESTIMONIALS.map((testimonial, idx) => (
+            {displayStories.map((story, idx) => (
               <button
-                key={testimonial.name}
+                key={story.id || story.name}
                 type="button"
                 onClick={() => setActiveTestimonialIndex(idx)}
                 className={`h-2 rounded-full transition-all duration-500 ${
@@ -1397,7 +1403,7 @@ export const HomePage: React.FC = () => {
                     ? "w-8 bg-primary"
                     : "w-2 bg-slate-300 hover:bg-slate-400"
                 }`}
-                aria-label={`Go to ${testimonial.name}`}
+                aria-label={`Go to ${story.name}`}
               />
             ))}
           </div>
@@ -1489,7 +1495,7 @@ export const HomePage: React.FC = () => {
             <div
               className="h-full bg-gradient-to-r from-primary via-primary-500 to-accent transition-all duration-700 ease-out"
               style={{
-                width: `${((activeArticleIndex + 1) / ARTICLES.length) * 100}%`,
+                width: `${((activeArticleIndex + 1) / Math.max(1, displayArticles.length)) * 100}%`,
               }}
             />
             <div
@@ -1500,12 +1506,15 @@ export const HomePage: React.FC = () => {
 
           {/* Cards */}
           <div className="mt-8 grid gap-6 sm:gap-8 md:grid-cols-3">
-            {ARTICLES.map((article, index) => {
+            {displayArticles.map((article, index) => {
               const isActive = activeArticleIndex === index;
+              const articleLink = article.link_url || "/blog";
+              const articleImage = article.image_url || "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=900&q=80";
+              const publishDate = article.created_at ? new Date(article.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Recent";
 
               return (
                 <article
-                  key={article.title}
+                  key={article.id || article.title}
                   onClick={() => setActiveArticleIndex(index)}
                   onMouseEnter={() => setActiveArticleIndex(index)}
                   className={`group flex flex-col overflow-hidden rounded-2xl border bg-white transition-all duration-500 cursor-pointer ${
@@ -1517,7 +1526,7 @@ export const HomePage: React.FC = () => {
                   {/* Image & Floating Category Badges */}
                   <div className="relative overflow-hidden">
                     <img
-                      src={article.image}
+                      src={articleImage}
                       alt={article.title}
                       loading="lazy"
                       className={`h-48 w-full object-cover transition duration-700 ease-out ${
@@ -1539,7 +1548,7 @@ export const HomePage: React.FC = () => {
 
                     {/* Read Time Pill Floating */}
                     <span className="absolute right-3.5 top-3.5 flex items-center gap-1 rounded-lg bg-slate-900/80 px-2 py-0.5 text-[11px] font-semibold text-white shadow-md backdrop-blur-xs">
-                      <Clock className={`h-3 w-3 text-white/80 ${isActive ? "animate-wiggle" : ""}`} /> {article.readTime}
+                      <Clock className={`h-3 w-3 text-white/80 ${isActive ? "animate-wiggle" : ""}`} /> {article.read_time || "4 min read"}
                     </span>
 
                     {/* Author at bottom of image */}
@@ -1555,7 +1564,7 @@ export const HomePage: React.FC = () => {
                     {/* Meta date */}
                     <div className="flex items-center gap-2 text-xs text-slate-500">
                       <CalendarDays className="h-3.5 w-3.5" />
-                      <span>{article.date}</span>
+                      <span>{publishDate}</span>
                     </div>
 
                     <h3
@@ -1563,7 +1572,7 @@ export const HomePage: React.FC = () => {
                         isActive ? "text-primary font-black" : "text-slate-900 group-hover:text-primary"
                       }`}
                     >
-                      <Link to={article.to} className="hover:underline">
+                      <Link to={articleLink} className="hover:underline">
                         {article.title}
                       </Link>
                     </h3>
@@ -1580,24 +1589,24 @@ export const HomePage: React.FC = () => {
                           e.stopPropagation();
                           setDetailData({
                             title: article.title,
-                            subtitle: `${article.category} • ${article.date}`,
+                            subtitle: `${article.category} • ${publishDate}`,
                             category: "Field Intel & Guide",
-                            badge: article.readTime,
+                            badge: article.read_time || "4 min read",
                             badgeColor: "bg-sky-50 text-sky-800",
-                            image: article.image,
-                            description: article.excerpt,
+                            image: articleImage,
+                            description: article.content || article.excerpt,
                             metrics: [
                               { label: "Category", value: article.category },
-                              { label: "Published", value: article.date },
-                              { label: "Read Time", value: article.readTime },
+                              { label: "Author", value: article.author || "Editorial Desk" },
+                              { label: "Read Time", value: article.read_time || "4 min read" },
                             ],
-                            points: article.tags?.map((t) => `Topic: ${t}`) || [
-                              "Comprehensive embassy visa dossier",
+                            points: article.tags?.length ? article.tags.map((t) => `Topic: ${t}`) : [
+                              "Comprehensive European university and visa dossier",
                               "Authored by European admissions counsellors",
                             ],
                             primaryCtaText: "Read Complete Guide",
                             onPrimaryCta: () => {
-                              window.location.href = article.to;
+                              window.location.href = articleLink;
                             },
                             secondaryCtaText: "WhatsApp Counsellor",
                             secondaryCtaLink: COMPANY.whatsapp,
@@ -1608,7 +1617,7 @@ export const HomePage: React.FC = () => {
                         Quick View
                       </button>
                       <Link
-                        to={article.to}
+                        to={articleLink}
                         onClick={(e) => e.stopPropagation()}
                         className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2 px-3 text-xs sm:text-sm font-bold text-white transition-colors ${
                           isActive ? "bg-primary hover:bg-blue-800" : "bg-slate-900 hover:bg-primary"
@@ -1626,9 +1635,9 @@ export const HomePage: React.FC = () => {
 
           {/* Interactive Step Dots */}
           <div className="mt-8 flex items-center justify-center gap-2">
-            {ARTICLES.map((article, idx) => (
+            {displayArticles.map((article, idx) => (
               <button
-                key={article.title}
+                key={article.id || article.title}
                 type="button"
                 onClick={() => setActiveArticleIndex(idx)}
                 className={`h-2 rounded-full transition-all duration-500 ${

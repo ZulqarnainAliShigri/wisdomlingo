@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
+  Award,
   BookOpen,
   Briefcase,
+  FileText,
   Globe,
   LayoutDashboard,
   MessageSquare,
@@ -17,6 +19,8 @@ export type AdminTab =
   | "courses"
   | "countries"
   | "apprenticeships"
+  | "stories"
+  | "articles"
   | "messages"
   | "seo"
   | "settings";
@@ -34,6 +38,8 @@ export const ADMIN_TABS: AdminTabDef[] = [
   { key: "courses", label: "Courses", icon: BookOpen, group: "Manage" },
   { key: "countries", label: "Destinations", icon: Globe, group: "Manage" },
   { key: "apprenticeships", label: "Ausbildung", icon: Briefcase, group: "Manage" },
+  { key: "stories", label: "Success Stories", icon: Award, group: "Manage" },
+  { key: "articles", label: "Articles & News", icon: FileText, group: "Manage" },
   { key: "messages", label: "Messages", icon: MessageSquare, group: "Manage" },
   { key: "seo", label: "SEO", icon: Search, group: "Site" },
   { key: "settings", label: "Settings", icon: Settings, group: "Site" },

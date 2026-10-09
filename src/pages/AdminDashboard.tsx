@@ -10,12 +10,14 @@ import { ProfileModal, avatarUrl, displayName } from "../components/admin/Profil
 import { Avatar } from "../components/ui/Avatar";
 import { Spinner } from "../components/ui/Loader";
 import { ApprenticeshipsTab } from "../components/admin/ApprenticeshipsTab";
+import { ArticlesTab } from "../components/admin/ArticlesTab";
 import { CountriesTab } from "../components/admin/CountriesTab";
 import { CoursesTab } from "../components/admin/CoursesTab";
 import { MessagesTab } from "../components/admin/MessagesTab";
 import { OverviewTab } from "../components/admin/OverviewTab";
 import { SeoTab } from "../components/admin/SeoTab";
 import { SettingsTab } from "../components/admin/SettingsTab";
+import { StoriesTab } from "../components/admin/StoriesTab";
 
 /** Page title shown in the dashboard header. */
 const HEADINGS: Record<AdminTab, string> = {
@@ -23,6 +25,8 @@ const HEADINGS: Record<AdminTab, string> = {
   courses: "Courses",
   countries: "Study destinations",
   apprenticeships: "Ausbildung",
+  stories: "Success Stories",
+  articles: "Articles & News",
   messages: "Messages",
   seo: "SEO",
   settings: "Settings",
@@ -226,6 +230,8 @@ export const AdminDashboardPage: React.FC = () => {
             {tab === "courses" && <CoursesTab />}
             {tab === "countries" && <CountriesTab />}
             {tab === "apprenticeships" && <ApprenticeshipsTab />}
+            {tab === "stories" && <StoriesTab />}
+            {tab === "articles" && <ArticlesTab />}
             {tab === "messages" && <MessagesTab onUnreadCountChange={setUnread} />}
             {tab === "seo" && <SeoTab />}
             {tab === "settings" && <SettingsTab onEditProfile={() => setProfileOpen(true)} />}

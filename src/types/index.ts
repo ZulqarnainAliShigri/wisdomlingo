@@ -48,6 +48,41 @@ export interface Apprenticeship {
 
 export type Ausbildung = Apprenticeship;
 
+export interface Story {
+  id: string;
+  name: string;
+  role: string;
+  institution: string;
+  destination_country: string;
+  flag: string;
+  intake: string | null;
+  status_badge: string;
+  highlight: string;
+  metric: string | null;
+  quote: string;
+  rating: number;
+  avatar_url: string | null;
+  is_active: boolean;
+  display_order?: number | null;
+  created_at?: string;
+}
+
+export interface Article {
+  id: string;
+  title: string;
+  category: string;
+  excerpt: string;
+  content?: string | null;
+  author: string | null;
+  read_time: string | null;
+  image_url: string | null;
+  tags: string[];
+  link_url?: string | null;
+  is_active: boolean;
+  display_order?: number | null;
+  created_at?: string;
+}
+
 export interface ContactSubmission {
   id: string;
   name: string;

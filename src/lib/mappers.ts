@@ -1,4 +1,4 @@
-import { Apprenticeship, ContactSubmission, Course, CourseCategory, Row, StudyCountry } from "../types";
+import { Apprenticeship, Article, ContactSubmission, Course, CourseCategory, Row, Story, StudyCountry } from "../types";
 import { asStringArray } from "./utils";
 
 export const mapCourse = (row: Row): Course => ({
@@ -53,4 +53,39 @@ export const mapSubmission = (row: Row): ContactSubmission => ({
   message: row.message ?? "",
   is_read: Boolean(row.is_read),
   created_at: row.created_at ?? new Date().toISOString(),
+});
+
+export const mapStory = (row: Row): Story => ({
+  id: String(row.id),
+  name: row.name ?? "Anonymous Student",
+  role: row.role ?? "Student",
+  institution: row.institution ?? "European University",
+  destination_country: row.destination_country ?? "Germany",
+  flag: row.flag ?? "🇩🇪",
+  intake: row.intake ?? null,
+  status_badge: row.status_badge ?? "Visa Approved",
+  highlight: row.highlight ?? "Successfully Enrolled",
+  metric: row.metric ?? null,
+  quote: row.quote ?? "",
+  rating: Number(row.rating) || 5,
+  avatar_url: row.avatar_url ?? row.image_url ?? null,
+  is_active: row.is_active !== false,
+  display_order: row.display_order ?? null,
+  created_at: row.created_at ?? undefined,
+});
+
+export const mapArticle = (row: Row): Article => ({
+  id: String(row.id),
+  title: row.title ?? "Untitled Article",
+  category: row.category ?? "Study Guide",
+  excerpt: row.excerpt ?? "",
+  content: row.content ?? null,
+  author: row.author ?? "WisdomLingo Editorial Desk",
+  read_time: row.read_time ?? "4 min read",
+  image_url: row.image_url ?? null,
+  tags: asStringArray(row.tags),
+  link_url: row.link_url ?? null,
+  is_active: row.is_active !== false,
+  display_order: row.display_order ?? null,
+  created_at: row.created_at ?? undefined,
 });

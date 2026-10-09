@@ -2,7 +2,11 @@ import React, { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, CalendarDays, Check, Clock, MessageSquare, PlayCircle } from "lucide-react";
 import { TEAM_PHOTOS } from "../config/media";
-import { BLOG_CATEGORIES, BLOG_POSTS, FEATURED_VIDEO } from "../data/content";
+import { FEATURED_VIDEO } from "../data/content";
+import { SEED_ARTICLES } from "../data/seed";
+import { useRemoteList } from "../hooks/useRemoteList";
+import { mapArticle } from "../lib/mappers";
+import { Article } from "../types";
 import { EnquiryModal } from "../components/public/EnquiryModal";
 import { PageHero } from "../components/ui/PageHero";
 import { SectionHeading } from "../components/ui/SectionHeading";
@@ -22,14 +26,21 @@ const PHOTO_BAND = [
 ];
 
 export const BlogPage: React.FC = () => {
+  const { items: articleList } = useRemoteList<Article>("articles", SEED_ARTICLES, mapArticle);
+  const allArticles = articleList.length > 0 ? articleList : SEED_ARTICLES;
+
   const [category, setCategory] = useState("All");
   const [enquiryOpen, setEnquiryOpen] = useState(false);
   const [detailData, setDetailData] = useState<DetailModalData | null>(null);
 
+  const categories = useMemo(() => {
+    return ["All", ...Array.from(new Set(allArticles.map((p) => p.category)))];
+  }, [allArticles]);
+
   const posts = useMemo(
     () =>
-      category === "All" ? BLOG_POSTS : BLOG_POSTS.filter((post) => post.category === category),
-    [category]
+      category === "All" ? allArticles : allArticles.filter((post) => post.category === category),
+    [category, allArticles]
   );
 
   const [activePostIdx, setActivePostIdx] = useState(0);
@@ -159,7 +170,7 @@ export const BlogPage: React.FC = () => {
 
           {/* Chips scroll sideways on phones */}
           <div className="-mx-4 mt-6 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:justify-center sm:px-0 sm:pb-0">
-            {BLOG_CATEGORIES.map((item) => (
+            {categories.map((item) => (
               <button
                 key={item}
                 type="button"
@@ -197,10 +208,15 @@ export const BlogPage: React.FC = () => {
           <div className="mt-8 grid gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {posts.map((post, index) => {
               const isActive = activePostIdx === index;
+              const postLink = post.link_url || "/study-abroad";
+              const postImg = post.image_url || "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=900&q=80";
+              const postDate = post.created_at
+                ? new Date(post.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+                : "Recent Guide";
 
               return (
                 <article
-                  key={post.title}
+                  key={post.id || post.title}
                   onClick={() => setActivePostIdx(index)}
                   onMouseEnter={() => setActivePostIdx(index)}
                   className={`group flex flex-col overflow-hidden rounded-2xl border bg-white transition-all duration-500 cursor-pointer ${
@@ -211,7 +227,7 @@ export const BlogPage: React.FC = () => {
                 >
                   <div className="relative overflow-hidden">
                     <img
-                      src={post.image}
+                      src={postImg}
                       alt={post.title}
                       loading="lazy"
                       className={`h-44 w-full object-cover transition duration-700 ease-out ${
@@ -231,10 +247,10 @@ export const BlogPage: React.FC = () => {
                   <div className="flex flex-1 flex-col p-5">
                     <div className="flex items-center gap-4 text-xs text-slate-500">
                       <span className="flex items-center gap-1.5">
-                        <CalendarDays className="h-3.5 w-3.5" /> {post.date}
+                        <CalendarDays className="h-3.5 w-3.5" /> {postDate}
                       </span>
                       <span className="flex items-center gap-1.5">
-                        <Clock className={`h-3.5 w-3.5 ${isActive ? "animate-wiggle text-primary" : ""}`} /> {post.readTime}
+                        <Clock className={`h-3.5 w-3.5 ${isActive ? "animate-wiggle text-primary" : ""}`} /> {post.read_time || "5 min read"}
                       </span>
                     </div>
                     <h3
@@ -255,24 +271,24 @@ export const BlogPage: React.FC = () => {
                           e.stopPropagation();
                           setDetailData({
                             title: post.title,
-                            subtitle: `${post.category} • ${post.date}`,
+                            subtitle: `${post.category} • ${postDate}`,
                             category: "Article Preview",
-                            badge: post.readTime,
+                            badge: post.read_time || "5 min read",
                             badgeColor: "bg-primary-50 text-primary",
-                            image: post.image,
-                            description: post.excerpt,
+                            image: postImg,
+                            description: post.content || post.excerpt,
                             metrics: [
                               { label: "Category", value: post.category },
-                              { label: "Date", value: post.date },
-                              { label: "Read Time", value: post.readTime },
+                              { label: "Author", value: post.author || "Editorial Desk" },
+                              { label: "Read Time", value: post.read_time || "5 min read" },
                             ],
-                            points: [
+                            points: post.tags?.length ? post.tags.map((t) => `Topic: ${t}`) : [
                               "Comprehensive dossier prepared by European counsellors",
                               "Contains official embassy & university guidelines",
                             ],
                             primaryCtaText: "Read Complete Guide",
                             onPrimaryCta: () => {
-                              window.location.href = post.to;
+                              window.location.href = postLink;
                             },
                             secondaryCtaText: "Ask Question",
                             secondaryCtaLink: `/about`,
@@ -283,7 +299,7 @@ export const BlogPage: React.FC = () => {
                         Quick View
                       </button>
                       <Link
-                        to={post.to}
+                        to={postLink}
                         onClick={(e) => e.stopPropagation()}
                         className={`flex-1 flex items-center justify-center gap-1 rounded-xl py-2 px-3 text-xs sm:text-sm font-bold text-white transition ${
                           isActive ? "bg-primary hover:bg-blue-800" : "bg-slate-900 hover:bg-primary"
@@ -303,7 +319,7 @@ export const BlogPage: React.FC = () => {
           <div className="mt-8 flex items-center justify-center gap-2">
             {posts.map((post, idx) => (
               <button
-                key={post.title}
+                key={post.id || post.title}
                 type="button"
                 onClick={() => setActivePostIdx(idx)}
                 className={`h-2 rounded-full transition-all duration-500 ${

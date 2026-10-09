@@ -1,7 +1,7 @@
 // Fallback content used when Supabase is unreachable or a table is still empty.
 // The same rows are inserted by supabase/seed.sql.
 
-import { Apprenticeship, Course, StudyCountry } from "../types";
+import { Apprenticeship, Article, Course, Story, StudyCountry } from "../types";
 
 export const SEED_COURSES: Course[] = [
   {
@@ -406,5 +406,161 @@ export const SEED_APPRENTICESHIPS: Apprenticeship[] = [
     ],
     image_url: null,
     is_active: true,
+  },
+];
+
+export const SEED_STORIES: Story[] = [
+  {
+    id: "seed-story-1",
+    name: "Sarah Jenkins",
+    role: "MSc Automotive Engineering",
+    institution: "TU Munich, Germany",
+    destination_country: "Germany",
+    flag: "🇩🇪",
+    intake: "Winter 2025 Intake",
+    status_badge: "Visa Approved & Enrolled",
+    highlight: "B2 Passed in 4 Months",
+    metric: "Tuition-Free Public University",
+    quote:
+      "The team at WisdomLingo made the notoriously complex German visa process feel straightforward. Their in-house language prep was exactly what I needed to pass my B2 exams on the first attempt.",
+    rating: 5,
+    avatar_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=160&q=80",
+    is_active: true,
+    display_order: 1,
+  },
+  {
+    id: "seed-story-2",
+    name: "Ahmed Al-Farsi",
+    role: "Nursing Specialist Ausbildung",
+    institution: "Klinikum Frankfurt, Germany",
+    destination_country: "Germany",
+    flag: "🇩🇪",
+    intake: "Autumn 2025 Intake",
+    status_badge: "Contract Secured & Visa Issued",
+    highlight: "€1,240/month Monthly Stipend",
+    metric: "100% Employer Sponsored",
+    quote:
+      "I wanted to pursue an Ausbildung but had zero leads. WisdomLingo matched me with a leading healthcare employer in Frankfurt, negotiated my stipend, and prepared me for embassy questions.",
+    rating: 5,
+    avatar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=160&q=80",
+    is_active: true,
+    display_order: 2,
+  },
+  {
+    id: "seed-story-3",
+    name: "Elena Rodriguez",
+    role: "BSc International Business",
+    institution: "Lund University, Sweden",
+    destination_country: "Sweden",
+    flag: "🇸🇪",
+    intake: "Spring 2026 Intake",
+    status_badge: "Residence Permit Granted",
+    highlight: "Schengen Residence Permit",
+    metric: "Top 100 Global University",
+    quote:
+      "From choosing Lund University in Sweden to arranging student housing and visa formalities, their support was relentless. The team was transparent, reachable, and deeply professional throughout.",
+    rating: 5,
+    avatar_url: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=160&q=80",
+    is_active: true,
+    display_order: 3,
+  },
+];
+
+export const SEED_ARTICLES: Article[] = [
+  {
+    id: "seed-art-1",
+    title: "Top 5 Public Universities in Germany for Engineering in 2026",
+    category: "Study Guide",
+    excerpt:
+      "A comprehensive look at the best tuition-free engineering programs available for international students.",
+    content:
+      "Discover Germany's elite TU9 technical universities offering zero tuition fee MSc programs taught completely in English. Learn about admission criteria, semester contribution costs, and career placement options.",
+    author: "Academic Advisory Desk",
+    read_time: "5 min read",
+    image_url: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=900&q=80",
+    tags: ["Tuition-Free", "TU9 Universities", "Winter 2026"],
+    link_url: "/study-abroad",
+    is_active: true,
+    display_order: 1,
+  },
+  {
+    id: "seed-art-2",
+    title: "How to Ace the Goethe-Zertifikat B2 Exam: Insider Tips",
+    category: "Language",
+    excerpt:
+      "Our in-house language experts share their top strategies for passing the critical B2 assessment on your first try.",
+    content:
+      "B2 is the golden gateway for both university admissions and nursing recognition in Germany. Master the Schreiben structure, learn how to handle Sprechen roleplays, and practice with real OSD and Goethe simulation mocks.",
+    author: "German Language Dept.",
+    read_time: "4 min read",
+    image_url: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=900&q=80",
+    tags: ["Goethe Exam", "B2 Certificate", "Exam Prep"],
+    link_url: "/courses",
+    is_active: true,
+    display_order: 2,
+  },
+  {
+    id: "seed-art-3",
+    title: "The Ultimate Guide to German Ausbildung Programs",
+    category: "Ausbildung",
+    excerpt:
+      "Everything you need to know about the dual vocational training system, monthly stipends, and securing an employer contract.",
+    content:
+      "Ausbildung provides paid on-the-job training in Germany with monthly stipends of €1,000–€1,400. From IT specialist to nursing and hospitality, discover how to secure an employer contract from Pakistan.",
+    author: "Vocational Pathways",
+    read_time: "6 min read",
+    image_url: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=900&q=80",
+    tags: ["Paid Training", "No Tuition", "PR Pathway"],
+    link_url: "/ausbildung",
+    is_active: true,
+    display_order: 3,
+  },
+  {
+    id: "seed-art-4",
+    title: "Blocked Account, Insurance and APS: The Paperwork Checklist",
+    category: "Visa & Documents",
+    excerpt:
+      "Most refusals happen on documents, not merit. Here is the exact file an embassy expects from a Pakistani applicant.",
+    content:
+      "Avoid costly visa delays. Learn the exact requirements for APS verification, choosing between Expatrio, Coracle or Fintiba for your blocked account, and statutory health insurance setup.",
+    author: "Visa Compliance Cell",
+    read_time: "7 min read",
+    image_url: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=900&q=80",
+    tags: ["APS Certificate", "Blocked Account", "Embassy Tips"],
+    link_url: "/study-abroad",
+    is_active: true,
+    display_order: 4,
+  },
+  {
+    id: "seed-art-5",
+    title: "Cyprus, Hungary or Germany: Choosing Your First Destination",
+    category: "Study Guide",
+    excerpt:
+      "Tuition, language requirements and intake dates compared, so you apply where your profile actually stands a chance.",
+    content:
+      "A realistic comparison between Western and Eastern European education options. Compare visa approval rates, minimum IELTS requirements, and budget constraints.",
+    author: "Academic Advisory Desk",
+    read_time: "5 min read",
+    image_url: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=900&q=80",
+    tags: ["European Study", "Visa Comparison", "Admissions"],
+    link_url: "/study-abroad",
+    is_active: true,
+    display_order: 5,
+  },
+  {
+    id: "seed-art-6",
+    title: "Your First Month Abroad: Registration, Bank and SIM",
+    category: "Student Life",
+    excerpt:
+      "Anmeldung, a local bank account and health insurance - the three errands that decide how smoothly your semester starts.",
+    content:
+      "Step-by-step checklist upon landing in Germany: scheduling your city registration (Anmeldung), unlocking your blocked account funds, and buying an affordable student SIM card.",
+    author: "Student Welfare Desk",
+    read_time: "4 min read",
+    image_url: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&q=80",
+    tags: ["Student Life", "Anmeldung", "Settling In"],
+    link_url: "/about",
+    is_active: true,
+    display_order: 6,
   },
 ];
