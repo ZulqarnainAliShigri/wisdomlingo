@@ -38,12 +38,26 @@ export const CoursesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
         primary={(course) => course.title}
         image={(course) => course.image_url}
         columns={[
-          { header: "Category", render: (course) => <span className="capitalize">{course.category}</span> },
-          { header: "Level", render: (course) => course.level || "-" },
-          { header: "Duration", render: (course) => course.duration || "-" },
+          {
+            header: "Category",
+            render: (course) => (
+              <span className="inline-block rounded-md bg-slate-100 px-2 py-0.5 text-xs font-semibold capitalize text-slate-700">
+                {course.category}
+              </span>
+            ),
+          },
+          {
+            header: "Level",
+            render: (course) => (
+              <span className="inline-block rounded-md bg-primary-50 px-2 py-0.5 text-xs font-bold text-primary">
+                {course.level || "-"}
+              </span>
+            ),
+          },
+          { header: "Duration", render: (course) => <span className="text-slate-600">{course.duration || "-"}</span> },
           {
             header: "Fee",
-            render: (course) => <span className="font-semibold text-slate-800">{course.fee || "-"}</span>,
+            render: (course) => <span className="font-bold text-slate-900">{course.fee || "-"}</span>,
           },
         ]}
         search={search}

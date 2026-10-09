@@ -34,15 +34,26 @@ export const ApprenticeshipsTab: React.FC<{ onBack?: () => void }> = ({ onBack }
         secondary={(item) => item.field}
         image={(item) => item.image_url}
         columns={[
-          { header: "Field", render: (item) => item.field },
           {
-            header: "Salary",
-            render: (item) => <span className="font-semibold text-slate-800">{item.salary || "-"}</span>,
+            header: "Field",
+            render: (item) => (
+              <span className="inline-block rounded-md bg-primary-50 px-2 py-0.5 text-xs font-bold text-primary">
+                {item.field}
+              </span>
+            ),
           },
-          { header: "Duration", render: (item) => item.duration || "-" },
           {
-            header: "Lists",
-            render: (item) => `${item.requirements.length} requirements, ${item.benefits.length} benefits`,
+            header: "Salary / Stipend",
+            render: (item) => <span className="font-bold text-slate-900">{item.salary || "-"}</span>,
+          },
+          { header: "Duration", render: (item) => <span className="text-slate-600">{item.duration || "-"}</span> },
+          {
+            header: "Details",
+            render: (item) => (
+              <span className="text-slate-600 text-xs">
+                {item.requirements.length} reqs • {item.benefits.length} perks
+              </span>
+            ),
           },
         ]}
         search={search}

@@ -32,6 +32,8 @@ const TABLES = [
   { name: "courses", label: "Courses" },
   { name: "study_countries", label: "Destinations" },
   { name: "apprenticeships", label: "Ausbildung" },
+  { name: "success_stories", label: "Success Stories" },
+  { name: "articles", label: "Articles" },
   { name: "contact_submissions", label: "Messages" },
   { name: "seo_settings", label: "SEO settings" },
   { name: "company_settings", label: "Business details" },

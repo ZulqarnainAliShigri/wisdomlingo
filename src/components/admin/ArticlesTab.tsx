@@ -37,10 +37,24 @@ export const ArticlesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
         secondary={(art) => `${art.category} • ${art.author || "WisdomLingo"} • ${art.read_time || "5 min"}`}
         image={(art) => art.image_url}
         columns={[
-          { header: "Category", render: (art) => art.category },
-          { header: "Read Time", render: (art) => art.read_time || "-" },
-          { header: "Tags", render: (art) => (art.tags.length ? art.tags.join(", ") : "-") },
-          { header: "Link", render: (art) => art.link_url || "/blog" },
+          {
+            header: "Category",
+            render: (art) => (
+              <span className="inline-block rounded-md bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700 border border-blue-200/60">
+                {art.category}
+              </span>
+            ),
+          },
+          { header: "Read Time", render: (art) => <span className="text-slate-600">{art.read_time || "5 min"}</span> },
+          {
+            header: "Tags",
+            render: (art) => (
+              <span className="text-slate-600 truncate max-w-[160px] block">
+                {art.tags.length ? art.tags.slice(0, 2).join(", ") : "-"}
+              </span>
+            ),
+          },
+          { header: "Author", render: (art) => <span className="text-slate-700 font-medium">{art.author || "WisdomLingo"}</span> },
         ]}
         search={search}
         onSearchChange={setSearch}

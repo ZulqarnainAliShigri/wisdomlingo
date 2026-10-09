@@ -35,12 +35,26 @@ export const CountriesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
         secondary={(country) => country.tagline || ""}
         image={(country) => country.image_url}
         columns={[
-          { header: "Code", render: (country) => country.flag || "-" },
-          { header: "Tuition", render: (country) => country.tuition || "-" },
-          { header: "Intakes", render: (country) => country.intake || "-" },
           {
-            header: "Lists",
-            render: (country) => `${country.benefits.length} benefits, ${country.requirements.length} requirements`,
+            header: "Flag",
+            render: (country) => (
+              <span className="inline-block rounded-md bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-800">
+                {country.flag || "🌍"}
+              </span>
+            ),
+          },
+          {
+            header: "Tuition",
+            render: (country) => <span className="font-bold text-slate-900">{country.tuition || "-"}</span>,
+          },
+          { header: "Intakes", render: (country) => <span className="text-slate-600">{country.intake || "-"}</span> },
+          {
+            header: "Overview",
+            render: (country) => (
+              <span className="text-slate-600 text-xs">
+                {country.benefits.length} benefits • {country.requirements.length} reqs
+              </span>
+            ),
           },
         ]}
         search={search}
