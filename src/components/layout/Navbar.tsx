@@ -41,14 +41,15 @@ export const Navbar: React.FC = () => {
         </div>
 
         <div className="hidden items-center gap-2 lg:flex lg:justify-self-end xl:gap-3">
-          {session ? (
-            <Link
-              to="/admin/dashboard"
-              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:text-slate-900"
-            >
-              <ShieldCheck className="h-4 w-4" /> Dashboard
-            </Link>
-          ) : null}
+          <Link
+            to={session ? "/admin/dashboard" : "/admin"}
+            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+            title={session ? "Go to Admin Dashboard" : "Admin Login"}
+          >
+            <ShieldCheck className="h-4 w-4 text-slate-500" />
+            <span>{session ? "Dashboard" : "Admin"}</span>
+          </Link>
+
           <a
             href={COMPANY.phoneHref}
             className="inline-flex items-center gap-2 whitespace-nowrap rounded-lg border border-accent/40 px-3 py-2 text-sm font-semibold text-accent transition hover:bg-accent-50 xl:px-4"
