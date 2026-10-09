@@ -39,6 +39,12 @@ import { SectionHeading } from "../components/ui/SectionHeading";
 import { EnquiryModal } from "../components/public/EnquiryModal";
 import { CourseCard } from "../components/public/CourseCard";
 import { DetailModal, DetailModalData } from "../components/public/DetailModal";
+import {
+  ConsultationDrawing,
+  DepartureArrivalDrawing,
+  LanguageApplicationDrawing,
+  VisaApprovalDrawing,
+} from "../components/public/ProcessDrawings";
 import { Seo } from "../components/Seo";
 
 /** Shown above the article grid on desktop, below it on phones. */
@@ -1101,7 +1107,109 @@ export const HomePage: React.FC = () => {
               className="animate-beam-runner absolute top-[30px] hidden h-1.5 w-16 -translate-y-1/2 rounded-full bg-gradient-to-r from-transparent via-primary to-transparent blur-xs lg:block"
             />
 
-            <ol className="relative grid gap-3 sm:gap-6 lg:grid-cols-4 lg:gap-10">
+            {/* ── MOBILE VIEW: Centered step-by-step vertical pathway with hand-drawn arrows & animations ── */}
+            <div className="flex flex-col items-center lg:hidden">
+              {PROCESS_STEPS.map((step, index) => {
+                const isActive = activeProcessStep === index;
+                const isCompleted = activeProcessStep > index;
+
+                return (
+                  <React.Fragment key={step.title}>
+                    {/* Step Card centered */}
+                    <div
+                      onClick={() => setActiveProcessStep(index)}
+                      className={`relative flex w-full max-w-sm flex-col items-center rounded-3xl border text-center transition-all duration-500 cursor-pointer p-5 ${
+                        isActive
+                          ? "border-primary/50 bg-gradient-to-b from-primary-50/70 via-white to-white shadow-xl ring-2 ring-primary/20 scale-102"
+                          : isCompleted
+                          ? "border-emerald-200/90 bg-emerald-50/20 shadow-xs"
+                          : "border-slate-200/90 bg-white shadow-xs opacity-85 hover:opacity-100"
+                      }`}
+                    >
+                      {/* Step Number Badge */}
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-black tracking-wide ${
+                            isActive
+                              ? "bg-accent text-white shadow-sm"
+                              : isCompleted
+                              ? "bg-emerald-600 text-white"
+                              : "bg-slate-100 text-slate-700"
+                          }`}
+                        >
+                          STEP 0{index + 1}
+                        </span>
+                        {isActive && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-primary-100 px-2 py-0.5 text-[10px] font-extrabold text-primary animate-pulse">
+                            <span className="h-1.5 w-1.5 rounded-full bg-primary" /> Active Step
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Centered Drawing / Icon illustration */}
+                      <div className="mt-3.5 flex h-24 w-full items-center justify-center">
+                        {index === 0 && <ConsultationDrawing className="h-24 w-auto max-w-[170px]" />}
+                        {index === 1 && <LanguageApplicationDrawing className="h-24 w-auto max-w-[170px]" />}
+                        {index === 2 && <VisaApprovalDrawing className="h-24 w-auto max-w-[170px]" />}
+                        {index === 3 && <DepartureArrivalDrawing className="h-24 w-auto max-w-[170px]" />}
+                      </div>
+
+                      {/* Step Title */}
+                      <h3
+                        className={`mt-3 text-base font-extrabold transition-colors duration-300 ${
+                          isActive ? "text-primary text-lg" : "text-slate-900"
+                        }`}
+                      >
+                        {step.title}
+                      </h3>
+
+                      {/* Step Description */}
+                      <p className="mt-1.5 text-xs sm:text-sm leading-relaxed text-slate-600 px-2">
+                        {step.description}
+                      </p>
+                    </div>
+
+                    {/* Centered Top-to-Bottom Animated Arrow Drawing between steps */}
+                    {index < PROCESS_STEPS.length - 1 && (
+                      <div className="my-2 flex flex-col items-center py-1">
+                        <svg
+                          width="32"
+                          height="44"
+                          viewBox="0 0 32 44"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="overflow-visible"
+                        >
+                          {/* Dashed vertical arrow shaft with traveling animation */}
+                          <line
+                            x1="16"
+                            y1="2"
+                            x2="16"
+                            y2="34"
+                            stroke={isCompleted || isActive ? "#2563EB" : "#94A3B8"}
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            className="animate-dash-flow"
+                          />
+                          {/* Downward Arrowhead */}
+                          <path
+                            d="M8 26L16 38L24 26"
+                            stroke={isCompleted || isActive ? "#DC2626" : "#64748B"}
+                            strokeWidth="3.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className={isActive ? "animate-bounce" : ""}
+                          />
+                        </svg>
+                      </div>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </div>
+
+            {/* ── DESKTOP VIEW: Horizontal 4-Stage Pathway ── */}
+            <ol className="relative hidden grid-cols-4 gap-10 lg:grid">
               {PROCESS_STEPS.map((step, index) => {
                 const isActive = activeProcessStep === index;
                 const isCompleted = activeProcessStep > index;
@@ -1111,69 +1219,52 @@ export const HomePage: React.FC = () => {
                     key={step.title}
                     onClick={() => setActiveProcessStep(index)}
                     onMouseEnter={() => setActiveProcessStep(index)}
-                    className={`group relative flex cursor-pointer items-start gap-3.5 rounded-2xl border p-3.5 transition-all duration-300 sm:p-5 lg:flex-col lg:items-center lg:gap-0 lg:rounded-none lg:border-0 lg:p-0 lg:text-center ${
-                      isActive
-                        ? "border-primary/40 bg-gradient-to-r from-primary-50/50 to-white shadow-md ring-1 ring-primary/20 lg:bg-transparent lg:shadow-none lg:ring-0"
-                        : "border-slate-200/80 bg-white shadow-2xs hover:border-slate-300 lg:border-0 lg:shadow-none"
-                    }`}
+                    className="group relative flex cursor-pointer flex-col items-center text-center transition-all duration-300"
                   >
                     {/* Step Node Circle & Icon */}
                     <div className="relative shrink-0">
                       <span
-                        className={`flex h-11 w-11 items-center justify-center rounded-2xl border-2 transition-all duration-300 sm:h-12 sm:w-12 lg:h-16 lg:w-16 lg:rounded-full ${
+                        className={`flex h-16 w-16 items-center justify-center rounded-full border-2 transition-all duration-300 ${
                           isActive
-                            ? "scale-105 border-primary bg-primary text-white shadow-md shadow-primary/25"
+                            ? "scale-110 border-primary bg-primary text-white shadow-lg shadow-primary/25 ring-4 ring-primary-100"
                             : isCompleted
-                            ? "border-primary-300 bg-primary-50 text-primary"
-                            : "border-slate-200 bg-slate-50 text-slate-500 group-hover:border-slate-300 group-hover:text-slate-700"
+                            ? "border-primary-400 bg-primary-50 text-primary"
+                            : "border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-700"
                         }`}
                       >
                         <step.icon
-                          className={`h-5 w-5 transition-transform duration-300 lg:h-6 lg:w-6 ${
+                          className={`h-6 w-6 transition-transform duration-300 ${
                             isActive ? "animate-wiggle text-white" : ""
                           }`}
                         />
                       </span>
 
-                      {/* Step Number Tag */}
+                      {/* Number badge */}
                       <span
-                        className={`absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black transition-all sm:h-5 sm:w-5 lg:-right-1 lg:-top-1 lg:h-6 lg:w-6 lg:text-[11px] ${
+                        className={`absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold transition-all ${
                           isActive
-                            ? "bg-accent text-white shadow-xs ring-2 ring-white"
+                            ? "scale-110 bg-accent text-white shadow-sm ring-2 ring-white"
                             : isCompleted
                             ? "bg-primary text-white"
-                            : "bg-slate-200 text-slate-700"
+                            : "bg-slate-100 text-slate-600"
                         }`}
                       >
                         0{index + 1}
                       </span>
                     </div>
 
-                    {/* Step Title & Mobile description */}
-                    <div className="min-w-0 flex-1 lg:mt-5">
-                      <div className="flex items-center justify-between gap-2">
-                        <h3
-                          className={`text-sm font-bold transition-colors duration-300 sm:text-base ${
-                            isActive
-                              ? "font-extrabold text-primary"
-                              : "text-slate-900 group-hover:text-primary"
-                          }`}
-                        >
-                          {step.title}
-                        </h3>
-                        {isActive && (
-                          <span className="rounded-full bg-primary-100/80 px-2 py-0.5 text-[10px] font-bold text-primary lg:hidden">
-                            Active
-                          </span>
-                        )}
-                      </div>
-                      <p
-                        className={`mt-1 text-xs leading-relaxed transition-all duration-300 sm:mt-2 sm:text-sm ${
+                    {/* Step Title & Description */}
+                    <div className="mt-5">
+                      <h3
+                        className={`text-base font-bold transition-colors duration-300 ${
                           isActive
-                            ? "text-slate-700 font-medium"
-                            : "text-slate-500 line-clamp-1 sm:line-clamp-none"
+                            ? "font-extrabold text-primary"
+                            : "text-slate-900 group-hover:text-primary"
                         }`}
                       >
+                        {step.title}
+                      </h3>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-600">
                         {step.description}
                       </p>
                     </div>
