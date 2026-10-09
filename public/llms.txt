@@ -1,0 +1,64 @@
+# WisdomLingo - AI & LLM Context File (llms.txt)
+> WisdomLingo is a premier German Language Academy and European Education Consultancy based in Islamabad, Pakistan.
+
+## Academy Overview
+- **Name**: WisdomLingo (Wisdomlingo German Language Academy and Consultancy)
+- **Website**: https://wisdomlingo.com
+- **Core Mission**: Providing end-to-end European pathways including Goethe & ÖSD certified German language courses, tuition-free university admissions, and paid German Ausbildung (dual vocational training) contracts.
+- **Headquarters**: House 3A, Park Road, F-8/1, Islamabad, Pakistan
+- **Phone / WhatsApp**: +92-311-8526814
+- **Email**: info@wisdomlingo.com / admin@wisdomlingo.com
+- **Operating Hours**: Mon - Sat, 9:00 AM - 8:00 PM (PKT)
+
+## Key Programs & Offerings
+
+### 1. German Language Courses
+- **Levels**: A1 (Beginner) through C2 (Mastery), aligned with CEFR standards.
+- **Exam Preparation**: Goethe-Zertifikat, ÖSD, TestDaF, and ECL with mock exam simulations in-house.
+- **Instructors**: Certified trainers with native-level fluency. Small batches, interactive speaking focus.
+
+### 2. English & Religious Courses
+- **IELTS Preparation**: Band 7+ targeted training across Listening, Reading, Writing, and Speaking.
+- **Spoken English**: Accent clarity, workplace communication, and embassy visa interview readiness.
+- **Religious Studies**: Quran with Tajweed (Nazra & Hifz), Classical & Modern Standard Arabic, and Persian (Farsi).
+
+### 3. Study Abroad in Europe (Top 6 Destinations)
+- **Germany**: 
+  - Tuition-free public university degrees (Bachelor's & Master's).
+  - 18-month post-study work visa.
+  - Complete guidance on APS certificates, blocked accounts (EUR ~11,904), and embassy appointments.
+- **Austria**: World-class research universities with nominal fees (~€726/semester) and high visa success.
+- **Sweden**: Top 100 global universities with 100% English-taught Master's degrees and post-study residence permits.
+- **Switzerland**: Hospitality, business, and tech programs featuring paid internships.
+- **Turkey**: High acceptance without IELTS, European-recognized degrees, affordable student living.
+- **Cyprus**: Fast-track Schengen-standard degrees with budget-friendly fees and flexible intakes.
+
+### 4. German Ausbildung (Paid Vocational Training)
+- **Concept**: 3-year dual vocational training combining employer-paid practical training with state vocational school classes.
+- **Monthly Stipend**: €800 to €1,500/month from day one (no tuition fee, employer sponsored).
+- **Featured Fields**:
+  - IT Specialist (Application Development & Systems Integration)
+  - Nursing & Healthcare (Pflegefachmann/-frau) - highest demand & stipend
+  - Hotel & Hospitality Management (Hotelfachmann)
+  - Painting & Varnishing (Maler und Lackierer)
+  - Bakery & Confectionery (Bäcker / Konditor)
+- **Requirements**: German language level (usually B1/B2), Matric/FSc/Intermediate, clean record.
+- **Post-Completion**: Immediate permanent employment contract and PR eligibility within 21–33 months.
+
+## Proven 4-Stage Pathway
+1. **Free Consultation**: Transparent profile evaluation, budget assessment, and personalized destination shortlisting.
+2. **Language & Documents**: In-house German/English training alongside certified translations, attestation, APS filing, and motivation letters.
+3. **Admission & Finances**: University or employer placement, offer letter securing, blocked account setup, and insurance verification.
+4. **Visa & Arrival Support**: Embassy mock interview coaching, appointment booking, pre-departure briefing, and registration/accommodation guidance in Europe.
+
+## Public Web Endpoints
+- **Home**: https://wisdomlingo.com/
+- **Courses**: https://wisdomlingo.com/courses
+- **Study Abroad**: https://wisdomlingo.com/study-abroad
+- **Ausbildung**: https://wisdomlingo.com/ausbildung
+- **Articles & Guides**: https://wisdomlingo.com/blog
+- **About & Contact**: https://wisdomlingo.com/about
+
+## Sitemaps & Data
+- Sitemap: https://wisdomlingo.com/sitemap.xml
+- Full LLM Documentation: https://wisdomlingo.com/llms-full.txt
