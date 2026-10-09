@@ -48,7 +48,7 @@ export const ApprenticeshipsTab: React.FC = () => {
         search={search}
         onSearchChange={setSearch}
         searchPlaceholder="Search by title or field"
-        addLabel="Add apprenticeship"
+        addLabel="Add Ausbildung"
         onAdd={() => {
           setEditing(null);
           setModalOpen(true);
@@ -59,8 +59,8 @@ export const ApprenticeshipsTab: React.FC = () => {
         }}
         onDelete={setPendingDelete}
         onToggleActive={toggleActive}
-        emptyTitle="No apprenticeships found"
-        emptyHint="Add a field to show it on the Apprenticeships page."
+        emptyTitle="No Ausbildung programs found"
+        emptyHint="Add a field to show it on the Ausbildung page."
       />
 
       <ApprenticeshipFormModal
@@ -76,10 +76,10 @@ export const ApprenticeshipsTab: React.FC = () => {
 
       <ConfirmDialog
         open={Boolean(pendingDelete)}
-        title="Delete apprenticeship"
+        title="Delete Ausbildung"
         message={`This will permanently remove "${
           pendingDelete?.title ?? ""
-        }" from the Apprenticeships page. This action cannot be undone.`}
+        }" from the Ausbildung page. This action cannot be undone.`}
         busy={deleting}
         onConfirm={async () => {
           if (!pendingDelete) return;

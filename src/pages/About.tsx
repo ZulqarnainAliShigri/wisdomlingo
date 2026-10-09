@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Award, Clock, Globe, Mail, MapPin, Phone } from "lucide-react";
 import { useCompany } from "../hooks/useCompany";
 import { HOME_STATS } from "../data/content";
@@ -11,25 +11,35 @@ import { Seo } from "../components/Seo";
 
 export const AboutPage: React.FC = () => {
   const COMPANY = useCompany();
+  const [activeStatIdx, setActiveStatIdx] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (isPaused) return;
+    const interval = setInterval(() => {
+      setActiveStatIdx((prev) => (prev + 1) % HOME_STATS.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [isPaused]);
 
   return (
     <>
       <Seo page="about" />
       <PageHero
         image={HERO_IMAGES.about}
-        eyebrow="About us"
-        title="Fifteen years of sending students abroad the right way"
-        subtitle="From a single German classroom to a full consultancy - training, admissions and placement under one roof."
+        eyebrow="About Us"
+        title="15 Years of Educational Excellence"
+        subtitle="Goethe-certified language training, European university admissions, and visa consulting."
       />
 
       <section className="section bg-white">
-        <div className="container-page grid gap-12 lg:grid-cols-2 lg:items-start">
+        <div className="container-page grid gap-10 lg:grid-cols-2 lg:items-start">
           <div>
             <SectionHeading
               align="left"
-              eyebrow="Who we are"
-              title="A consultancy built by teachers, not agents"
-              subtitle="When our students asked what came after the certificate, we learned the admission and visa process ourselves."
+              eyebrow="Who We Are"
+              title="Built by Teachers, Not Agents"
+              subtitle="Accredited language instruction and zero-error European embassy filings."
             />
             <p className="mt-6 text-sm leading-relaxed text-slate-600">
               Today the same team teaches the language, prepares the documents and files the embassy
@@ -57,14 +67,61 @@ export const AboutPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              {HOME_STATS.map((stat) => (
-                <div key={stat.label} className="rounded-2xl bg-primary-50 px-5 py-6 text-center">
-                  <span className="block text-3xl font-extrabold text-primary">{stat.value}</span>
-                  <span className="mt-1 block text-xs font-semibold uppercase tracking-wide text-slate-600">
-                    {stat.label}
-                  </span>
-                </div>
+            {/* Animated Runner Beam Track */}
+            <div className="relative mt-8 mb-2 hidden sm:block overflow-hidden h-0.5">
+              <div className="h-full w-full border-t-2 border-dashed border-slate-300" />
+              <div
+                className="h-full bg-gradient-to-r from-primary via-primary-500 to-accent transition-all duration-700 ease-out"
+                style={{
+                  width: `${((activeStatIdx + 1) / HOME_STATS.length) * 100}%`,
+                }}
+              />
+              <div
+                aria-hidden="true"
+                className="animate-beam-runner absolute top-0 h-1.5 w-24 -translate-y-1/2 rounded-full bg-gradient-to-r from-transparent via-primary to-transparent blur-xs"
+              />
+            </div>
+
+            <div
+              className="mt-4 grid gap-4 sm:grid-cols-3"
+              onMouseEnter={() => setIsPaused(true)}
+              onMouseLeave={() => setIsPaused(false)}
+            >
+              {HOME_STATS.map((stat, index) => {
+                const isActive = activeStatIdx === index;
+                return (
+                  <div
+                    key={stat.label}
+                    onClick={() => setActiveStatIdx(index)}
+                    className={`rounded-2xl px-5 py-6 text-center transition-all duration-500 cursor-pointer ${
+                      isActive
+                        ? "bg-white shadow-xl ring-2 ring-primary/30 scale-105 border border-primary/20 -translate-y-1"
+                        : "bg-primary-50/70 hover:bg-primary-50"
+                    }`}
+                  >
+                    <span className="block text-3xl font-extrabold text-primary">{stat.value}</span>
+                    <span className="mt-1 block text-xs font-semibold uppercase tracking-wide text-slate-600">
+                      {stat.label}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Interactive Step Dots */}
+            <div className="mt-5 flex items-center justify-center gap-2">
+              {HOME_STATS.map((stat, idx) => (
+                <button
+                  key={stat.label}
+                  type="button"
+                  onClick={() => setActiveStatIdx(idx)}
+                  className={`h-2 rounded-full transition-all duration-500 ${
+                    activeStatIdx === idx
+                      ? "w-8 bg-primary"
+                      : "w-2 bg-slate-300 hover:bg-slate-400"
+                  }`}
+                  aria-label={`Go to ${stat.label}`}
+                />
               ))}
             </div>
           </div>

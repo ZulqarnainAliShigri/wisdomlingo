@@ -78,3 +78,34 @@
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes linePulse {
+  0% { stroke-dashoffset: 48; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.animate-dash-flow {
+  stroke-dasharray: 6 6;
+  animation: linePulse 2.5s linear infinite;
+}
+
+@keyframes beamGlow {
+  0% { left: 8%; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { left: 92%; opacity: 0; }
+}
+
+.animate-beam-runner {
+  animation: beamGlow 4s ease-in-out infinite;
+}
+
+@keyframes gentleWiggle {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-8deg) scale(1.05); }
+  75% { transform: rotate(8deg) scale(1.05); }
+}
+
+.animate-wiggle {
+  animation: gentleWiggle 1.8s ease-in-out infinite;
+}

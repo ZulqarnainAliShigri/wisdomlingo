@@ -84,39 +84,141 @@ export const HERO_HIGHLIGHTS = [
 
 export const HOME_PROGRAMS = [
   {
-    title: "German Courses",
+    title: "German Language Courses",
+    shortTitle: "German Courses",
+    tagline: "A1 to C2 Goethe & ÖSD Certified Training",
     to: "/courses",
-    cta: "View Language Programs",
+    cta: "Explore Language Courses",
     icon: Languages,
-    tint: "bg-primary-50 text-primary",
+    badge: "Language Academy",
+    badgeColor: "bg-blue-600 text-white",
+    cardGradient: "from-blue-600 via-indigo-600 to-blue-800",
+    image: ARTICLE_IMAGES.language,
     featured: false,
+    stat: "A1 — C2",
+    statLabel: "All CEFR Levels Prep",
+    tint: "bg-blue-50 text-blue-600",
     description:
-      "From beginner levels to specialized professional terminology, our partner schools offer immersive language training.",
-    points: ["A1 to C2 certification prep", "Medical & Engineering German", "Accommodation assistance"],
+      "Master the German language with certified native and expert instructors. Small interactive batches, comprehensive mock exams, and specialized modules for doctors, nurses, and engineers.",
+    points: [
+      "Official Goethe-Zertifikat & ÖSD exam preparation",
+      "Specialized Medical & Technical German terminology",
+      "Physical academy in Islamabad + live online sessions",
+      "Free learning materials and speaking simulation clubs",
+    ],
+    pills: ["Goethe & ÖSD Prep", "Small Batches", "Flexible Timings"],
   },
   {
-    title: "Study Abroad",
+    title: "Study in Europe",
+    shortTitle: "Study Abroad",
+    tagline: "Tuition-Free Degrees at Top Public Universities",
     to: "/study-abroad",
-    cta: "Explore Universities",
+    cta: "Explore Universities & Visas",
     icon: GraduationCap,
-    tint: "bg-primary-50 text-primary",
+    badge: "Most Popular Pathway",
+    badgeColor: "bg-accent text-white shadow-sm",
+    cardGradient: "from-sky-600 via-blue-700 to-indigo-900",
+    image: ARTICLE_IMAGES.universities,
     featured: true,
+    stat: "€0 Tuition",
+    statLabel: "Public Universities in Germany",
+    tint: "bg-primary-50 text-primary",
     description:
-      "Gain a competitive edge with a degree from a top-tier European university. We guide you from application to enrollment.",
-    points: ["Bachelor's & Master's degrees", "University matching & admissions", "Student visa processing"],
+      "Unlock world-class European education with tuition-free bachelor's and master's degrees. We provide complete guidance for university shortlisting, APS, blocked account, and visa filing.",
+    points: [
+      "Guaranteed admission matching in Germany, Sweden, Austria & more",
+      "Full APS verification and blocked account assistance",
+      "18-month post-study stay-back job search visa",
+      "English-medium Bachelor's and Master's degree options",
+    ],
+    pills: ["Zero Tuition Options", "APS File Guidance", "98% Visa Success"],
   },
   {
-    title: "Apprenticeships",
-    to: "/apprenticeships",
-    cta: "Discover Apprenticeships",
+    title: "Ausbildung in Germany",
+    shortTitle: "Ausbildung",
+    tagline: "Paid Dual Vocational Training & Work Contract",
+    to: "/ausbildung",
+    cta: "Discover Ausbildung Fields",
     icon: Briefcase,
-    tint: "bg-primary-50 text-primary",
+    badge: "Earn While You Learn",
+    badgeColor: "bg-emerald-600 text-white",
+    cardGradient: "from-emerald-600 via-teal-700 to-cyan-900",
+    image: ARTICLE_IMAGES.ausbildung,
     featured: false,
+    stat: "€900 – €1,500",
+    statLabel: "Monthly Paid Salary",
+    tint: "bg-emerald-50 text-emerald-700",
     description:
-      "Earn while you learn. The dual vocational training system offers hands-on experience and immediate career prospects.",
-    points: ["Ausbildung program matching", "Employer interview prep", "Contract negotiation support"],
+      "A 3-year government-backed dual vocational contract with a German employer. Get paid every month during your training, attend vocational school, and step into a guaranteed career.",
+    points: [
+      "Monthly salary from day one with zero tuition expenses",
+      "Direct employer interviews in Nursing, IT, Mechatronics & more",
+      "Employer-sponsored visa with fast-track permanent residency",
+      "Recognised German qualification valid across all 27 EU nations",
+    ],
+    pills: ["Paid Training", "Visa Sponsored", "Permanent Job Offer"],
   },
 ];
+
+/** Photography for each destination card. */
+export const COUNTRY_PHOTOS: Record<string, string> = {
+  Germany: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=800&q=80",
+  Sweden: "https://images.unsplash.com/photo-1509356843151-3e7d96241e11?auto=format&fit=crop&w=800&q=80",
+  Cyprus: "https://images.unsplash.com/photo-1580837119756-563d608dd119?auto=format&fit=crop&w=800&q=80",
+  Turkey: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=800&q=80",
+  Austria: "https://images.unsplash.com/photo-1516550893923-42d28e5677af?auto=format&fit=crop&w=800&q=80",
+  Switzerland: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=800&q=80",
+};
+
+/** Country emoji flags. */
+export const COUNTRY_FLAGS: Record<string, string> = {
+  Germany: "🇩🇪",
+  Sweden: "🇸🇪",
+  Cyprus: "🇨🇾",
+  Turkey: "🇹🇷",
+  Austria: "🇦🇹",
+  Switzerland: "🇨🇭",
+};
+
+/** Country category filters & metadata. */
+export const COUNTRY_PERKS: Record<string, { tag: string; tone: string; visaRate: string; category: ("tuition-free" | "english" | "schengen")[] }> = {
+  Germany: {
+    tag: "Tuition-Free",
+    tone: "bg-emerald-600 text-white",
+    visaRate: "98% Visa Rate",
+    category: ["tuition-free", "schengen"],
+  },
+  Austria: {
+    tag: "€726 / Sem",
+    tone: "bg-blue-600 text-white",
+    visaRate: "97% Visa Rate",
+    category: ["tuition-free", "schengen"],
+  },
+  Sweden: {
+    tag: "English-Taught",
+    tone: "bg-indigo-600 text-white",
+    visaRate: "95% Visa Rate",
+    category: ["english", "schengen"],
+  },
+  Switzerland: {
+    tag: "Paid Internships",
+    tone: "bg-rose-600 text-white",
+    visaRate: "94% Visa Rate",
+    category: ["schengen"],
+  },
+  Turkey: {
+    tag: "No IELTS",
+    tone: "bg-amber-600 text-white",
+    visaRate: "99% Visa Rate",
+    category: ["english"],
+  },
+  Cyprus: {
+    tag: "Fast Track",
+    tone: "bg-teal-600 text-white",
+    visaRate: "99% Visa Rate",
+    category: ["english"],
+  },
+};
 
 /** Small icon shown in the corner of each destination card, keyed by country name. */
 export const COUNTRY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -154,23 +256,27 @@ export const WHY_US = [
 /** The four-step timeline in the "Our process" section. */
 export const PROCESS_STEPS = [
   {
+    step: "01",
     title: "Consultation",
     description: "In-depth profile analysis to match you with the best programs and destinations.",
     icon: MessagesSquare,
   },
   {
+    step: "02",
     title: "Application",
     description:
       "Flawless documentation, translation, and direct university or employer submissions.",
     icon: FileText,
   },
   {
+    step: "03",
     title: "Visa Processing",
     description:
       "Expert guidance through blocked accounts, APS certificates, and embassy interviews.",
     icon: BadgeCheck,
   },
   {
+    step: "04",
     title: "Arrival Support",
     description:
       "Pre-departure briefing and on-ground support for a smooth transition to your new life.",
@@ -181,23 +287,47 @@ export const PROCESS_STEPS = [
 export const TESTIMONIALS = [
   {
     quote:
-      "The team at WisdomLingo made the notoriously complex German visa process feel straightforward. Their in-house language prep was exactly what I needed to pass my B2 exams.",
+      "The team at WisdomLingo made the notoriously complex German visa process feel straightforward. Their in-house language prep was exactly what I needed to pass my B2 exams on the first attempt.",
     name: "Sarah Jenkins",
-    role: "MSc Engineering, Germany",
+    role: "MSc Automotive Engineering",
+    institution: "TU Munich, Germany",
+    destinationCountry: "Germany",
+    flag: "🇩🇪",
+    intake: "Winter 2025 Intake",
+    statusBadge: "Visa Approved & Enrolled",
+    highlight: "B2 Passed in 4 Months",
+    metric: "Tuition-Free Public University",
+    rating: 5,
     avatar: TESTIMONIAL_AVATARS.sarah,
   },
   {
     quote:
-      "I wanted to pursue an Ausbildung but did not know where to start. They matched me with an excellent employer and prepped me perfectly for the interviews.",
+      "I wanted to pursue an Ausbildung but had zero leads. WisdomLingo matched me with a leading healthcare employer in Frankfurt, negotiated my stipend, and prepared me for embassy questions.",
     name: "Ahmed Al-Farsi",
-    role: "IT Apprenticeship, Austria",
+    role: "Nursing Specialist Ausbildung",
+    institution: "Klinikum Frankfurt, Germany",
+    destinationCountry: "Germany",
+    flag: "🇩🇪",
+    intake: "Autumn 2025 Intake",
+    statusBadge: "Contract Secured & Visa Issued",
+    highlight: "€1,240/month Monthly Stipend",
+    metric: "100% Employer Sponsored",
+    rating: 5,
     avatar: TESTIMONIAL_AVATARS.ahmed,
   },
   {
     quote:
-      "From selecting the right university in Sweden to helping with accommodation, their support was comprehensive. Truly a premium consultancy service.",
+      "From choosing Lund University in Sweden to arranging student housing and visa formalities, their support was relentless. The team was transparent, reachable, and deeply professional throughout.",
     name: "Elena Rodriguez",
-    role: "BA Business, Sweden",
+    role: "BSc International Business",
+    institution: "Lund University, Sweden",
+    destinationCountry: "Sweden",
+    flag: "🇸🇪",
+    intake: "Spring 2026 Intake",
+    statusBadge: "Residence Permit Granted",
+    highlight: "Schengen Residence Permit",
+    metric: "Top 100 Global University",
+    rating: 5,
     avatar: TESTIMONIAL_AVATARS.elena,
   },
 ];
@@ -236,6 +366,9 @@ export const BLOG_POSTS = [
       "A comprehensive look at the best tuition-free engineering programs available for international students.",
     image: ARTICLE_IMAGES.universities,
     to: "/study-abroad",
+    author: "Academic Advisory Desk",
+    badgeColor: "bg-blue-50 text-blue-700 border-blue-200",
+    tags: ["Tuition-Free", "TU9 Universities", "Winter 2026"],
   },
   {
     category: "Language",
@@ -243,19 +376,25 @@ export const BLOG_POSTS = [
     readTime: "4 min read",
     title: "How to Ace the Goethe-Zertifikat B2 Exam: Insider Tips",
     excerpt:
-      "Our in-house language experts share their top strategies for passing the critical B2 assessment.",
+      "Our in-house language experts share their top strategies for passing the critical B2 assessment on your first try.",
     image: ARTICLE_IMAGES.language,
     to: "/courses",
+    author: "German Language Dept.",
+    badgeColor: "bg-amber-50 text-amber-700 border-amber-200",
+    tags: ["Goethe Exam", "B2 Certificate", "Exam Prep"],
   },
   {
-    category: "Career Focus",
+    category: "Ausbildung",
     date: "Jul 15, 2026",
     readTime: "6 min read",
     title: "The Ultimate Guide to German Ausbildung Programs",
     excerpt:
-      "Everything you need to know about the dual vocational training system and how to secure a contract.",
+      "Everything you need to know about the dual vocational training system, monthly stipends, and securing an employer contract.",
     image: ARTICLE_IMAGES.ausbildung,
-    to: "/apprenticeships",
+    to: "/ausbildung",
+    author: "Vocational Pathways",
+    badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    tags: ["Paid Training", "No Tuition", "PR Pathway"],
   },
   {
     category: "Visa & Documents",
@@ -266,6 +405,9 @@ export const BLOG_POSTS = [
       "Most refusals happen on documents, not merit. Here is the exact file an embassy expects from a Pakistani applicant.",
     image: ARTICLE_IMAGES.visa,
     to: "/study-abroad",
+    author: "Visa Compliance Cell",
+    badgeColor: "bg-purple-50 text-purple-700 border-purple-200",
+    tags: ["APS Certificate", "Blocked Account", "Embassy Tips"],
   },
   {
     category: "Study Guide",

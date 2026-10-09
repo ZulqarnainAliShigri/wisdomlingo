@@ -17,6 +17,7 @@ export const HERO_IMAGES = {
   home: unsplash("1591123120675-6f7f1aae0e5b"),
   courses: unsplash("1503676260728-1c00da094a0b", 1600),
   studyAbroad: unsplash("1467269204594-9661b134dd2b", 1600),
+  ausbildung: unsplash("1581091226825-a6a2a5aee158", 1600),
   apprenticeships: unsplash("1581091226825-a6a2a5aee158", 1600),
   about: unsplash("1521737711867-e3b97375f902", 1600),
   blog: unsplash("1434030216411-0b793f4b4173", 1600),

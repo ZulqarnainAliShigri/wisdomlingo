@@ -22,7 +22,7 @@ const HEADINGS: Record<AdminTab, string> = {
   overview: "Dashboard",
   courses: "Courses",
   countries: "Study destinations",
-  apprenticeships: "Apprenticeships",
+  apprenticeships: "Ausbildung",
   messages: "Messages",
   seo: "SEO",
   settings: "Settings",

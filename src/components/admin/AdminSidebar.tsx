@@ -33,7 +33,7 @@ export const ADMIN_TABS: AdminTabDef[] = [
   { key: "overview", label: "Dashboard", icon: LayoutDashboard, group: "Overview" },
   { key: "courses", label: "Courses", icon: BookOpen, group: "Manage" },
   { key: "countries", label: "Destinations", icon: Globe, group: "Manage" },
-  { key: "apprenticeships", label: "Apprenticeships", icon: Briefcase, group: "Manage" },
+  { key: "apprenticeships", label: "Ausbildung", icon: Briefcase, group: "Manage" },
   { key: "messages", label: "Messages", icon: MessageSquare, group: "Manage" },
   { key: "seo", label: "SEO", icon: Search, group: "Site" },
   { key: "settings", label: "Settings", icon: Settings, group: "Site" },

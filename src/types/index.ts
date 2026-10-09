@@ -46,6 +46,8 @@ export interface Apprenticeship {
   display_order?: number | null;
 }
 
+export type Ausbildung = Apprenticeship;
+
 export interface ContactSubmission {
   id: string;
   name: string;

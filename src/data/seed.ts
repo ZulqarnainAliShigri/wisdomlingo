@@ -36,7 +36,7 @@ export const SEED_COURSES: Course[] = [
     duration: "10 weeks",
     fee: "PKR 22,000",
     description:
-      "The level most Ausbildung (apprenticeship) contracts and student visas require. Covers connectors, subordinate clauses, formal letters and structured presentations.",
+      "The level most Ausbildung contracts and student visas require. Covers connectors, subordinate clauses, formal letters and structured presentations.",
     image_url: null,
     is_active: true,
   },
@@ -330,7 +330,7 @@ export const SEED_APPRENTICESHIPS: Apprenticeship[] = [
       "Clean police record",
     ],
     benefits: [
-      "Highest apprenticeship salary bracket",
+      "Highest Ausbildung salary bracket",
       "Guaranteed employment after training",
       "Fast-track family reunion",
       "PR eligibility after 21 months of work",

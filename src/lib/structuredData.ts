@@ -128,7 +128,7 @@ export function apprenticeshipListSchema(
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Apprenticeship fields",
+    name: "Ausbildung fields",
     numberOfItems: items.length,
     itemListElement: items.map((item, index) => ({
       "@type": "ListItem",

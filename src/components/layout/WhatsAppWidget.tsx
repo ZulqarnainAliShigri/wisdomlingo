@@ -101,7 +101,7 @@ export const WhatsAppWidget: React.FC = () => {
           <div className="bg-[#EFEAE2] bg-opacity-95 p-4">
             <div className="max-w-[90%] rounded-2xl rounded-tl-xs bg-white p-3 text-xs leading-relaxed text-slate-700 shadow-xs">
               <p>
-                Hi there 👋 Ask us about German courses, university admissions or paid apprenticeships. We are online and happy to help!
+                Hi there 👋 Ask us about German courses, university admissions or paid Ausbildung programs. We are online and happy to help!
               </p>
               <span className="mt-1 block text-right text-[10px] text-slate-400">
                 Just now • ✓✓

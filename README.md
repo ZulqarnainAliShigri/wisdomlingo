@@ -1,7 +1,7 @@
 # WisdomLingo
 
 Education consultancy platform for German language training, European study-abroad
-counselling and paid apprenticeships.
+counselling and paid Ausbildung programs.
 
 ```
 wisdom/
@@ -40,10 +40,10 @@ REACT_APP_SUPABASE_ANON_KEY=your-anon-public-key
 | `/` | Home — hero, stats, three program cards |
 | `/courses` | German (A1–C2), English (IELTS, Spoken), Religious (Quran, Arabic, Persian) tabs |
 | `/study-abroad` | 6 countries with expandable benefits + 4-step application process |
-| `/apprenticeships` | 5 fields with salary, duration, requirements, benefits |
+| `/ausbildung` | 5 fields with salary, duration, requirements, benefits |
 | `/about` | Company introduction + contact form |
 | `/admin` | Admin login |
-| `/admin/dashboard` | Protected dashboard — Courses, Destinations, Apprenticeships, Messages |
+| `/admin/dashboard` | Protected dashboard — Courses, Destinations, Ausbildung, Messages |
 
 Directory layout:
 

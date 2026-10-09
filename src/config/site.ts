@@ -102,6 +102,6 @@ export const SUBJECT_OPTIONS = [
   "IELTS / Spoken English",
   "Quran, Arabic or Persian",
   "Study Abroad Counselling",
-  "Apprenticeship (Ausbildung)",
+  "Ausbildung in Germany",
   "Other",
 ];

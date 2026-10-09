@@ -3,14 +3,14 @@ export const NAV_LINKS = [
   { to: "/", label: "Home" },
   { to: "/courses", label: "Courses" },
   { to: "/study-abroad", label: "Study Abroad" },
-  { to: "/apprenticeships", label: "Apprenticeships" },
+  { to: "/ausbildung", label: "Ausbildung" },
   { to: "/blog", label: "Blog" },
   { to: "/about", label: "About" },
 ];
 
 /** The links shown inline in the centre of the desktop navbar. Home is the logo. */
 export const PRIMARY_NAV = NAV_LINKS.filter((link) =>
-  ["/courses", "/study-abroad", "/apprenticeships", "/blog", "/about"].includes(link.to)
+  ["/courses", "/study-abroad", "/ausbildung", "/blog", "/about"].includes(link.to)
 );
 
 /** Footer link columns. */
@@ -20,7 +20,7 @@ export const FOOTER_GROUPS: { title: string; links: { to: string; label: string 
     links: [
       { to: "/courses", label: "German Courses" },
       { to: "/study-abroad", label: "Study Abroad" },
-      { to: "/apprenticeships", label: "Apprenticeships" },
+      { to: "/ausbildung", label: "Ausbildung" },
     ],
   },
   {

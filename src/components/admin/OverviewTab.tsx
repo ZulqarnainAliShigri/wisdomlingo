@@ -212,7 +212,7 @@ export const OverviewTab: React.FC<{ onNavigate: (tab: AdminTab) => void }> = ({
           hidden: hiddenCountries.length,
         },
         {
-          label: "Apprenticeships",
+          label: "Ausbildung",
           published: apprenticeships.length - hiddenApprenticeships.length,
           hidden: hiddenApprenticeships.length,
         },
@@ -250,7 +250,7 @@ export const OverviewTab: React.FC<{ onNavigate: (tab: AdminTab) => void }> = ({
           count: hiddenApprenticeships.length,
           icon: Briefcase,
           text: "hidden from the website",
-          noun: ["apprenticeship", "apprenticeships"] as const,
+          noun: ["Ausbildung program", "Ausbildung programs"] as const,
           tab: "apprenticeships" as AdminTab,
         },
       ].filter((item) => item.count > 0),
@@ -270,7 +270,7 @@ export const OverviewTab: React.FC<{ onNavigate: (tab: AdminTab) => void }> = ({
   const quickActions: { label: string; tab: AdminTab }[] = [
     { label: "Add a course", tab: "courses" },
     { label: "Add a destination", tab: "countries" },
-    { label: "Add an apprenticeship", tab: "apprenticeships" },
+    { label: "Add an Ausbildung program", tab: "apprenticeships" },
   ];
 
   return (
@@ -479,7 +479,7 @@ export const OverviewTab: React.FC<{ onNavigate: (tab: AdminTab) => void }> = ({
           </ChartCard>
 
           <ChartCard
-            title="Apprenticeships by field"
+            title="Ausbildung by field"
             hint={`${analytics.counts.apprenticeships} training fields`}
             tableRows={analytics.fields.map((slice) => ({
               label: slice.label,

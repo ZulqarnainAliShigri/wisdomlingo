@@ -8,7 +8,7 @@ export const DEFAULT_SEO: SeoSettings = {
   site_url: "",
   title_template: "%s | WisdomLingo",
   default_description:
-    "WisdomLingo - German language courses (A1 to C2), IELTS and spoken English, study abroad counselling for six European countries, and paid apprenticeships in Germany.",
+    "WisdomLingo - German language courses (A1 to C2), IELTS and spoken English, study abroad counselling for six European countries, and paid Ausbildung in Germany.",
   keywords: "German language course, Ausbildung, study abroad, IELTS, Goethe exam, WisdomLingo",
   og_image_url: null,
   twitter_handle: null,
@@ -21,7 +21,7 @@ export const SEO_PAGES: { key: SeoPageKey; label: string; path: string }[] = [
   { key: "home", label: "Home", path: "/" },
   { key: "courses", label: "Courses", path: "/courses" },
   { key: "studyAbroad", label: "Study Abroad", path: "/study-abroad" },
-  { key: "apprenticeships", label: "Apprenticeships", path: "/apprenticeships" },
+  { key: "apprenticeships", label: "Ausbildung", path: "/ausbildung" },
   { key: "blog", label: "Blog", path: "/blog" },
   { key: "about", label: "About", path: "/about" },
 ];

@@ -40,7 +40,7 @@ const ROUTES = [
   { key: "home", path: "/", label: "Home" },
   { key: "courses", path: "/courses", label: "Courses" },
   { key: "studyAbroad", path: "/study-abroad", label: "Study Abroad" },
-  { key: "apprenticeships", path: "/apprenticeships", label: "Apprenticeships" },
+  { key: "apprenticeships", path: "/ausbildung", label: "Ausbildung" },
   { key: "blog", path: "/blog", label: "Blog" },
   { key: "about", path: "/about", label: "About" },
 ];
@@ -50,7 +50,7 @@ const DEFAULTS = {
   site_url: "",
   title_template: `%s | ${COMPANY_FALLBACK.name}`,
   default_description:
-    "WisdomLingo - German language courses (A1 to C2), IELTS and spoken English, study abroad counselling for six European countries, and paid apprenticeships in Germany.",
+    "WisdomLingo - German language courses (A1 to C2), IELTS and spoken English, study abroad counselling for six European countries, and paid Ausbildung in Germany.",
   keywords: "",
   og_image_url: null,
   twitter_handle: null,

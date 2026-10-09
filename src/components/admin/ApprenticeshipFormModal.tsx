@@ -80,7 +80,7 @@ export const ApprenticeshipFormModal: React.FC<ApprenticeshipFormModalProps> = (
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (form.title.trim().length < 3) {
-      toast.error("Please enter the apprenticeship title.");
+      toast.error("Please enter the Ausbildung title.");
       return;
     }
     if (!form.field.trim()) {
@@ -110,8 +110,8 @@ export const ApprenticeshipFormModal: React.FC<ApprenticeshipFormModalProps> = (
   return (
     <FormShell
       open={open}
-      title={editing ? "Edit apprenticeship" : "Add apprenticeship"}
-      submitLabel={editing ? "Save changes" : "Create apprenticeship"}
+      title={editing ? "Edit Ausbildung" : "Add Ausbildung"}
+      submitLabel={editing ? "Save changes" : "Create Ausbildung"}
       saving={saving}
       busy={uploading}
       onClose={onClose}
@@ -190,7 +190,7 @@ export const ApprenticeshipFormModal: React.FC<ApprenticeshipFormModalProps> = (
 
       <div className="sm:col-span-2">
         <ImageUploadField
-          label="Apprenticeship image"
+          label="Ausbildung image"
           value={form.image_url}
           onChange={set("image_url")}
           folder="apprenticeships"

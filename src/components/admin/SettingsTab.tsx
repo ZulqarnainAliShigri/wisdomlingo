@@ -30,7 +30,7 @@ import { avatarUrl, displayName } from "./ProfileModal";
 const TABLES = [
   { name: "courses", label: "Courses" },
   { name: "study_countries", label: "Destinations" },
-  { name: "apprenticeships", label: "Apprenticeships" },
+  { name: "apprenticeships", label: "Ausbildung" },
   { name: "contact_submissions", label: "Messages" },
   { name: "seo_settings", label: "SEO settings" },
   { name: "company_settings", label: "Business details" },
