@@ -180,65 +180,67 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({ onUnreadCountChange })
   return (
     <div>
       {/* Filters - one row, scoping the list below */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative min-w-[14rem] flex-1">
+      <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search name, email or message"
+            placeholder="Search name, email, phone or message..."
             aria-label="Search messages"
-            className="input !py-2.5 !pl-9"
+            className="input !py-2 sm:!py-2.5 !pl-9 text-xs sm:text-sm"
           />
         </div>
 
-        <div
-          role="group"
-          aria-label="Filter by status"
-          className="inline-flex rounded-lg border border-slate-200 p-1"
-        >
-          {STATUS_FILTERS.map((option) => (
-            <button
-              key={option.key}
-              type="button"
-              onClick={() => setStatus(option.key)}
-              aria-pressed={status === option.key}
-              className={`rounded-md px-3 py-1.5 text-xs font-semibold transition ${
-                status === option.key
-                  ? "bg-primary text-white"
-                  : "text-slate-500 hover:text-slate-900"
-              }`}
-            >
-              {option.label}
-              {option.key === "unread" && unread > 0 && (
-                <span className={status === "unread" ? "ml-1.5" : "ml-1.5 text-accent"}>
-                  {unread}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-
-        {subjects.length > 0 && (
-          <select
-            value={subject}
-            onChange={(event) => setSubject(event.target.value)}
-            aria-label="Filter by subject"
-            className="input !w-auto !py-2.5 text-sm"
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+          <div
+            role="group"
+            aria-label="Filter by status"
+            className="flex overflow-x-auto rounded-xl border border-slate-200 bg-slate-50 p-1 no-scrollbar w-full sm:w-auto"
           >
-            <option value="all">All subjects</option>
-            {subjects.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
+            {STATUS_FILTERS.map((option) => (
+              <button
+                key={option.key}
+                type="button"
+                onClick={() => setStatus(option.key)}
+                aria-pressed={status === option.key}
+                className={`flex-1 sm:flex-none whitespace-nowrap rounded-lg px-3 py-1 text-xs font-bold transition text-center ${
+                  status === option.key
+                    ? "bg-primary text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                {option.label}
+                {option.key === "unread" && unread > 0 && (
+                  <span className={`ml-1.5 rounded-full px-1.5 py-0.2 text-[10px] font-black ${status === "unread" ? "bg-white text-primary" : "bg-accent text-white"}`}>
+                    {unread}
+                  </span>
+                )}
+              </button>
             ))}
-          </select>
-        )}
+          </div>
+
+          {subjects.length > 0 && (
+            <select
+              value={subject}
+              onChange={(event) => setSubject(event.target.value)}
+              aria-label="Filter by subject"
+              className="input !w-full sm:!w-auto !py-1.5 sm:!py-2 text-xs sm:text-sm font-semibold text-slate-700"
+            >
+              <option value="all">All subjects</option>
+              {subjects.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
       </div>
 
       {/* Inbox: list beside the conversation on desktop, one at a time on phones */}
-      <div className="mt-5 grid gap-5 lg:h-[calc(100vh-19rem)] lg:min-h-[28rem] lg:grid-cols-[19rem_1fr]">
+      <div className="mt-4 sm:mt-5 grid gap-4 sm:gap-5 lg:h-[calc(100vh-19rem)] lg:min-h-[28rem] lg:grid-cols-[19rem_1fr]">
         <div
           className={`flex flex-col overflow-hidden rounded-2xl border border-slate-200 ${
             selected ? "hidden lg:flex" : "flex"
@@ -496,20 +498,31 @@ const ThreadReader: React.FC<{
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-2 border-t border-slate-200 p-4">
+      <div className="flex flex-col sm:flex-row gap-2 border-t border-slate-200 p-3.5 sm:p-4 bg-white">
         {email && (
-          <a href={mailto} className="btn-primary !py-2.5 text-sm">
+          <a
+            href={mailto}
+            className="btn-primary !py-2.5 text-xs sm:text-sm flex-1 justify-center shadow-xs"
+          >
             <Mail className="h-4 w-4" /> Reply by email
           </a>
         )}
         {phone && (
-          <a href={`tel:${phone}`} className="btn-ghost !py-2.5 text-sm">
+          <a
+            href={`tel:${phone}`}
+            className="btn-ghost !py-2.5 text-xs sm:text-sm flex-1 justify-center border border-slate-200"
+          >
             <Phone className="h-4 w-4" /> Call
           </a>
         )}
         {whatsapp && (
-          <a href={whatsapp} target="_blank" rel="noreferrer" className="btn-ghost !py-2.5 text-sm">
-            <MessageSquare className="h-4 w-4" /> WhatsApp
+          <a
+            href={whatsapp}
+            target="_blank"
+            rel="noreferrer"
+            className="btn-ghost !py-2.5 text-xs sm:text-sm flex-1 justify-center border border-emerald-200 text-emerald-700 bg-emerald-50/60 hover:bg-emerald-100/80"
+          >
+            <MessageSquare className="h-4 w-4 text-emerald-600" /> WhatsApp
           </a>
         )}
       </div>

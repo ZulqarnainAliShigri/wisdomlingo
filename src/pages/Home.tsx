@@ -341,76 +341,74 @@ export const HomePage: React.FC = () => {
         {...courseCarousel.containerProps}
       >
         <div className="container-page">
-          {/* Courses Section Header */}
-          <div className="mb-4 sm:mb-8">
-            <SectionHeading
-              align="center"
-              eyebrow="Our Courses"
-              title="Language & Skill Training"
-              titleClassName="hidden sm:block"
-              subtitle="Certified courses from beginner to fluency."
-              subtitleClassName="hidden sm:block"
-            />
-          </div>
+          {/* Courses Section Header: Left on Desktop, Clean & Compact on Mobile */}
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 text-center lg:text-left">
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-primary-50 px-3 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-primary shadow-2xs">
+                <BookOpen className="h-3.5 w-3.5 text-primary" /> Our Courses
+              </span>
+              <h2 className="mt-2 text-xl font-black tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
+                Language & <span className="text-primary">Skill Training</span>
+              </h2>
+              <p className="hidden sm:block mt-1 text-xs sm:text-sm lg:text-base leading-relaxed text-slate-600">
+                Certified courses from beginner (A1) to fluency (C2) with Goethe exam preparation.
+              </p>
+            </div>
 
-          {/* Category Tabs */}
-          <div
-            role="tablist"
-            aria-label="Course categories"
-            className="mx-auto grid max-w-3xl grid-cols-3 gap-1 rounded-2xl bg-white p-1.5 shadow-sm sm:gap-2 sm:p-2"
-          >
-            {CATEGORY_TABS.map((tab) => {
-              const isActive = tab.key === activeCourseTab;
-              return (
+            {/* Category Tabs & Carousel Controls */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 self-center lg:self-end">
+              <div
+                role="tablist"
+                aria-label="Course categories"
+                className="grid grid-cols-3 gap-1 rounded-2xl bg-white p-1.5 shadow-sm sm:gap-1.5"
+              >
+                {CATEGORY_TABS.map((tab) => {
+                  const isActive = tab.key === activeCourseTab;
+                  return (
+                    <button
+                      key={tab.key}
+                      role="tab"
+                      aria-selected={isActive}
+                      type="button"
+                      onClick={() => {
+                        setActiveCourseTab(tab.key);
+                      }}
+                      className={`flex items-center justify-center gap-1 rounded-xl px-2.5 py-1.5 text-[11px] font-bold transition sm:px-3.5 sm:py-2 sm:text-xs ${
+                        isActive
+                          ? "bg-primary text-white shadow-sm"
+                          : "text-slate-600 hover:text-slate-900"
+                      }`}
+                    >
+                      <tab.icon className="h-3 w-3 shrink-0 sm:h-3.5 sm:w-3.5" />
+                      <span className="whitespace-nowrap">{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Clear Left / Right Carousel Controls - Hidden on Mobile */}
+              <div className="hidden sm:flex items-center gap-2">
                 <button
-                  key={tab.key}
-                  role="tab"
-                  aria-selected={isActive}
                   type="button"
-                  onClick={() => {
-                    setActiveCourseTab(tab.key);
-                  }}
-                  className={`flex items-center justify-center gap-1 rounded-xl px-1.5 py-2 text-[11px] font-bold transition sm:gap-2 sm:px-4 sm:py-3 sm:text-sm ${
-                    isActive
-                      ? "bg-primary text-white shadow-sm"
-                      : "text-slate-600 hover:text-slate-900"
-                  }`}
+                  onClick={courseCarousel.prev}
+                  aria-label="Previous course"
+                  className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
                 >
-                  <tab.icon className="h-3 w-3 shrink-0 sm:h-4 sm:w-4" />
-                  <span className="whitespace-nowrap">{tab.label}</span>
-                  <span
-                    className={`rounded-full px-1 py-0.5 text-[9px] font-semibold sm:px-2 sm:text-[11px] ${
-                      isActive ? "bg-white/20 text-white" : "bg-slate-200 text-slate-600"
-                    }`}
-                  >
-                    {allCourses.filter((c) => c.category === tab.key).length}
-                  </span>
+                  <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
-              );
-            })}
-          </div>
-
-          {/* Clear Left / Right Carousel Controls */}
-          <div className="mt-6 flex items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={courseCarousel.prev}
-              aria-label="Previous course"
-              className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <span className="text-xs font-black tracking-wider text-slate-500">
-              0{courseCarousel.activeRealIndex + 1} / 0{Math.max(1, filteredCourses.length)}
-            </span>
-            <button
-              type="button"
-              onClick={courseCarousel.next}
-              aria-label="Next course"
-              className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
+                <span className="px-1 text-xs font-black tracking-wider text-slate-500">
+                  0{courseCarousel.activeRealIndex + 1} / 0{Math.max(1, filteredCourses.length)}
+                </span>
+                <button
+                  type="button"
+                  onClick={courseCarousel.next}
+                  aria-label="Next course"
+                  className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
+                >
+                  <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Animated Runner Beam Track */}
@@ -545,28 +543,28 @@ export const HomePage: React.FC = () => {
         </div>
 
         <div className="container-page relative">
-          <div className="flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
-            <div className="max-w-2xl">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-primary-50 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-primary shadow-2xs">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 text-center lg:text-left">
+            <div className="max-w-2xl text-center lg:text-left">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-primary-50 px-3 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-primary shadow-2xs">
                 <Sparkles className="h-3.5 w-3.5 text-accent" /> Accredited Pathways
               </span>
-              <h2 className="mt-3 text-2xl font-black tracking-tight text-slate-900 sm:text-4xl lg:text-[2.5rem]">
+              <h2 className="mt-2 text-xl font-black tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
                 Three Programs, <span className="text-primary">One Future</span>
               </h2>
-              <p className="mt-2 text-sm sm:text-base leading-relaxed text-slate-600">
+              <p className="hidden sm:block mt-1 text-xs sm:text-sm lg:text-base leading-relaxed text-slate-600">
                 Language mastery, tuition-free degrees, and paid Ausbildung contracts in Germany.
               </p>
             </div>
 
-            {/* Clear Left / Right Carousel Controls on Mobile / Tablet */}
-            <div className="flex items-center gap-2 lg:hidden">
+            {/* Clear Left / Right Carousel Controls on Mobile / Tablet - Hidden on Mobile */}
+            <div className="hidden sm:flex items-center gap-2 lg:hidden">
               <button
                 type="button"
                 onClick={programCarousel.prev}
                 aria-label="Previous pathway"
-                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
+                className="flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
               >
-                <ChevronLeft className="h-5 w-5" />
+                <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
               <div className="px-2 text-xs font-black tracking-wider text-slate-500">
                 0{programCarousel.activeRealIndex + 1} / 0{HOME_PROGRAMS.length}
@@ -575,9 +573,9 @@ export const HomePage: React.FC = () => {
                 type="button"
                 onClick={programCarousel.next}
                 aria-label="Next pathway"
-                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
+                className="flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
               >
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
             </div>
           </div>
@@ -912,63 +910,67 @@ export const HomePage: React.FC = () => {
         {...destCarousel.containerProps}
       >
         <div className="container-page">
-          <div className="mx-auto max-w-3xl text-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-primary-50 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-primary shadow-2xs">
-              <Globe className="h-3.5 w-3.5 text-primary" /> Destinations
-            </span>
-            <h2 className="mt-3 text-2xl font-black tracking-tight text-slate-900 sm:text-4xl lg:text-[2.5rem]">
-              Top European <span className="text-primary">Destinations</span>
-            </h2>
-            <p className="mt-2 text-sm sm:text-base leading-relaxed text-slate-600 max-w-xl mx-auto">
-              Tuition-free admissions, Schengen work rights, and post-graduation settlement.
-            </p>
-
-            {/* Quick Interactive Filter Bar */}
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-              {[
-                { id: "all", label: "All 6 Countries" },
-                { id: "tuition-free", label: "Tuition-Free (DE & AT)" },
-                { id: "english", label: "English-Taught" },
-                { id: "schengen", label: "Schengen Zone" },
-              ].map((filterTab) => (
-                <button
-                  key={filterTab.id}
-                  type="button"
-                  onClick={() => {
-                    setDestFilter(filterTab.id as any);
-                  }}
-                  className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${
-                    destFilter === filterTab.id
-                      ? "bg-primary text-white shadow-md shadow-primary/25 scale-105"
-                      : "border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
-                  }`}
-                >
-                  {filterTab.label}
-                </button>
-              ))}
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 text-center lg:text-left">
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-primary-50 px-3 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-primary shadow-2xs">
+                <Globe className="h-3.5 w-3.5 text-primary" /> Destinations
+              </span>
+              <h2 className="mt-2 text-xl font-black tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
+                Top European <span className="text-primary">Destinations</span>
+              </h2>
+              <p className="hidden sm:block mt-1 text-xs sm:text-sm lg:text-base leading-relaxed text-slate-600">
+                Tuition-free admissions, Schengen work rights, and post-graduation settlement.
+              </p>
             </div>
 
-            {/* Clear Left / Right Carousel Controls */}
-            <div className="mt-6 flex items-center justify-center gap-3">
-              <button
-                type="button"
-                onClick={destCarousel.prev}
-                aria-label="Previous destination"
-                className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <span className="text-xs font-black tracking-wider text-slate-500">
-                0{destCarousel.activeRealIndex + 1} / 0{Math.max(1, filteredDestinations.length)}
-              </span>
-              <button
-                type="button"
-                onClick={destCarousel.next}
-                aria-label="Next destination"
-                className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
-              >
-                <ChevronRight className="h-5 w-5" />
-              </button>
+            {/* Quick Interactive Filter Bar + Controls */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 self-center lg:self-end">
+              <div className="flex flex-wrap items-center justify-center gap-1.5">
+                {[
+                  { id: "all", label: "All 6" },
+                  { id: "tuition-free", label: "Tuition-Free" },
+                  { id: "english", label: "English" },
+                  { id: "schengen", label: "Schengen" },
+                ].map((filterTab) => (
+                  <button
+                    key={filterTab.id}
+                    type="button"
+                    onClick={() => {
+                      setDestFilter(filterTab.id as any);
+                    }}
+                    className={`rounded-full px-3 py-1 text-[11px] sm:text-xs font-bold transition-all ${
+                      destFilter === filterTab.id
+                        ? "bg-primary text-white shadow-sm scale-105"
+                        : "border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                    }`}
+                  >
+                    {filterTab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Clear Left / Right Carousel Controls - Hidden on Mobile */}
+              <div className="hidden sm:flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={destCarousel.prev}
+                  aria-label="Previous destination"
+                  className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
+                >
+                  <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+                </button>
+                <span className="px-1 text-xs font-black tracking-wider text-slate-500">
+                  0{destCarousel.activeRealIndex + 1} / 0{Math.max(1, filteredDestinations.length)}
+                </span>
+                <button
+                  type="button"
+                  onClick={destCarousel.next}
+                  aria-label="Next destination"
+                  className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
+                >
+                  <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1244,20 +1246,22 @@ export const HomePage: React.FC = () => {
           WHY US
       ══════════════════════════════════════════════════════ */}
       <section className="section bg-primary-50">
-        <div className="container-page grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-12">
-          <div>
-            <SectionHeading
-              align="left"
-              eyebrow="Why WisdomLingo"
-              title="15 Years of Proven Excellence"
-              subtitle="Zero-error visa filings, Goethe-certified faculty, and direct university ties."
-              subtitleClassName="hidden sm:block"
-            />
+        <div className="container-page grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-12">
+          <div className="text-center lg:text-left">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-primary-50 px-3 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-primary shadow-2xs">
+              <Sparkles className="h-3.5 w-3.5 text-accent" /> Why WisdomLingo
+            </span>
+            <h2 className="mt-2 text-xl font-black tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
+              15 Years of <span className="text-primary">Proven Excellence</span>
+            </h2>
+            <p className="hidden sm:block mt-1 text-xs sm:text-sm lg:text-base leading-relaxed text-slate-600">
+              Zero-error visa filings, Goethe-certified faculty, and direct university ties.
+            </p>
             <a
               href={COMPANY.whatsapp}
               target="_blank"
               rel="noreferrer"
-              className="btn-primary mt-6 w-full sm:mt-8 sm:w-auto"
+              className="btn-primary mt-5 sm:mt-8 w-full sm:w-auto"
             >
               <MessageSquare className="h-4 w-4" /> Talk to a counsellor
             </a>
@@ -1343,12 +1347,17 @@ export const HomePage: React.FC = () => {
       ══════════════════════════════════════════════════════ */}
       <section className="section bg-white">
         <div className="container-page">
-          <SectionHeading
-            eyebrow="Our Process"
-            title="Your 4-Stage Pathway"
-            subtitle="From Islamabad consultation to landing in your European campus."
-            subtitleClassName="hidden sm:block"
-          />
+          <div className="text-center lg:text-left">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-primary-50 px-3 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-primary shadow-2xs">
+              Our Process
+            </span>
+            <h2 className="mt-2 text-xl font-black tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
+              Your 4-Stage <span className="text-primary">Pathway</span>
+            </h2>
+            <p className="hidden sm:block mt-1 text-xs sm:text-sm lg:text-base leading-relaxed text-slate-600">
+              From Islamabad consultation to landing in your European campus.
+            </p>
+          </div>
 
           <div className="relative mt-10 lg:mt-16">
             {/* Desktop timeline track base */}
@@ -1557,60 +1566,62 @@ export const HomePage: React.FC = () => {
         {...testimonialsCarousel.containerProps}
       >
         <div className="container-page">
-          <div className="mx-auto max-w-3xl text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-amber-800 shadow-2xs">
-              <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
-              Verified Outcomes
-            </span>
-            <h2 className="mt-3 text-2xl font-black tracking-tight text-slate-900 sm:text-4xl lg:text-[2.5rem]">
-              Real Journeys, <span className="text-primary">Real Results</span>
-            </h2>
-            <p className="mt-2 text-sm sm:text-base leading-relaxed text-slate-600 max-w-xl mx-auto">
-              Verified admissions, Goethe exam certificates, and European visa success stories.
-            </p>
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 text-center lg:text-left">
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-amber-800 shadow-2xs">
+                <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
+                Verified Outcomes
+              </span>
+              <h2 className="mt-2 text-xl font-black tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
+                Real Journeys, <span className="text-primary">Real Results</span>
+              </h2>
+              <p className="hidden sm:block mt-1 text-xs sm:text-sm lg:text-base leading-relaxed text-slate-600">
+                Verified admissions, Goethe exam certificates, and European visa success stories.
+              </p>
 
-            {/* Credibility highlights */}
-            <div className="mt-5 inline-flex flex-wrap items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-xs sm:gap-6">
-              <span className="flex items-center gap-1.5">
-                <span className="flex text-amber-500">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-current" />
-                  ))}
+              {/* Credibility highlights */}
+              <div className="mt-3.5 inline-flex flex-wrap items-center justify-center lg:justify-start gap-2.5 rounded-2xl border border-slate-200 bg-white px-3.5 py-1.5 text-[11px] sm:text-xs font-semibold text-slate-700 shadow-xs sm:gap-5">
+                <span className="flex items-center gap-1.5">
+                  <span className="flex text-amber-500">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-current" />
+                    ))}
+                  </span>
+                  <strong className="text-slate-900">4.9 / 5</strong> Rating (350+ reviews)
                 </span>
-                <strong className="text-slate-900">4.9 / 5</strong> Rating (350+ reviews)
-              </span>
-              <span className="hidden h-4 w-px bg-slate-200 sm:block" />
-              <span className="flex items-center gap-1.5 text-slate-700">
-                <ShieldCheck className="h-4 w-4 text-emerald-600" />
-                <strong className="text-slate-900">98.4%</strong> Visa Rate
-              </span>
-              <span className="hidden h-4 w-px bg-slate-200 sm:block" />
-              <span className="flex items-center gap-1.5 text-slate-700">
-                <GraduationCap className="h-4 w-4 text-primary" />
-                <strong className="text-slate-900">500+</strong> Placed in Europe
-              </span>
+                <span className="hidden h-3.5 w-px bg-slate-200 sm:block" />
+                <span className="flex items-center gap-1 text-slate-700">
+                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+                  <strong className="text-slate-900">98.4%</strong> Visa Rate
+                </span>
+                <span className="hidden h-3.5 w-px bg-slate-200 sm:block" />
+                <span className="flex items-center gap-1 text-slate-700">
+                  <GraduationCap className="h-3.5 w-3.5 text-primary" />
+                  <strong className="text-slate-900">500+</strong> Placed in Europe
+                </span>
+              </div>
             </div>
 
-            {/* Clear Left / Right Carousel Controls */}
-            <div className="mt-6 flex items-center justify-center gap-3">
+            {/* Clear Left / Right Carousel Controls - Hidden on Mobile */}
+            <div className="hidden sm:flex items-center justify-center lg:justify-end gap-2 self-center lg:self-end">
               <button
                 type="button"
                 onClick={testimonialsCarousel.prev}
                 aria-label="Previous testimonial"
-                className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
+                className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
               >
-                <ChevronLeft className="h-5 w-5" />
+                <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
-              <span className="text-xs font-black tracking-wider text-slate-500">
+              <span className="px-1 text-xs font-black tracking-wider text-slate-500">
                 0{testimonialsCarousel.activeRealIndex + 1} / 0{Math.max(1, displayStories.length)}
               </span>
               <button
                 type="button"
                 onClick={testimonialsCarousel.next}
                 aria-label="Next testimonial"
-                className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
+                className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
               >
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
             </div>
           </div>
@@ -1876,40 +1887,40 @@ export const HomePage: React.FC = () => {
         {...articlesCarousel.containerProps}
       >
         <div className="container-page">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-sky-800 shadow-2xs">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 text-center lg:text-left">
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-sky-800 shadow-2xs">
                 <BookOpen className="h-3.5 w-3.5 text-sky-600" />
                 Knowledge Hub
               </span>
-              <h2 className="mt-3 text-2xl font-black tracking-tight text-slate-900 sm:text-4xl lg:text-[2.5rem]">
+              <h2 className="mt-2 text-xl font-black tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
                 Guides & <span className="text-primary">Field Intel</span>
               </h2>
-              <p className="mt-2 text-sm sm:text-base leading-relaxed text-slate-600 max-w-xl">
+              <p className="hidden sm:block mt-1 text-xs sm:text-sm lg:text-base leading-relaxed text-slate-600">
                 Visa policy announcements and European university application guides.
               </p>
             </div>
 
-            {/* Clear Left / Right Carousel Controls */}
-            <div className="flex items-center gap-3">
+            {/* Clear Left / Right Carousel Controls & View All Link - Hidden on Mobile */}
+            <div className="hidden sm:flex items-center justify-center lg:justify-end gap-2 self-center lg:self-end">
               <button
                 type="button"
                 onClick={articlesCarousel.prev}
                 aria-label="Previous article"
-                className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
+                className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
               >
-                <ChevronLeft className="h-5 w-5" />
+                <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
-              <span className="text-xs font-black tracking-wider text-slate-500">
+              <span className="px-1 text-xs font-black tracking-wider text-slate-500">
                 0{articlesCarousel.activeRealIndex + 1} / 0{Math.max(1, displayArticles.length)}
               </span>
               <button
                 type="button"
                 onClick={articlesCarousel.next}
                 aria-label="Next article"
-                className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
+                className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-primary hover:bg-primary hover:text-white active:scale-95"
               >
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
               <ViewAllArticles className="hidden shrink-0 sm:inline-flex ml-2" />
             </div>

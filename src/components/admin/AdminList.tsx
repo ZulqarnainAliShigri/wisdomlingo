@@ -70,12 +70,12 @@ export function AdminList<T extends AdminEntity>({
 
   return (
     <div>
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-1 flex-col gap-3 sm:flex-row">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-1 flex-col gap-2.5 sm:flex-row">
           <div className="relative flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
-              className="input pl-10"
+              className="input pl-10 text-xs sm:text-sm"
               value={search}
               onChange={(event) => onSearchChange(event.target.value)}
               placeholder={searchPlaceholder}
@@ -85,12 +85,12 @@ export function AdminList<T extends AdminEntity>({
           {filter}
         </div>
 
-        <button type="button" className="btn-primary" onClick={onAdd}>
+        <button type="button" className="btn-primary w-full sm:w-auto justify-center" onClick={onAdd}>
           <Plus className="h-4 w-4" /> {addLabel}
         </button>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-5 sm:mt-6">
         {loading ? (
           <FullPageLoader label="Loading..." />
         ) : items.length === 0 ? (
@@ -168,39 +168,53 @@ export function AdminList<T extends AdminEntity>({
             </div>
 
             {/* Mobile / tablet cards */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:hidden">
+            <div className="grid gap-3.5 sm:gap-4 sm:grid-cols-2 lg:hidden">
               {items.map((item) => (
-                <div key={item.id} className="card overflow-hidden">
+                <div key={item.id} className="rounded-2xl border border-slate-200/90 bg-white overflow-hidden shadow-2xs transition hover:shadow-md">
                   {image && (
-                    <MediaImage src={image(item)} alt={primary(item)} className="h-32 w-full" />
+                    <div className="relative h-36 w-full overflow-hidden bg-slate-100">
+                      <MediaImage src={image(item)} alt={primary(item)} className="h-full w-full object-cover" />
+                      <div className="absolute top-2.5 right-2.5 z-10">
+                        {statusBadge(item)}
+                      </div>
+                    </div>
                   )}
-                  <div className="p-4">
-                    <div className="flex flex-wrap items-center gap-2">{statusBadge(item)}</div>
-                    <h3 className="mt-2 font-bold text-slate-900">{primary(item)}</h3>
-                    {secondary && <p className="mt-1 text-xs text-slate-500">{secondary(item)}</p>}
-                    <dl className="mt-3 space-y-1 text-xs text-slate-600">
-                      {columns.map((column) => (
-                        <div key={column.header} className="flex gap-2">
-                          <dt className="font-semibold text-slate-500">{column.header}:</dt>
-                          <dd className="min-w-0 flex-1 truncate">{column.render(item)}</dd>
-                        </div>
-                      ))}
-                    </dl>
-                    <div className="mt-4 flex gap-2">
+                  <div className="p-3.5 sm:p-4">
+                    {!image && (
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Entry</span>
+                        {statusBadge(item)}
+                      </div>
+                    )}
+                    <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-snug">{primary(item)}</h3>
+                    {secondary && <p className="mt-0.5 text-xs text-slate-500">{secondary(item)}</p>}
+                    
+                    <div className="mt-3 rounded-xl bg-slate-50/80 p-2.5 border border-slate-100">
+                      <dl className="space-y-1 text-xs text-slate-600">
+                        {columns.map((column) => (
+                          <div key={column.header} className="flex items-center justify-between gap-2 py-0.5">
+                            <dt className="font-semibold text-slate-400 text-[11px]">{column.header}:</dt>
+                            <dd className="min-w-0 font-medium text-slate-800 text-right truncate">{column.render(item)}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </div>
+
+                    <div className="mt-3.5 flex items-center gap-2">
                       <button
                         type="button"
-                        className="btn-ghost flex-1 !py-2"
+                        className="btn-primary flex-1 !py-2 text-xs font-bold justify-center"
                         onClick={() => onEdit(item)}
                       >
-                        <Pencil className="h-4 w-4" /> Edit
+                        <Pencil className="h-3.5 w-3.5" /> Edit
                       </button>
                       <button
                         type="button"
-                        className="btn !py-2 border border-accent text-accent hover:bg-accent-50"
+                        className="btn !py-2 px-3 border border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs font-bold"
                         onClick={() => onDelete(item)}
                         aria-label={`Delete ${primary(item)}`}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   </div>

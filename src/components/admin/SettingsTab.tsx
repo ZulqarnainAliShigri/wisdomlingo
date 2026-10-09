@@ -53,17 +53,17 @@ const Section: React.FC<{
   action?: React.ReactNode;
   children: React.ReactNode;
 }> = ({ icon: Icon, title, hint, action, children }) => (
-  <section className="rounded-2xl border border-slate-200 p-5">
-    <div className="flex flex-wrap items-start justify-between gap-3">
+  <section className="rounded-2xl border border-slate-200 p-4 sm:p-5">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div className="min-w-0">
-        <h2 className="flex items-center gap-2 text-base font-bold text-slate-900">
+        <h2 className="flex items-center gap-2 text-sm sm:text-base font-bold text-slate-900">
           <Icon className="h-4 w-4 text-primary" /> {title}
         </h2>
-        {hint && <p className="mt-1 text-sm text-slate-500">{hint}</p>}
+        {hint && <p className="mt-0.5 text-xs sm:text-sm text-slate-500">{hint}</p>}
       </div>
-      {action}
+      {action && <div className="shrink-0">{action}</div>}
     </div>
-    <div className="mt-5">{children}</div>
+    <div className="mt-4 sm:mt-5">{children}</div>
   </section>
 );
 

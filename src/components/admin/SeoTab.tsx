@@ -192,18 +192,18 @@ export const SeoTab: React.FC = () => {
       </div>
 
       {/* Checklist */}
-      <section className="rounded-2xl border border-slate-200 p-5">
+      <section className="rounded-2xl border border-slate-200 p-4 sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-base font-bold text-slate-900">SEO checklist</h2>
-          <span className="text-sm font-semibold text-slate-500">
+          <h2 className="text-sm sm:text-base font-bold text-slate-900">SEO checklist</h2>
+          <span className="text-xs sm:text-sm font-semibold text-slate-500">
             {passed} of {checks.length} done
           </span>
         </div>
-        <ul className="mt-4 space-y-2">
+        <ul className="mt-3.5 sm:mt-4 space-y-2">
           {checks.map((check) => (
             <li
               key={check.label}
-              className={`flex gap-3 rounded-xl border p-3.5 ${
+              className={`flex gap-2.5 sm:gap-3 rounded-xl border p-3 sm:p-3.5 ${
                 check.ok ? "border-emerald-200 bg-emerald-50/50" : "border-amber-200 bg-amber-50/50"
               }`}
             >
@@ -213,8 +213,8 @@ export const SeoTab: React.FC = () => {
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
               )}
               <span className="min-w-0">
-                <span className="block text-sm font-semibold text-slate-800">{check.label}</span>
-                <span className="block text-xs text-slate-500">{check.hint}</span>
+                <span className="block text-xs sm:text-sm font-semibold text-slate-800">{check.label}</span>
+                <span className="block text-[11px] sm:text-xs text-slate-500">{check.hint}</span>
               </span>
             </li>
           ))}
@@ -222,20 +222,20 @@ export const SeoTab: React.FC = () => {
       </section>
 
       {/* Per-page titles and descriptions */}
-      <section className="rounded-2xl border border-slate-200 p-5">
-        <h2 className="text-base font-bold text-slate-900">Page titles &amp; descriptions</h2>
-        <p className="mt-1 text-sm text-slate-500">
+      <section className="rounded-2xl border border-slate-200 p-4 sm:p-5">
+        <h2 className="text-sm sm:text-base font-bold text-slate-900">Page titles &amp; descriptions</h2>
+        <p className="mt-0.5 text-xs sm:text-sm text-slate-500">
           This is what shows in a Google result. Write for the person searching, not the robot.
         </p>
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-4 flex overflow-x-auto pb-1 gap-2 no-scrollbar">
           {SEO_PAGES.map((item) => (
             <button
               key={item.key}
               type="button"
               onClick={() => setActivePage(item.key)}
               aria-pressed={activePage === item.key}
-              className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
+              className={`shrink-0 rounded-lg px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold transition ${
                 activePage === item.key
                   ? "bg-primary text-white"
                   : "border border-slate-200 text-slate-600 hover:text-slate-900"
@@ -344,10 +344,10 @@ export const SeoTab: React.FC = () => {
       </section>
 
       {/* Site-wide */}
-      <section className="rounded-2xl border border-slate-200 p-5">
-        <h2 className="text-base font-bold text-slate-900">Site-wide settings</h2>
+      <section className="rounded-2xl border border-slate-200 p-4 sm:p-5">
+        <h2 className="text-sm sm:text-base font-bold text-slate-900">Site-wide settings</h2>
 
-        <div className="mt-4 grid gap-5 sm:grid-cols-2">
+        <div className="mt-4 grid gap-4 sm:gap-5 sm:grid-cols-2">
           <div>
             <label className="label" htmlFor="seo-site-name">
               Site name
@@ -462,18 +462,17 @@ export const SeoTab: React.FC = () => {
         </div>
       </section>
 
-
       {/* Technical SEO - what the build already does for you */}
-      <section className="rounded-2xl border border-slate-200 p-5">
-        <h2 className="flex items-center gap-2 text-base font-bold text-slate-900">
+      <section className="rounded-2xl border border-slate-200 p-4 sm:p-5">
+        <h2 className="flex items-center gap-2 text-sm sm:text-base font-bold text-slate-900">
           <Code2 className="h-4 w-4 text-primary" /> Technical SEO (handled at build time)
         </h2>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-0.5 text-xs sm:text-sm text-slate-500">
           These run automatically on <code className="rounded bg-slate-100 px-1.5 py-0.5">npm run build</code>,
           using the values above. Rebuild and redeploy after changing anything on this page.
         </p>
 
-        <ul className="mt-4 space-y-2 text-sm text-slate-700">
+        <ul className="mt-3.5 sm:mt-4 space-y-2 text-xs sm:text-sm text-slate-700">
           {[
             [
               "A real HTML file per page",
@@ -496,11 +495,11 @@ export const SeoTab: React.FC = () => {
               "Regenerated from your site URL, with any page you marked noindex left out of the sitemap.",
             ],
           ].map(([title, detail]) => (
-            <li key={title} className="flex gap-3 rounded-xl border border-slate-200 p-3.5">
+            <li key={title} className="flex gap-2.5 sm:gap-3 rounded-xl border border-slate-200 p-3 sm:p-3.5">
               <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
               <span>
                 <span className="block font-semibold text-slate-900">{title}</span>
-                <span className="block text-xs leading-relaxed text-slate-500">{detail}</span>
+                <span className="block text-[11px] sm:text-xs leading-relaxed text-slate-500">{detail}</span>
               </span>
             </li>
           ))}
@@ -515,7 +514,7 @@ export const SeoTab: React.FC = () => {
             }
             target="_blank"
             rel="noreferrer"
-            className="btn-ghost !py-2.5 text-sm"
+            className="btn-ghost !py-2 sm:!py-2.5 text-xs sm:text-sm"
           >
             Test rich results
           </a>
@@ -527,13 +526,13 @@ export const SeoTab: React.FC = () => {
             }
             target="_blank"
             rel="noreferrer"
-            className="btn-ghost !py-2.5 text-sm"
+            className="btn-ghost !py-2 sm:!py-2.5 text-xs sm:text-sm"
           >
             Check Core Web Vitals
           </a>
         </div>
 
-        <p className="mt-4 rounded-xl bg-amber-50 p-3.5 text-xs leading-relaxed text-amber-900">
+        <p className="mt-4 rounded-xl bg-amber-50 p-3 sm:p-3.5 text-xs leading-relaxed text-amber-900">
           <strong>One thing this cannot fix:</strong> reviews. Google will not show star ratings
           unless they are real and verifiable, and marking up invented ones risks a manual penalty -
           so no review markup is emitted. Collect genuine reviews on your Google Business Profile
@@ -542,11 +541,11 @@ export const SeoTab: React.FC = () => {
       </section>
 
       {/* Sitemap reminder */}
-      <section className="rounded-2xl border border-slate-200 p-5">
-        <h2 className="flex items-center gap-2 text-base font-bold text-slate-900">
+      <section className="rounded-2xl border border-slate-200 p-4 sm:p-5">
+        <h2 className="flex items-center gap-2 text-sm sm:text-base font-bold text-slate-900">
           <Globe className="h-4 w-4 text-primary" /> Next steps outside this dashboard
         </h2>
-        <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-slate-600">
+        <ol className="mt-3 list-decimal space-y-2 pl-5 text-xs sm:text-sm leading-relaxed text-slate-600">
           <li>
             Verify the site in{" "}
             <a
@@ -581,12 +580,12 @@ export const SeoTab: React.FC = () => {
         </ol>
       </section>
 
-      <div className="sticky bottom-0 -mx-5 border-t border-slate-200 bg-white px-5 py-4 sm:-mx-7 sm:px-7">
+      <div className="sticky bottom-0 -mx-3.5 sm:-mx-7 border-t border-slate-200 bg-white/95 backdrop-blur-xs px-4 py-3 sm:px-7 sm:py-4">
         <button
           type="button"
           onClick={save}
           disabled={saving || uploading}
-          className="btn-primary w-full sm:w-auto"
+          className="btn-primary w-full sm:w-auto justify-center"
         >
           {saving ? <Spinner /> : <Save className="h-4 w-4" />}
           {saving ? "Saving..." : "Save SEO settings"}

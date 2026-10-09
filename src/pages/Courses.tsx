@@ -212,7 +212,7 @@ export const CoursesPage: React.FC = () => {
                   <h2 className="mt-1 text-xl font-black tracking-tight text-slate-900 sm:text-2xl">
                     Which German Level Do You Need?
                   </h2>
-                  <p className="mt-1 text-xs sm:text-sm text-slate-600 max-w-2xl">
+                  <p className="hidden sm:block mt-1 text-xs sm:text-sm text-slate-600 max-w-2xl">
                     Every visa and academic programme in Germany has a specific CEFR requirement. Click any level to filter our matching courses.
                   </p>
                 </div>
@@ -476,15 +476,15 @@ export const CoursesPage: React.FC = () => {
           )}
 
           {/* Why Learn with WisdomLingo Academy Feature Grid */}
-          <div className="mt-16 rounded-3xl border border-slate-200/90 bg-white p-8 shadow-sm sm:p-12">
-            <div className="text-center">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3.5 py-1 text-xs font-bold text-primary">
+          <div className="mt-16 rounded-3xl border border-slate-200/90 bg-white p-6 shadow-sm sm:p-10 lg:p-12">
+            <div className="text-center lg:text-left">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-primary">
                 <Award className="h-3.5 w-3.5 text-accent" /> Academic Standard
               </span>
-              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+              <h2 className="mt-2 text-xl font-black tracking-tight text-slate-900 sm:text-2xl lg:text-3xl">
                 Why Learn German at WisdomLingo?
               </h2>
-              <p className="mx-auto mt-2 max-w-xl text-xs sm:text-sm text-slate-600">
+              <p className="hidden sm:block mt-1 max-w-xl text-xs sm:text-sm text-slate-600">
                 We combine rigorous Goethe exam preparation with active speaking immersion to ensure your visa success.
               </p>
             </div>
@@ -534,14 +534,14 @@ export const CoursesPage: React.FC = () => {
 
           {/* Student FAQs Accordion */}
           <div className="mt-16 rounded-3xl border border-slate-200/90 bg-white p-6 shadow-sm sm:p-10">
-            <div className="text-center">
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
+            <div className="text-center lg:text-left">
+              <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-primary">
                 <HelpCircle className="h-4 w-4" /> Have Questions?
               </span>
-              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+              <h2 className="mt-2 text-xl font-black tracking-tight text-slate-900 sm:text-2xl lg:text-3xl">
                 Frequently Asked Questions
               </h2>
-              <p className="mx-auto mt-1 max-w-xl text-xs sm:text-sm text-slate-600">
+              <p className="hidden sm:block mt-1 max-w-xl text-xs sm:text-sm text-slate-600">
                 Everything you need to know about course durations, examinations, and visa acceptance.
               </p>
             </div>

@@ -51,7 +51,7 @@ export const SectionHeading: React.FC<{
       )}
       {subtitle && (
         <p
-          className={`mt-1.5 sm:mt-2 text-xs sm:text-sm lg:text-base leading-relaxed text-slate-600 ${subtitleClassName}`}
+          className={`hidden sm:block mt-1.5 sm:mt-2 text-xs sm:text-sm lg:text-base leading-relaxed text-slate-600 ${subtitleClassName}`}
         >
           {subtitle}
         </p>
