@@ -40,7 +40,7 @@ export const StoriesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
           {
             header: "Country",
             render: (story) => (
-              <span className="inline-flex items-center gap-1 font-semibold text-slate-800">
+              <span className="inline-flex items-center gap-1 font-medium text-slate-800">
                 <span>{story.flag || "🎓"}</span>
                 <span>{story.destination_country}</span>
               </span>
@@ -49,24 +49,16 @@ export const StoriesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
           {
             header: "Status",
             render: (story) => (
-              <span className="inline-block rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-200/60">
+              <span className="inline-block rounded-md bg-emerald-50 px-1.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200/60">
                 {story.status_badge || "Visa Approved"}
               </span>
             ),
           },
           {
-            header: "Highlight",
+            header: "University",
             render: (story) => (
-              <span className="text-slate-600 truncate max-w-[180px] block">
-                {story.highlight || "-"}
-              </span>
-            ),
-          },
-          {
-            header: "Rating",
-            render: (story) => (
-              <span className="text-amber-500 font-semibold tracking-wider">
-                {"★".repeat(story.rating || 5)}
+              <span className="text-slate-600 truncate max-w-[150px] block">
+                {story.institution || story.role}
               </span>
             ),
           },

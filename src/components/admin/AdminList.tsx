@@ -176,70 +176,66 @@ export function AdminList<T extends AdminEntity>({
         ) : items.length === 0 ? (
           <EmptyState title={emptyTitle} hint={emptyHint} />
         ) : viewMode === "list" ? (
-          /* ================= LIST / TABLE VIEW ================= */
-          <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-            {/* Desktop Full Clean Table */}
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-left text-sm">
+          /* ================= SLIM & SIMPLE LIST VIEW ================= */
+          <div className="overflow-hidden rounded-xl border border-slate-200/90 bg-white shadow-2xs">
+            {/* Desktop / Tablet Thin Table */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-200 bg-slate-50/80 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                    <th className="px-4 py-3 sm:px-5">Title &amp; Details</th>
+                  <tr className="border-b border-slate-200 bg-slate-50/70 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    <th className="px-4 py-2.5">Title</th>
                     {columns.map((column) => (
-                      <th key={column.header} className="px-4 py-3 sm:px-5">
+                      <th key={column.header} className="px-3 py-2.5">
                         {column.header}
                       </th>
                     ))}
-                    <th className="px-4 py-3 sm:px-5">Status</th>
-                    <th className="px-4 py-3 sm:px-5 text-right">Actions</th>
+                    <th className="px-3 py-2.5">Status</th>
+                    <th className="px-4 py-2.5 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {items.map((item) => (
                     <tr key={item.id} className="transition hover:bg-slate-50/70">
-                      <td className="px-4 py-3.5 sm:px-5">
-                        <div className="flex items-center gap-3">
+                      <td className="px-4 py-2 sm:py-2.5">
+                        <div className="flex items-center gap-2.5">
                           {image && (
                             <MediaImage
                               src={image(item)}
                               alt={primary(item)}
-                              className="h-10 w-14 shrink-0 rounded-lg object-cover border border-slate-200/80 shadow-2xs"
-                              fallbackIcon={<ImageIcon className="h-4 w-4 text-slate-400" />}
+                              className="h-8 w-11 shrink-0 rounded-md object-cover border border-slate-200/80 shadow-2xs"
+                              fallbackIcon={<ImageIcon className="h-3.5 w-3.5 text-slate-400" />}
                             />
                           )}
                           <div className="min-w-0">
-                            <p className="font-bold text-slate-900 truncate max-w-sm text-sm">
+                            <p className="font-bold text-slate-900 truncate max-w-xs text-xs sm:text-sm">
                               {primary(item)}
                             </p>
-                            {secondary && (
-                              <p className="text-xs text-slate-500 truncate max-w-sm mt-0.5">
-                                {secondary(item)}
-                              </p>
-                            )}
                           </div>
                         </div>
                       </td>
                       {columns.map((column) => (
-                        <td key={column.header} className="px-4 py-3.5 sm:px-5 text-xs text-slate-600 font-medium">
+                        <td key={column.header} className="px-3 py-2 sm:py-2.5 text-slate-600 font-medium whitespace-nowrap">
                           {column.render(item)}
                         </td>
                       ))}
-                      <td className="px-4 py-3.5 sm:px-5">{statusBadge(item)}</td>
-                      <td className="px-4 py-3.5 sm:px-5 text-right">
-                        <div className="inline-flex items-center gap-1.5">
+                      <td className="px-3 py-2 sm:py-2.5 whitespace-nowrap">{statusBadge(item)}</td>
+                      <td className="px-4 py-2 sm:py-2.5 text-right whitespace-nowrap">
+                        <div className="inline-flex items-center gap-1">
                           <button
                             type="button"
                             aria-label={`Edit ${primary(item)}`}
                             onClick={() => onEdit(item)}
-                            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-primary hover:bg-primary-50 hover:text-primary active:scale-95"
+                            className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:border-primary hover:bg-primary-50 hover:text-primary active:scale-95"
+                            title="Edit"
                           >
                             <Pencil className="h-3.5 w-3.5" />
-                            <span>Edit</span>
                           </button>
                           <button
                             type="button"
                             aria-label={`Delete ${primary(item)}`}
                             onClick={() => onDelete(item)}
-                            className="inline-flex items-center justify-center rounded-lg border border-rose-200 bg-rose-50/60 p-1.5 text-rose-600 transition hover:border-rose-300 hover:bg-rose-100 active:scale-95"
+                            className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-rose-200 bg-rose-50/50 text-rose-600 transition hover:border-rose-300 hover:bg-rose-100 active:scale-95"
+                            title="Delete"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
@@ -251,62 +247,50 @@ export function AdminList<T extends AdminEntity>({
               </table>
             </div>
 
-            {/* Mobile / Tablet Simple List Row Cards */}
-            <div className="divide-y divide-slate-100 md:hidden">
+            {/* Mobile Thin Single-Row Items */}
+            <div className="divide-y divide-slate-100 sm:hidden">
               {items.map((item) => (
-                <div key={item.id} className="p-3.5 sm:p-4 hover:bg-slate-50/60 transition">
-                  <div className="flex items-start gap-3">
+                <div key={item.id} className="flex items-center justify-between gap-2.5 px-3 py-2.5 hover:bg-slate-50/60 transition">
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
                     {image && (
                       <MediaImage
                         src={image(item)}
                         alt={primary(item)}
-                        className="h-12 w-14 shrink-0 rounded-xl object-cover border border-slate-200/80 shadow-2xs"
-                        fallbackIcon={<ImageIcon className="h-4 w-4 text-slate-400" />}
+                        className="h-9 w-9 shrink-0 rounded-lg object-cover border border-slate-200/80"
+                        fallbackIcon={<ImageIcon className="h-3.5 w-3.5 text-slate-400" />}
                       />
                     )}
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <h4 className="truncate text-xs sm:text-sm font-bold text-slate-900 leading-tight">
-                          {primary(item)}
-                        </h4>
-                        {statusBadge(item)}
-                      </div>
-                      {secondary && (
-                        <p className="mt-0.5 truncate text-[11px] sm:text-xs text-slate-500">
-                          {secondary(item)}
-                        </p>
-                      )}
-
-                      {/* Attributes list */}
-                      <div className="mt-2 flex flex-wrap gap-1.5 text-[10px] sm:text-[11px]">
-                        {columns.map((column) => (
-                          <span
-                            key={column.header}
-                            className="inline-flex items-center gap-1 rounded-md bg-slate-100/90 px-2 py-0.5 font-medium text-slate-700"
-                          >
-                            <span className="text-slate-400">{column.header}:</span>
-                            <span className="font-semibold">{column.render(item)}</span>
+                      <p className="truncate text-xs font-bold text-slate-900 leading-snug">
+                        {primary(item)}
+                      </p>
+                      <div className="mt-0.5 flex items-center gap-2 text-[10px] text-slate-500">
+                        {columns.slice(0, 2).map((col) => (
+                          <span key={col.header} className="truncate">
+                            {col.render(item)}
                           </span>
                         ))}
                       </div>
                     </div>
                   </div>
 
-                  {/* Actions Footer */}
-                  <div className="mt-2.5 flex items-center justify-end gap-2 pt-2 border-t border-slate-100/80">
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {statusBadge(item)}
                     <button
                       type="button"
                       onClick={() => onEdit(item)}
-                      className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-primary hover:bg-primary-50 hover:text-primary active:scale-95"
+                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-600 active:scale-95"
+                      title="Edit"
                     >
-                      <Pencil className="h-3.5 w-3.5" /> Edit
+                      <Pencil className="h-3 w-3" />
                     </button>
                     <button
                       type="button"
                       onClick={() => onDelete(item)}
-                      className="inline-flex items-center gap-1 rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs font-semibold text-rose-600 transition hover:bg-rose-100 active:scale-95"
+                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-rose-200 bg-rose-50 text-rose-600 active:scale-95"
+                      title="Delete"
                     >
-                      <Trash2 className="h-3.5 w-3.5" /> Delete
+                      <Trash2 className="h-3 w-3" />
                     </button>
                   </div>
                 </div>

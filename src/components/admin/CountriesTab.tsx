@@ -38,24 +38,16 @@ export const CountriesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
           {
             header: "Flag",
             render: (country) => (
-              <span className="inline-block rounded-md bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-800">
+              <span className="inline-block rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-semibold text-slate-800">
                 {country.flag || "🌍"}
               </span>
             ),
           },
           {
             header: "Tuition",
-            render: (country) => <span className="font-bold text-slate-900">{country.tuition || "-"}</span>,
+            render: (country) => <span className="font-semibold text-slate-800">{country.tuition || "-"}</span>,
           },
           { header: "Intakes", render: (country) => <span className="text-slate-600">{country.intake || "-"}</span> },
-          {
-            header: "Overview",
-            render: (country) => (
-              <span className="text-slate-600 text-xs">
-                {country.benefits.length} benefits • {country.requirements.length} reqs
-              </span>
-            ),
-          },
         ]}
         search={search}
         onSearchChange={setSearch}

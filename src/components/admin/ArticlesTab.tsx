@@ -40,21 +40,13 @@ export const ArticlesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
           {
             header: "Category",
             render: (art) => (
-              <span className="inline-block rounded-md bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700 border border-blue-200/60">
+              <span className="inline-block rounded-md bg-blue-50 px-1.5 py-0.5 text-[11px] font-bold text-blue-700 border border-blue-200/60">
                 {art.category}
               </span>
             ),
           },
           { header: "Read Time", render: (art) => <span className="text-slate-600">{art.read_time || "5 min"}</span> },
-          {
-            header: "Tags",
-            render: (art) => (
-              <span className="text-slate-600 truncate max-w-[160px] block">
-                {art.tags.length ? art.tags.slice(0, 2).join(", ") : "-"}
-              </span>
-            ),
-          },
-          { header: "Author", render: (art) => <span className="text-slate-700 font-medium">{art.author || "WisdomLingo"}</span> },
+          { header: "Author", render: (art) => <span className="text-slate-600 font-medium">{art.author || "WisdomLingo"}</span> },
         ]}
         search={search}
         onSearchChange={setSearch}

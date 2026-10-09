@@ -41,7 +41,7 @@ export const CoursesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
           {
             header: "Category",
             render: (course) => (
-              <span className="inline-block rounded-md bg-slate-100 px-2 py-0.5 text-xs font-semibold capitalize text-slate-700">
+              <span className="inline-block rounded-md bg-slate-100 px-1.5 py-0.5 text-[11px] font-semibold capitalize text-slate-700">
                 {course.category}
               </span>
             ),
@@ -49,15 +49,14 @@ export const CoursesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
           {
             header: "Level",
             render: (course) => (
-              <span className="inline-block rounded-md bg-primary-50 px-2 py-0.5 text-xs font-bold text-primary">
+              <span className="inline-block rounded-md bg-primary-50 px-1.5 py-0.5 text-[11px] font-bold text-primary">
                 {course.level || "-"}
               </span>
             ),
           },
-          { header: "Duration", render: (course) => <span className="text-slate-600">{course.duration || "-"}</span> },
           {
             header: "Fee",
-            render: (course) => <span className="font-bold text-slate-900">{course.fee || "-"}</span>,
+            render: (course) => <span className="font-bold text-slate-800">{course.fee || "-"}</span>,
           },
         ]}
         search={search}

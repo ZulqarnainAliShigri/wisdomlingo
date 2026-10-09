@@ -37,24 +37,16 @@ export const ApprenticeshipsTab: React.FC<{ onBack?: () => void }> = ({ onBack }
           {
             header: "Field",
             render: (item) => (
-              <span className="inline-block rounded-md bg-primary-50 px-2 py-0.5 text-xs font-bold text-primary">
+              <span className="inline-block rounded-md bg-primary-50 px-1.5 py-0.5 text-[11px] font-bold text-primary">
                 {item.field}
               </span>
             ),
           },
           {
-            header: "Salary / Stipend",
-            render: (item) => <span className="font-bold text-slate-900">{item.salary || "-"}</span>,
+            header: "Stipend",
+            render: (item) => <span className="font-semibold text-slate-800">{item.salary || "-"}</span>,
           },
           { header: "Duration", render: (item) => <span className="text-slate-600">{item.duration || "-"}</span> },
-          {
-            header: "Details",
-            render: (item) => (
-              <span className="text-slate-600 text-xs">
-                {item.requirements.length} reqs • {item.benefits.length} perks
-              </span>
-            ),
-          },
         ]}
         search={search}
         onSearchChange={setSearch}
