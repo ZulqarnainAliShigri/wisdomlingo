@@ -121,6 +121,10 @@ export function useInfiniteCarousel<T>({
 
   // Track style for seamless 60fps GPU acceleration
   const trackStyle: React.CSSProperties = {
+    display: "flex",
+    width: "100%",
+    minWidth: "100%",
+    flexWrap: "nowrap",
     transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)`,
     transition: isTransitioning
       ? "transform 700ms cubic-bezier(0.25, 1, 0.5, 1)"
@@ -130,7 +134,10 @@ export function useInfiniteCarousel<T>({
 
   const itemStyle: React.CSSProperties = {
     width: `${100 / itemsPerView}%`,
+    minWidth: `${100 / itemsPerView}%`,
+    maxWidth: `${100 / itemsPerView}%`,
     flexShrink: 0,
+    boxSizing: "border-box",
   };
 
   return {

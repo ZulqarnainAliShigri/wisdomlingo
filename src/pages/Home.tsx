@@ -429,15 +429,15 @@ export const HomePage: React.FC = () => {
           </div>
 
           {/* Infinite Carousel Sliding Viewport */}
-          <div className="relative mt-4">
+          <div className="relative w-full max-w-full overflow-hidden mt-4">
             {/* Left Floating Arrow */}
             <button
               type="button"
               onClick={courseCarousel.prev}
               aria-label="Previous course"
-              className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
+              className="absolute left-1 sm:-left-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
             >
-              <ChevronLeft className="h-6 w-6" />
+              <ChevronLeft className="h-5 w-5" />
             </button>
 
             {/* Right Floating Arrow */}
@@ -445,15 +445,15 @@ export const HomePage: React.FC = () => {
               type="button"
               onClick={courseCarousel.next}
               aria-label="Next course"
-              className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
+              className="absolute right-1 sm:-right-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
             >
-              <ChevronRight className="h-6 w-6" />
+              <ChevronRight className="h-5 w-5" />
             </button>
 
             {/* Track */}
-            <div className="overflow-hidden py-3 -my-3 px-1 sm:px-2">
+            <div className="w-full max-w-full overflow-hidden py-3 -my-3 px-1 sm:px-2">
               <div
-                className="flex"
+                className="flex w-full min-w-0 flex-nowrap"
                 style={courseCarousel.trackStyle}
                 onTransitionEnd={courseCarousel.handleTransitionEnd}
               >
@@ -705,15 +705,15 @@ export const HomePage: React.FC = () => {
           </div>
 
           {/* MOBILE & TABLET VIEW: Seamless Infinite Carousel */}
-          <div className="relative mt-6 block lg:hidden">
+          <div className="relative w-full max-w-full overflow-hidden mt-6 block lg:hidden">
             {/* Left Floating Arrow */}
             <button
               type="button"
               onClick={programCarousel.prev}
               aria-label="Previous pathway"
-              className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
+              className="absolute left-1 sm:-left-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
             >
-              <ChevronLeft className="h-6 w-6" />
+              <ChevronLeft className="h-5 w-5" />
             </button>
 
             {/* Right Floating Arrow */}
@@ -721,15 +721,15 @@ export const HomePage: React.FC = () => {
               type="button"
               onClick={programCarousel.next}
               aria-label="Next pathway"
-              className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
+              className="absolute right-1 sm:-right-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
             >
-              <ChevronRight className="h-6 w-6" />
+              <ChevronRight className="h-5 w-5" />
             </button>
 
             {/* Carousel Overflow Viewport */}
-            <div className="overflow-hidden py-3 -my-3 px-1 sm:px-2">
+            <div className="w-full max-w-full overflow-hidden py-3 -my-3 px-1 sm:px-2">
               <div
-                className="flex"
+                className="flex w-full min-w-0 flex-nowrap"
                 style={programCarousel.trackStyle}
                 onTransitionEnd={programCarousel.handleTransitionEnd}
               >
@@ -988,15 +988,15 @@ export const HomePage: React.FC = () => {
           </div>
 
           {/* Carousel Viewport with Floating Left and Right Navigation Buttons */}
-          <div className="relative mt-6">
+          <div className="relative w-full max-w-full overflow-hidden mt-6">
             {/* Left Floating Arrow */}
             <button
               type="button"
               onClick={destCarousel.prev}
               aria-label="Previous destination"
-              className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
+              className="absolute left-1 sm:-left-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
             >
-              <ChevronLeft className="h-6 w-6" />
+              <ChevronLeft className="h-5 w-5" />
             </button>
 
             {/* Right Floating Arrow */}
@@ -1004,15 +1004,15 @@ export const HomePage: React.FC = () => {
               type="button"
               onClick={destCarousel.next}
               aria-label="Next destination"
-              className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
+              className="absolute right-1 sm:-right-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
             >
-              <ChevronRight className="h-6 w-6" />
+              <ChevronRight className="h-5 w-5" />
             </button>
 
             {/* Sliding Carousel Track */}
-            <div className="overflow-hidden py-3 -my-3 px-1 sm:px-2">
+            <div className="w-full max-w-full overflow-hidden py-3 -my-3 px-1 sm:px-2">
               <div
-                className="flex"
+                className="flex w-full min-w-0 flex-nowrap"
                 style={destCarousel.trackStyle}
                 onTransitionEnd={destCarousel.handleTransitionEnd}
               >
@@ -1631,29 +1631,29 @@ export const HomePage: React.FC = () => {
           </div>
 
           {/* Carousel Viewport with Floating Left/Right Arrows */}
-          <div className="relative mt-6">
+          <div className="relative w-full max-w-full overflow-hidden mt-6">
             <button
               type="button"
               onClick={testimonialsCarousel.prev}
               aria-label="Previous testimonial"
-              className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
+              className="absolute left-1 sm:-left-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
             >
-              <ChevronLeft className="h-6 w-6" />
+              <ChevronLeft className="h-5 w-5" />
             </button>
 
             <button
               type="button"
               onClick={testimonialsCarousel.next}
               aria-label="Next testimonial"
-              className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
+              className="absolute right-1 sm:-right-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
             >
-              <ChevronRight className="h-6 w-6" />
+              <ChevronRight className="h-5 w-5" />
             </button>
 
             {/* Sliding Track */}
-            <div className="overflow-hidden py-3 -my-3 px-1 sm:px-2">
+            <div className="w-full max-w-full overflow-hidden py-3 -my-3 px-1 sm:px-2">
               <div
-                className="flex"
+                className="flex w-full min-w-0 flex-nowrap"
                 style={testimonialsCarousel.trackStyle}
                 onTransitionEnd={testimonialsCarousel.handleTransitionEnd}
               >
@@ -1931,29 +1931,29 @@ export const HomePage: React.FC = () => {
           </div>
 
           {/* Carousel Viewport with Floating Left/Right Arrows */}
-          <div className="relative mt-6">
+          <div className="relative w-full max-w-full overflow-hidden mt-6">
             <button
               type="button"
               onClick={articlesCarousel.prev}
               aria-label="Previous article"
-              className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
+              className="absolute left-1 sm:-left-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
             >
-              <ChevronLeft className="h-6 w-6" />
+              <ChevronLeft className="h-5 w-5" />
             </button>
 
             <button
               type="button"
               onClick={articlesCarousel.next}
               aria-label="Next article"
-              className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
+              className="absolute right-1 sm:-right-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
             >
-              <ChevronRight className="h-6 w-6" />
+              <ChevronRight className="h-5 w-5" />
             </button>
 
             {/* Sliding Track */}
-            <div className="overflow-hidden py-3 -my-3 px-1 sm:px-2">
+            <div className="w-full max-w-full overflow-hidden py-3 -my-3 px-1 sm:px-2">
               <div
-                className="flex"
+                className="flex w-full min-w-0 flex-nowrap"
                 style={articlesCarousel.trackStyle}
                 onTransitionEnd={articlesCarousel.handleTransitionEnd}
               >
