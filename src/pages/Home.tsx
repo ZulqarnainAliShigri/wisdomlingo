@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
@@ -37,7 +37,6 @@ import { SEED_ARTICLES, SEED_COUNTRIES, SEED_COURSES, SEED_STORIES } from "../da
 import { useRemoteList } from "../hooks/useRemoteList";
 import { mapArticle, mapCountry, mapCourse, mapStory } from "../lib/mappers";
 import { Article, Course, CourseCategory, Story, StudyCountry } from "../types";
-import { SectionHeading } from "../components/ui/SectionHeading";
 import { EnquiryModal } from "../components/public/EnquiryModal";
 import { CourseCard } from "../components/public/CourseCard";
 import { DetailModal, DetailModalData } from "../components/public/DetailModal";
@@ -104,13 +103,30 @@ export const HomePage: React.FC = () => {
     intervalMs: 2000,
   });
 
-  // 2. ACCREDITED PATHWAYS CAROUSEL (Mobile / Tablet only, Desktop is 3-col grid)
-  const programItemsPerView = viewportWidth < 768 ? 1 : 2;
+  // 2. ACCREDITED PATHWAYS CAROUSEL (Desktop: 3 cards, Tablet: 2 cards, Mobile: 1 card)
+  const programItemsPerView = viewportWidth < 640 ? 1 : viewportWidth < 1024 ? 2 : 3;
   const programCarousel = useInfiniteCarousel({
     items: HOME_PROGRAMS,
     itemsPerView: programItemsPerView,
     intervalMs: 2000,
+    pauseOnHover: false,
   });
+
+  // Program 3D carousel touch swipe gestures
+  const programTouchStartXRef = useRef<number | null>(null);
+  const handleProgramTouchStart = (e: React.TouchEvent) => {
+    programTouchStartXRef.current = e.touches[0].clientX;
+  };
+  const handleProgramTouchEnd = (e: React.TouchEvent) => {
+    if (programTouchStartXRef.current === null) return;
+    const deltaX = e.changedTouches[0].clientX - programTouchStartXRef.current;
+    if (deltaX > 40) {
+      programCarousel.prev();
+    } else if (deltaX < -40) {
+      programCarousel.next();
+    }
+    programTouchStartXRef.current = null;
+  };
 
   // 3. DESTINATIONS SHOWCASE INFINITE CAROUSEL
   const [destFilter, setDestFilter] = useState<"all" | "tuition-free" | "english" | "schengen">("all");
@@ -530,7 +546,7 @@ export const HomePage: React.FC = () => {
           PROGRAMS SHOWCASE (STATIC GRID ON DESKTOP, SEAMLESS INFINITE CAROUSEL ON MOBILE)
       ══════════════════════════════════════════════════════ */}
       <section
-        className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50/80 to-white py-16 sm:py-24"
+        className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50/80 to-white py-4 sm:py-16 lg:py-20"
         {...programCarousel.containerProps}
       >
         {/* Decorative background glows */}
@@ -543,12 +559,12 @@ export const HomePage: React.FC = () => {
         </div>
 
         <div className="container-page relative">
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 text-center lg:text-left">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-2 sm:gap-4 text-center lg:text-left">
             <div className="max-w-2xl text-center lg:text-left">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-primary-50 px-3 py-0.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-primary shadow-2xs">
-                <Sparkles className="h-3.5 w-3.5 text-accent" /> Accredited Pathways
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-primary-50 px-2.5 py-0.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-primary shadow-2xs">
+                <Sparkles className="h-3 w-3 text-accent" /> Accredited Pathways
               </span>
-              <h2 className="mt-2 text-xl font-black tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
+              <h2 className="mt-1 text-lg font-black tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
                 Three Programs, <span className="text-primary">One Future</span>
               </h2>
               <p className="hidden sm:block mt-1 text-xs sm:text-sm lg:text-base leading-relaxed text-slate-600">
@@ -556,8 +572,8 @@ export const HomePage: React.FC = () => {
               </p>
             </div>
 
-            {/* Clear Left / Right Carousel Controls on Mobile / Tablet - Hidden on Mobile */}
-            <div className="hidden sm:flex items-center gap-2 lg:hidden">
+            {/* Carousel Controls */}
+            <div className="hidden sm:flex items-center gap-2">
               <button
                 type="button"
                 onClick={programCarousel.prev}
@@ -580,138 +596,19 @@ export const HomePage: React.FC = () => {
             </div>
           </div>
 
-          {/* DESKTOP VIEW: Clean Static 3-Column Grid (No Carousel on Desktop) */}
-          <div className="mt-10 hidden lg:grid lg:grid-cols-3 lg:gap-8 items-stretch">
-            {HOME_PROGRAMS.map((program) => (
-              <article
-                key={program.title}
-                className="group relative flex h-full flex-col rounded-3xl border border-slate-200/90 bg-white shadow-sm transition-all duration-500 overflow-hidden hover:border-primary/40 hover:shadow-2xl hover:-translate-y-2 cursor-pointer"
-              >
-                {/* Visual Image Header */}
-                <div className="relative h-44 w-full overflow-hidden bg-slate-900">
-                  <img
-                    src={program.image}
-                    alt={program.title}
-                    loading="lazy"
-                    className="h-full w-full object-cover opacity-85 transition-transform duration-700 ease-out group-hover:scale-106 group-hover:opacity-95"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-
-                  {/* Top Floating Badges */}
-                  <div className="absolute inset-x-4 top-3.5 flex items-center justify-between gap-2 z-10">
-                    <span
-                      className={`rounded-full px-3 py-1 text-[11px] font-bold tracking-wide shadow-md backdrop-blur-md ${program.badgeColor}`}
-                    >
-                      {program.badge}
-                    </span>
-                    <span className="rounded-md bg-white/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
-                      Verified
-                    </span>
-                  </div>
-
-                  {/* Center Emblem Icon */}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/50 bg-white/95 text-primary shadow-2xl backdrop-blur-md transition-all duration-500 group-hover:scale-110 group-hover:bg-primary group-hover:text-white">
-                      <program.icon className="h-7 w-7 transition-transform duration-300" />
-                    </div>
-                  </div>
-
-                  {/* Bottom Stat Ribbon */}
-                  <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between rounded-xl border border-white/20 bg-slate-950/60 px-3 py-1.5 backdrop-blur-md text-white shadow-md z-10">
-                    <div>
-                      <span className="block text-[10px] uppercase font-semibold tracking-wider text-slate-300">
-                        {program.statLabel}
-                      </span>
-                      <span className="block text-xs sm:text-sm font-black text-white tracking-tight">
-                        {program.stat}
-                      </span>
-                    </div>
-                    <span className="text-[11px] font-bold text-emerald-400">
-                      Active Pathway
-                    </span>
-                  </div>
-                </div>
-
-                {/* Card Content Body */}
-                <div className="flex flex-1 flex-col p-5 sm:p-6">
-                  <h3 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-primary">
-                    {program.title}
-                  </h3>
-                  <p className="mt-1 text-xs font-bold uppercase tracking-wide text-accent">
-                    {program.tagline}
-                  </p>
-                  <p className="mt-2 text-xs sm:text-sm leading-relaxed text-slate-600 line-clamp-2">
-                    {program.description}
-                  </p>
-
-                  {/* Micro Pills */}
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {program.pills.map((pill) => (
-                      <span
-                        key={pill}
-                        className="inline-flex items-center rounded-md bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700"
-                      >
-                        {pill}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Card CTA Actions */}
-                  <div className="mt-5 pt-3 border-t border-slate-100 flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDetailData({
-                          title: program.title,
-                          subtitle: program.tagline,
-                          category: "Core Pathway",
-                          badge: program.badge,
-                          badgeColor: program.badgeColor,
-                          image: program.image,
-                          description: program.description,
-                          metrics: [
-                            { label: program.statLabel, value: program.stat },
-                            { label: "Format", value: "Campus & Online" },
-                            { label: "Visa Support", value: "Complete File" },
-                          ],
-                          points: program.points,
-                          primaryCtaText: program.cta,
-                          onPrimaryCta: () => {
-                            window.location.href = program.to;
-                          },
-                          secondaryCtaText: "WhatsApp Us",
-                          secondaryCtaLink: COMPANY.whatsapp,
-                        });
-                      }}
-                      className="flex-1 rounded-xl border border-slate-200 bg-slate-50 py-2.5 px-3 text-xs sm:text-sm font-bold text-slate-700 transition-colors hover:border-primary hover:bg-primary-50 hover:text-primary"
-                    >
-                      Details
-                    </button>
-                    <Link
-                      to={program.to}
-                      onClick={(e) => e.stopPropagation()}
-                      className="flex-1 flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 py-2.5 px-3 text-xs sm:text-sm font-bold text-white transition-all hover:bg-primary"
-                    >
-                      <span>Explore</span>
-                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                    </Link>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          {/* MOBILE & TABLET VIEW: Seamless Infinite Carousel */}
-          <div className="relative w-full max-w-full overflow-hidden mt-6 block lg:hidden">
+          {/* 3D COVERFLOW FANNED STAGE (Center card prominent & upright, Left & Right cards fanned in 3D perspective) */}
+          <div
+            className="relative w-full max-w-6xl mx-auto mt-2 sm:mt-8 select-none"
+            style={{ perspective: "1200px" }}
+          >
             {/* Left Floating Arrow */}
             <button
               type="button"
               onClick={programCarousel.prev}
               aria-label="Previous pathway"
-              className="absolute left-1 sm:-left-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
+              className="absolute left-0.5 sm:left-3 lg:left-5 top-1/2 -translate-y-1/2 z-40 flex h-8 w-8 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
 
             {/* Right Floating Arrow */}
@@ -719,180 +616,241 @@ export const HomePage: React.FC = () => {
               type="button"
               onClick={programCarousel.next}
               aria-label="Next pathway"
-              className="absolute right-1 sm:-right-5 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
+              className="absolute right-0.5 sm:right-3 lg:right-5 top-1/2 -translate-y-1/2 z-40 flex h-8 w-8 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:text-white hover:scale-110 active:scale-95"
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
 
-            {/* Carousel Overflow Viewport */}
-            <div className="w-full max-w-full overflow-hidden py-3 -my-3 px-1 sm:px-2">
-              <div
-                className="flex w-full min-w-0 flex-nowrap"
-                style={programCarousel.trackStyle}
-                onTransitionEnd={programCarousel.handleTransitionEnd}
-              >
-                {programCarousel.extendedItems.map((program, index) => {
-                  const realIndex = (index % HOME_PROGRAMS.length);
-                  const isActive = programCarousel.activeRealIndex === realIndex;
+            {/* 3D Cards Stage Viewport */}
+            <div
+              className="relative w-full h-[290px] sm:h-[440px] lg:h-[500px] flex items-center justify-center overflow-hidden sm:overflow-visible py-0.5 sm:py-2"
+              style={{ transformStyle: "preserve-3d" }}
+              onTouchStart={handleProgramTouchStart}
+              onTouchEnd={handleProgramTouchEnd}
+            >
+              {programCarousel.extendedItems.map((program, index) => {
+                const offset = index - programCarousel.currentIndex;
 
-                  return (
-                    <div
-                      key={`${program.title}-${index}`}
-                      className="shrink-0 p-2 sm:p-3"
-                      style={programCarousel.itemStyle}
+                // Render active center card and 2 adjacent cards on each side
+                if (offset < -2 || offset > 2) return null;
+
+                const isCenter = offset === 0;
+                const isLeft = offset === -1;
+                const isRight = offset === 1;
+
+                // 3D positioning styles matching user's fanned cards diagram
+                let transform = "";
+                let zIndex = 10;
+                let opacity = 0;
+                let pointerEvents: "auto" | "none" = "none";
+                let cursor = "default";
+                let filter = "none";
+
+                const sideOffsetPercent = viewportWidth < 640 ? "70%" : viewportWidth < 1024 ? "74%" : "80%";
+
+                if (isCenter) {
+                  transform = "translate3d(-50%, -50%, 40px) rotateY(0deg) rotateZ(0deg) scale(1.02)";
+                  zIndex = 30;
+                  opacity = 1;
+                  pointerEvents = "auto";
+                } else if (isLeft) {
+                  transform = `translate3d(calc(-50% - ${sideOffsetPercent}), -50%, -30px) rotateY(25deg) rotateZ(-3deg) scale(0.85)`;
+                  zIndex = 20;
+                  opacity = 0.85;
+                  pointerEvents = "auto";
+                  cursor = "pointer";
+                  filter = "brightness(0.96)";
+                } else if (isRight) {
+                  transform = `translate3d(calc(-50% + ${sideOffsetPercent}), -50%, -30px) rotateY(-25deg) rotateZ(3deg) scale(0.85)`;
+                  zIndex = 20;
+                  opacity = 0.85;
+                  pointerEvents = "auto";
+                  cursor = "pointer";
+                  filter = "brightness(0.96)";
+                } else if (offset === -2) {
+                  transform = "translate3d(calc(-50% - 130%), -50%, -90px) rotateY(35deg) rotateZ(-5deg) scale(0.7)";
+                  zIndex = 10;
+                  opacity = 0;
+                } else if (offset === 2) {
+                  transform = "translate3d(calc(-50% + 130%), -50%, -90px) rotateY(-35deg) rotateZ(5deg) scale(0.7)";
+                  zIndex = 10;
+                  opacity = 0;
+                }
+
+                const cardStyle: React.CSSProperties = {
+                  position: "absolute",
+                  left: "50%",
+                  top: "50%",
+                  width: "100%",
+                  maxWidth: viewportWidth < 640 ? "min(58vw, 225px)" : viewportWidth < 1024 ? "280px" : "320px",
+                  transform,
+                  zIndex,
+                  opacity,
+                  pointerEvents,
+                  cursor,
+                  filter,
+                  transition: programCarousel.isTransitioning
+                    ? "transform 700ms cubic-bezier(0.25, 1, 0.5, 1), opacity 700ms ease, filter 700ms ease"
+                    : "none",
+                  transformStyle: "preserve-3d",
+                  willChange: "transform, opacity",
+                };
+
+                return (
+                  <div
+                    key={`${program.title}-${index}`}
+                    style={cardStyle}
+                    onClick={() => {
+                      if (isLeft) programCarousel.prev();
+                      if (isRight) programCarousel.next();
+                    }}
+                    onTransitionEnd={
+                      isCenter ? programCarousel.handleTransitionEnd : undefined
+                    }
+                  >
+                    <article
+                      className={`group relative flex h-full flex-col rounded-xl sm:rounded-2xl bg-white transition-all duration-500 overflow-hidden ${
+                        isCenter
+                          ? "border-2 border-slate-800/90 shadow-xl shadow-slate-900/20 ring-1 sm:ring-2 ring-primary/20"
+                          : "border border-slate-300/90 shadow-md shadow-slate-900/10 hover:border-slate-400"
+                      }`}
                     >
-                      <article
-                        className={`group relative flex h-full flex-col rounded-3xl border transition-all duration-500 overflow-hidden bg-white cursor-pointer ${
-                          isActive
-                            ? "border-primary/60 shadow-2xl -translate-y-2 ring-2 ring-primary/30"
-                            : "border-slate-200/90 shadow-sm hover:border-slate-300 hover:-translate-y-1"
-                        }`}
-                      >
-                        {/* Visual Image Header */}
-                        <div className="relative h-44 w-full overflow-hidden bg-slate-900">
-                          <img
-                            src={program.image}
-                            alt={program.title}
-                            loading="lazy"
-                            className={`h-full w-full object-cover transition-transform duration-700 ease-out ${
-                              isActive ? "scale-108 opacity-95" : "opacity-85 group-hover:scale-105"
-                            }`}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                      {/* Side card click overlay indicator */}
+                      {!isCenter && (
+                        <div
+                          className="absolute inset-0 z-30 rounded-xl sm:rounded-2xl bg-slate-950/10 transition-colors hover:bg-slate-950/5 cursor-pointer"
+                          title="Click to view"
+                        />
+                      )}
 
-                          {/* Top Badges */}
-                          <div className="absolute inset-x-4 top-3.5 flex items-center justify-between gap-2 z-10">
-                            <span
-                              className={`rounded-full px-3 py-1 text-[11px] font-bold tracking-wide shadow-md backdrop-blur-md ${program.badgeColor}`}
-                            >
-                              {program.badge}
-                            </span>
-                            <span className="rounded-md bg-white/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
-                              Verified
-                            </span>
-                          </div>
+                      {/* Visual Image Header */}
+                      <div className="relative h-26 sm:h-36 lg:h-40 w-full overflow-hidden bg-slate-900" style={{ height: viewportWidth < 640 ? "105px" : undefined }}>
+                        <img
+                          src={program.image}
+                          alt={program.title}
+                          loading="lazy"
+                          className="h-full w-full object-cover opacity-85 transition-transform duration-700 ease-out group-hover:scale-106 group-hover:opacity-95"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
 
-                          {/* Center Emblem Icon */}
-                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                            <div
-                              className={`flex h-14 w-14 items-center justify-center rounded-2xl border border-white/50 shadow-2xl backdrop-blur-md transition-all duration-500 ${
-                                isActive
-                                  ? "bg-primary text-white scale-110 shadow-primary/50 ring-4 ring-primary/20 rotate-3"
-                                  : "bg-white/95 text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-white"
-                              }`}
-                            >
-                              <program.icon className="h-7 w-7 transition-transform duration-300" />
-                            </div>
-                          </div>
-
-                          {/* Bottom Stat Ribbon */}
-                          <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between rounded-xl border border-white/20 bg-slate-950/60 px-3 py-1.5 backdrop-blur-md text-white shadow-md z-10">
-                            <div>
-                              <span className="block text-[10px] uppercase font-semibold tracking-wider text-slate-300">
-                                {program.statLabel}
-                              </span>
-                              <span className="block text-xs sm:text-sm font-black text-white tracking-tight">
-                                {program.stat}
-                              </span>
-                            </div>
-                            <span className="text-[11px] font-bold text-emerald-400">
-                              Active Pathway
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Card Content Body */}
-                        <div className="flex flex-1 flex-col p-5 sm:p-6">
-                          <h3
-                            className={`text-lg sm:text-xl font-bold tracking-tight transition-colors ${
-                              isActive ? "text-primary font-black" : "text-slate-900 group-hover:text-primary"
-                            }`}
+                        {/* Top Floating Badges */}
+                        <div className="absolute inset-x-2.5 top-2 flex items-center justify-between gap-1 z-10">
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-[8.5px] sm:text-[10px] font-bold tracking-wide shadow-md backdrop-blur-md ${program.badgeColor}`}
                           >
-                            {program.title}
-                          </h3>
-                          <p className="mt-1 text-xs font-bold uppercase tracking-wide text-accent">
-                            {program.tagline}
-                          </p>
-                          <p className="mt-2 text-xs sm:text-sm leading-relaxed text-slate-600 line-clamp-2">
-                            {program.description}
-                          </p>
+                            {program.badge}
+                          </span>
+                          <span className="rounded-md bg-white/20 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider text-white">
+                            Verified
+                          </span>
+                        </div>
 
-                          {/* Micro Pills */}
-                          <div className="mt-3 flex flex-wrap gap-1.5">
-                            {program.pills.map((pill) => (
-                              <span
-                                key={pill}
-                                className="inline-flex items-center rounded-md bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700"
-                              >
-                                {pill}
-                              </span>
-                            ))}
-                          </div>
-
-                          {/* Card CTA Actions */}
-                          <div className="mt-5 pt-3 border-t border-slate-100 flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setDetailData({
-                                  title: program.title,
-                                  subtitle: program.tagline,
-                                  category: "Core Pathway",
-                                  badge: program.badge,
-                                  badgeColor: program.badgeColor,
-                                  image: program.image,
-                                  description: program.description,
-                                  metrics: [
-                                    { label: program.statLabel, value: program.stat },
-                                    { label: "Format", value: "Campus & Online" },
-                                    { label: "Visa Support", value: "Complete File" },
-                                  ],
-                                  points: program.points,
-                                  primaryCtaText: program.cta,
-                                  onPrimaryCta: () => {
-                                    window.location.href = program.to;
-                                  },
-                                  secondaryCtaText: "WhatsApp Us",
-                                  secondaryCtaLink: COMPANY.whatsapp,
-                                });
-                              }}
-                              className="flex-1 rounded-xl border border-slate-200 bg-slate-50 py-2.5 px-3 text-xs sm:text-sm font-bold text-slate-700 transition-colors hover:border-primary hover:bg-primary-50 hover:text-primary"
-                            >
-                              Details
-                            </button>
-                            <Link
-                              to={program.to}
-                              onClick={(e) => e.stopPropagation()}
-                              className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2.5 px-3 text-xs sm:text-sm font-bold transition-all ${
-                                isActive
-                                  ? "bg-primary text-white shadow-md shadow-primary/20 hover:bg-blue-800"
-                                  : "bg-slate-900 text-white hover:bg-primary"
-                              }`}
-                            >
-                              <span>Explore</span>
-                              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                            </Link>
+                        {/* Center Emblem Icon */}
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                          <div className="flex h-8 w-8 sm:h-11 sm:w-11 items-center justify-center rounded-lg sm:rounded-xl border border-white/50 bg-white/95 text-primary shadow-lg sm:shadow-xl backdrop-blur-md transition-all duration-500 group-hover:scale-110 group-hover:bg-primary group-hover:text-white">
+                            <program.icon className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300" />
                           </div>
                         </div>
-                      </article>
-                    </div>
-                  );
-                })}
-              </div>
+
+                        {/* Bottom Stat Ribbon */}
+                        <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between rounded-md sm:rounded-lg border border-white/20 bg-slate-950/65 px-2 py-0.5 sm:px-2.5 sm:py-1 backdrop-blur-md text-white shadow-md z-10">
+                          <div>
+                            <span className="block text-[8px] sm:text-[9px] uppercase font-semibold tracking-wider text-slate-300 leading-tight">
+                              {program.statLabel}
+                            </span>
+                            <span className="block text-[10px] sm:text-xs font-black text-white tracking-tight leading-tight">
+                              {program.stat}
+                            </span>
+                          </div>
+                          <span className="text-[9px] sm:text-[10px] font-bold text-emerald-400">
+                            Active
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Card Content Body */}
+                      <div className="flex flex-1 flex-col p-2.5 sm:p-4 lg:p-4.5">
+                        <h3 className="text-xs sm:text-base font-bold tracking-tight text-slate-900 transition-colors group-hover:text-primary line-clamp-1 sm:line-clamp-none">
+                          {program.title}
+                        </h3>
+                        <p className="mt-0.5 text-[8.5px] sm:text-[10px] font-bold uppercase tracking-wide text-accent leading-tight line-clamp-1">
+                          {program.tagline}
+                        </p>
+                        <p className="mt-1 sm:mt-1.5 text-[9.5px] sm:text-xs leading-snug text-slate-600 line-clamp-2">
+                          {program.description}
+                        </p>
+
+                        {/* Micro Pills */}
+                        <div className="mt-1.5 sm:mt-2.5 flex flex-wrap gap-1">
+                          {program.pills.map((pill) => (
+                            <span
+                              key={pill}
+                              className="inline-flex items-center rounded bg-slate-100 px-1.5 py-0.5 text-[8.5px] sm:text-[10px] font-semibold text-slate-700"
+                            >
+                              {pill}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Card CTA Actions */}
+                        <div className="mt-2 sm:mt-3.5 pt-1.5 sm:pt-2.5 border-t border-slate-100 flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDetailData({
+                                title: program.title,
+                                subtitle: program.tagline,
+                                category: "Core Pathway",
+                                badge: program.badge,
+                                badgeColor: program.badgeColor,
+                                image: program.image,
+                                description: program.description,
+                                metrics: [
+                                  { label: program.statLabel, value: program.stat },
+                                  { label: "Format", value: "Campus & Online" },
+                                  { label: "Visa Support", value: "Complete File" },
+                                ],
+                                points: program.points,
+                                primaryCtaText: program.cta,
+                                onPrimaryCta: () => {
+                                  window.location.href = program.to;
+                                },
+                                secondaryCtaText: "WhatsApp Us",
+                                secondaryCtaLink: COMPANY.whatsapp,
+                              });
+                            }}
+                            className="flex-1 rounded-md sm:rounded-lg border border-slate-200 bg-slate-50 py-1.5 px-2 text-[10px] sm:text-xs font-bold text-slate-700 transition-colors hover:border-primary hover:bg-primary-50 hover:text-primary"
+                          >
+                            Details
+                          </button>
+                          <Link
+                            to={program.to}
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex-1 flex items-center justify-center gap-1 rounded-md sm:rounded-lg bg-slate-900 py-1.5 px-2 text-[10px] sm:text-xs font-bold text-white transition-all hover:bg-primary"
+                          >
+                            <span>Explore</span>
+                            <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5 transition-transform group-hover:translate-x-0.5" />
+                          </Link>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                );
+              })}
             </div>
 
-            {/* Interactive Step Dots for Mobile/Tablet */}
-            <div className="mt-6 flex items-center justify-center gap-2">
+            {/* Interactive Step Dots */}
+            <div className="mt-2 sm:mt-6 flex items-center justify-center gap-1.5 sm:gap-2">
               {HOME_PROGRAMS.map((program, idx) => (
                 <button
                   key={program.title}
                   type="button"
                   onClick={() => programCarousel.goTo(idx)}
-                  className={`h-2 rounded-full transition-all duration-500 ${
+                  className={`h-1.5 sm:h-2.5 rounded-full transition-all duration-500 ${
                     programCarousel.activeRealIndex === idx
-                      ? "w-8 bg-primary"
-                      : "w-2 bg-slate-300 hover:bg-slate-400"
+                      ? "w-6 sm:w-8 bg-primary"
+                      : "w-1.5 sm:w-2.5 bg-slate-300 hover:bg-slate-400"
                   }`}
                   aria-label={`Go to ${program.title}`}
                 />

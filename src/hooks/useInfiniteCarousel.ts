@@ -17,15 +17,37 @@ export function useInfiniteCarousel<T>({
 }: UseInfiniteCarouselOptions<T>) {
   const count = items.length;
 
-  // We duplicate the array 3 times: [cloneBlock0, activeBlock1, cloneBlock2]
+  // Calculate copies: ensure plenty of runway (at least 24 items) so looping is 100% seamless
+  const copies = useMemo(() => {
+    if (count <= 1) return 1;
+    return Math.max(4, Math.ceil(24 / count));
+  }, [count]);
+
+  const middleBlock = useMemo(() => {
+    if (count <= 1) return 0;
+    return count <= 3 ? 3 : 1;
+  }, [count]);
+
+  const maxBlock = useMemo(() => {
+    if (count <= 1) return 1;
+    return count <= 3 ? 5 : 3;
+  }, [count]);
+
+  // Extended items array duplicated smoothly across multiple blocks
   const extendedItems = useMemo(() => {
     if (count === 0) return [];
     if (count === 1) return items;
-    return [...items, ...items, ...items];
-  }, [items, count]);
+    const result: T[] = [];
+    for (let i = 0; i < copies; i++) {
+      result.push(...items);
+    }
+    return result;
+  }, [items, count, copies]);
 
-  // Initial position is at the start of block 1 (middle block)
-  const [currentIndex, setCurrentIndex] = useState(() => (count > 1 ? count : 0));
+  // Initial position in the safe middle block
+  const [currentIndex, setCurrentIndex] = useState(() =>
+    count > 1 ? count * middleBlock : 0
+  );
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   const resettingRef = useRef(false);
@@ -34,7 +56,7 @@ export function useInfiniteCarousel<T>({
   useEffect(() => {
     if (count > 1) {
       setIsTransitioning(false);
-      setCurrentIndex(count);
+      setCurrentIndex(count * middleBlock);
       const timer = setTimeout(() => {
         setIsTransitioning(true);
       }, 50);
@@ -42,45 +64,71 @@ export function useInfiniteCarousel<T>({
     } else {
       setCurrentIndex(0);
     }
-  }, [count]);
+  }, [count, middleBlock]);
+
+  // Pause when browser tab is inactive to prevent timer drift, resume when active
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.hidden) {
+        setIsPaused(true);
+      } else {
+        setIsPaused(false);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, []);
 
   // Next slide (advances forward)
   const next = useCallback(() => {
     if (count <= 1 || resettingRef.current) return;
     setIsTransitioning(true);
-    setCurrentIndex((prev) => prev + 1);
-  }, [count]);
+    setCurrentIndex((prev) => {
+      // Safety guard: if somehow drifted too far, normalize smoothly
+      if (prev >= count * (maxBlock + 1)) {
+        return count * middleBlock + (prev % count) + 1;
+      }
+      return prev + 1;
+    });
+  }, [count, maxBlock, middleBlock]);
 
   // Previous slide (moves backward)
   const prev = useCallback(() => {
     if (count <= 1 || resettingRef.current) return;
     setIsTransitioning(true);
-    setCurrentIndex((prev) => prev - 1);
-  }, [count]);
+    setCurrentIndex((prev) => {
+      if (prev <= count * (middleBlock - 1)) {
+        return count * (middleBlock + 1) + ((prev % count) + count) % count - 1;
+      }
+      return prev - 1;
+    });
+  }, [count, middleBlock]);
 
   // Jump to specific real index
   const goTo = useCallback(
     (realIndex: number) => {
       if (count <= 1) return;
-      const target = count + ((realIndex % count + count) % count);
+      const normalizedReal = ((realIndex % count) + count) % count;
+      const target = count * middleBlock + normalizedReal;
       setIsTransitioning(true);
       setCurrentIndex(target);
     },
-    [count]
+    [count, middleBlock]
   );
 
   // Handle transition end for seamless invisible loop reset
   const handleTransitionEnd = useCallback(() => {
     if (count <= 1) return;
 
-    // If we passed beyond the middle block into block 2
-    if (currentIndex >= count * 2) {
+    // If we reached or passed the upper threshold block
+    if (currentIndex >= count * maxBlock) {
       resettingRef.current = true;
       setIsTransitioning(false);
-      const targetIndex = currentIndex - count;
+      const normalizedReal = ((currentIndex % count) + count) % count;
+      const targetIndex = count * middleBlock + normalizedReal;
       setCurrentIndex(targetIndex);
 
-      // Re-enable transition on next animation frame
+      // Re-enable transition on the next animation frames
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setIsTransitioning(true);
@@ -88,11 +136,12 @@ export function useInfiniteCarousel<T>({
         });
       });
     }
-    // If we moved before the middle block into block 0
-    else if (currentIndex < count) {
+    // If we moved before the middle threshold block
+    else if (currentIndex < count * (middleBlock - 1)) {
       resettingRef.current = true;
       setIsTransitioning(false);
-      const targetIndex = currentIndex + count;
+      const normalizedReal = ((currentIndex % count) + count) % count;
+      const targetIndex = count * middleBlock + normalizedReal;
       setCurrentIndex(targetIndex);
 
       requestAnimationFrame(() => {
@@ -102,12 +151,13 @@ export function useInfiniteCarousel<T>({
         });
       });
     }
-  }, [count, currentIndex]);
+  }, [count, currentIndex, maxBlock, middleBlock]);
 
-  // Auto-play interval (every 2000ms continuously)
+  // Auto-play interval (continuously moving every 2000ms)
   useEffect(() => {
     if (!autoPlay || count <= 1) return;
     if (pauseOnHover && isPaused) return;
+    if (isPaused) return;
 
     const interval = setInterval(() => {
       next();
@@ -125,7 +175,7 @@ export function useInfiniteCarousel<T>({
     width: "100%",
     minWidth: "100%",
     flexWrap: "nowrap",
-    transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)`,
+    transform: `translate3d(-${currentIndex * (100 / itemsPerView)}%, 0, 0)`,
     transition: isTransitioning
       ? "transform 700ms cubic-bezier(0.25, 1, 0.5, 1)"
       : "none",
