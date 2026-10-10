@@ -1,5 +1,5 @@
 import React, { useId, useState } from "react";
-import { ArrowDownRight, ArrowUpRight, BarChart3, List, Minus, Table2 } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, BarChart3, List, Minus } from "lucide-react";
 import { Bucket, Slice, niceMax } from "../../lib/analytics";
 
 /**

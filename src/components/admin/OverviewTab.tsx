@@ -7,7 +7,6 @@ import {
   Briefcase,
   CheckCircle2,
   ChevronRight,
-  Eye,
   FileText,
   Globe,
   ImageOff,
@@ -17,9 +16,7 @@ import {
   MessageSquare,
   Plus,
   Sparkles,
-  TrendingUp,
 } from "lucide-react";
-import { toast } from "react-toastify";
 import {
   SEED_APPRENTICESHIPS,
   SEED_ARTICLES,
@@ -29,7 +26,7 @@ import {
 } from "../../data/seed";
 import { CATEGORY_TABS } from "../../data/content";
 import { isSupabaseConfigured, supabase } from "../../lib/supabase";
-import { errorMessage, formatDate } from "../../lib/utils";
+import { formatDate } from "../../lib/utils";
 import {
   RANGES,
   RangeKey,
