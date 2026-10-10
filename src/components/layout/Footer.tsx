@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Linkedin } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 import { useCompany } from "../../hooks/useCompany";
 import { FOOTER_GROUPS } from "../../config/navigation";
 import { Logo } from "./Logo";
@@ -44,6 +44,38 @@ export const Footer: React.FC = () => {
                 <Icon className="h-4 w-4" />
               </a>
             ))}
+          </div>
+
+          <div className="mt-6 space-y-2.5 text-xs text-slate-300">
+            <p className="flex items-center gap-2.5">
+              <Mail className="h-3.5 w-3.5 text-primary shrink-0" />
+              <a
+                href={`mailto:${COMPANY.email}`}
+                className="font-medium text-slate-200 transition hover:text-white"
+              >
+                {COMPANY.email}
+              </a>
+            </p>
+            <p className="flex items-center gap-2.5">
+              <Phone className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+              <a
+                href={COMPANY.phoneHref}
+                className="transition hover:text-white"
+              >
+                {COMPANY.phone}
+              </a>
+            </p>
+            <p className="flex items-start gap-2.5">
+              <MapPin className="h-3.5 w-3.5 text-accent shrink-0 mt-0.5" />
+              <a
+                href={COMPANY.googleMapsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="transition hover:text-white"
+              >
+                {COMPANY.address || "House 3A, Park Road, F-8/1, Islamabad"}
+              </a>
+            </p>
           </div>
         </div>
 

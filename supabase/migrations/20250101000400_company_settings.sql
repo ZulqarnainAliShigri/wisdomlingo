@@ -110,7 +110,7 @@ values (
   '09:00',
   '20:00',
   'Wisdomlingo German language Academy and consultancy',
-  'https://share.google/MD63jEY3xJEpiUtS2',
+  'https://share.google/9lTl3g6nDtA19ffrH',
   'https://www.instagram.com/wisdomlingo',
   'https://www.facebook.com/share/1EMnwzS44J/',
   'https://www.linkedin.com/in/muhammad-raza-abidi-79aa7937a',

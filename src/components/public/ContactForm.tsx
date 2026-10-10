@@ -1,10 +1,10 @@
 import React, { useId, useState } from "react";
-import { Send } from "lucide-react";
+import { Check, Copy, ExternalLink, Mail, Send } from "lucide-react";
 import { toast } from "react-toastify";
 import { SUBJECT_OPTIONS } from "../../config/site";
 import { useCompany } from "../../hooks/useCompany";
 import { isSupabaseConfigured, supabase } from "../../lib/supabase";
-import { emailPattern, errorMessage } from "../../lib/utils";
+import { emailPattern } from "../../lib/utils";
 import { Spinner } from "../ui/Loader";
 
 interface ContactFormState {
@@ -48,6 +48,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
   });
   const [errors, setErrors] = useState<Partial<Record<keyof ContactFormState, string>>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   // Unique per instance, so the page form and the modal form never share ids.
   const uid = useId();
@@ -71,6 +72,25 @@ export const ContactForm: React.FC<ContactFormProps> = ({
     return Object.keys(next).length === 0;
   };
 
+  const getEmailSubject = () =>
+    `[WisdomLingo Enquiry] ${form.subject ? form.subject : "Admission & Study Enquiry"} - ${form.name || "Student"}`;
+
+  const getEmailBody = () =>
+    `Dear WisdomLingo Admissions Team,\n\nName: ${form.name || "N/A"}\nEmail: ${form.email || "N/A"}\nPhone: ${form.phone || "N/A"}\nSubject: ${form.subject || "General Inquiry"}\n\nMessage:\n${form.message || ""}\n\n---\nSent from wisdomlingo.com directly to ${COMPANY.email}`;
+
+  const getMailtoUrl = () =>
+    `mailto:${COMPANY.email}?subject=${encodeURIComponent(getEmailSubject())}&body=${encodeURIComponent(getEmailBody())}`;
+
+  const getGmailWebUrl = () =>
+    `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(COMPANY.email)}&su=${encodeURIComponent(getEmailSubject())}&body=${encodeURIComponent(getEmailBody())}`;
+
+  const copyEmail = () => {
+    navigator.clipboard?.writeText(COMPANY.email);
+    setCopied(true);
+    toast.success(`Copied ${COMPANY.email} to clipboard!`);
+    setTimeout(() => setCopied(false), 2500);
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!validate()) {
@@ -78,28 +98,34 @@ export const ContactForm: React.FC<ContactFormProps> = ({
       return;
     }
 
-    if (!isSupabaseConfigured) {
-      toast.info("Backend not connected yet - please call or WhatsApp us at " + COMPANY.phone + ".");
-      return;
-    }
-
     setSubmitting(true);
     try {
-      const { error } = await supabase.from("contact_submissions").insert([
-        {
-          name: form.name.trim(),
-          email: form.email.trim().toLowerCase(),
-          phone: form.phone.trim(),
-          subject: form.subject,
-          message: form.message.trim(),
-        },
-      ]);
-      if (error) throw error;
-      toast.success("Thank you! Your message has been sent - we reply within one working day.");
+      if (isSupabaseConfigured) {
+        await supabase.from("contact_submissions").insert([
+          {
+            name: form.name.trim(),
+            email: form.email.trim().toLowerCase(),
+            phone: form.phone.trim(),
+            subject: form.subject,
+            message: form.message.trim(),
+          },
+        ]);
+      }
+
+      // Trigger direct email sending via mailto link
+      const mailtoUrl = getMailtoUrl();
+      window.location.href = mailtoUrl;
+
+      toast.success(
+        `Thank you! Opening your email app to send directly to ${COMPANY.email}.`
+      );
       setForm({ ...EMPTY_CONTACT, subject: defaultSubject, message: defaultMessage });
       onSent?.();
-    } catch (error) {
-      toast.error(errorMessage(error, "Could not send your message. Please try again."));
+    } catch {
+      // In case of any database error, still provide the direct email link
+      window.location.href = getMailtoUrl();
+      toast.info(`Opening email draft directly to ${COMPANY.email}.`);
+      onSent?.();
     } finally {
       setSubmitting(false);
     }
@@ -115,15 +141,76 @@ export const ContactForm: React.FC<ContactFormProps> = ({
   return (
     <form onSubmit={handleSubmit} noValidate className={isCard ? "card p-6 sm:p-8" : undefined}>
       {isCard && (
-        <>
-          <h3 className="text-xl font-bold text-slate-900">Send us a message</h3>
-          <p className="mt-1 text-sm text-slate-500">
-            Fill in the form and a counsellor will get back to you within one working day.
-          </p>
-        </>
+        <div className="mb-6 space-y-3">
+          <div className="flex flex-col gap-1">
+            <h3 className="text-xl font-bold text-slate-900">Send us a message</h3>
+            <p className="text-sm text-slate-500">
+              Fill in the form to send an email directly to our admissions counsellors.
+            </p>
+          </div>
+
+          {/* Official Business Email Banner */}
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary-200/80 bg-gradient-to-r from-primary-50/80 to-blue-50/50 p-3.5 text-xs text-slate-700">
+            <div className="flex items-center gap-2">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary text-white shadow-xs">
+                <Mail className="h-3.5 w-3.5" />
+              </span>
+              <div>
+                <span className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider">
+                  Official Business Email
+                </span>
+                <a
+                  href={`mailto:${COMPANY.email}`}
+                  className="font-semibold text-primary hover:underline"
+                >
+                  {COMPANY.email}
+                </a>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={copyEmail}
+                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 font-medium text-slate-700 shadow-2xs transition hover:bg-slate-50"
+                title="Copy business email"
+              >
+                {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                <span>{copied ? "Copied" : "Copy Email"}</span>
+              </button>
+
+              <a
+                href={getGmailWebUrl()}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-1.5 font-medium text-white shadow-xs transition hover:bg-primary-700"
+                title="Open pre-filled draft in Gmail Web"
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+                <span>Gmail Web</span>
+              </a>
+            </div>
+          </div>
+        </div>
       )}
 
-      <div className={`grid gap-5 sm:grid-cols-2 ${isCard ? "mt-6" : ""}`}>
+      {!isCard && (
+        <div className="mb-4 flex items-center justify-between gap-2 rounded-lg bg-primary-50 px-3 py-2 text-xs text-primary-900 border border-primary-100">
+          <span className="flex items-center gap-1.5">
+            <Mail className="h-3.5 w-3.5 text-primary" />
+            <span>Sends directly to <strong>{COMPANY.email}</strong></span>
+          </span>
+          <button
+            type="button"
+            onClick={copyEmail}
+            className="font-medium text-primary underline hover:text-primary-800"
+          >
+            {copied ? "Copied!" : "Copy Email"}
+          </button>
+        </div>
+      )}
+
+      <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label className="label" htmlFor={fieldId("name")}>
             Full name *
@@ -141,7 +228,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
 
         <div>
           <label className="label" htmlFor={fieldId("email")}>
-            Email *
+            Your email *
           </label>
           <input
             id={fieldId("email")}
@@ -157,7 +244,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
 
         <div>
           <label className="label" htmlFor={fieldId("phone")}>
-            Phone *
+            Phone / WhatsApp *
           </label>
           <input
             id={fieldId("phone")}
@@ -200,20 +287,44 @@ export const ContactForm: React.FC<ContactFormProps> = ({
             className="input min-h-[140px] resize-y"
             value={form.message}
             onChange={update("message")}
-            placeholder="Tell us about your qualification, target country and preferred intake."
+            placeholder="Tell us about your educational qualification, target European country and preferred intake."
           />
           {fieldError("message")}
         </div>
       </div>
 
-      <button
-        type="submit"
-        className={`btn-accent mt-6 ${isCard ? "w-full sm:w-auto" : "w-full"}`}
-        disabled={submitting}
-      >
-        {submitting ? <Spinner /> : <Send className="h-4 w-4" />}
-        {submitting ? "Sending..." : "Send message"}
-      </button>
+      <div className={`mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between ${!isCard ? "pt-2" : ""}`}>
+        <button
+          type="submit"
+          className="btn-accent w-full sm:w-auto"
+          disabled={submitting}
+        >
+          {submitting ? <Spinner /> : <Send className="h-4 w-4" />}
+          {submitting ? "Preparing Email..." : "Send Email Directly"}
+        </button>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <a
+            href={getGmailWebUrl()}
+            target="_blank"
+            rel="noreferrer"
+            className="btn-ghost !py-2 text-xs text-slate-600 hover:text-primary w-full sm:w-auto text-center"
+            title="Open email composer in Gmail Web"
+          >
+            <ExternalLink className="h-3.5 w-3.5 text-primary" />
+            <span>Open in Gmail</span>
+          </a>
+
+          <a
+            href={`mailto:${COMPANY.email}`}
+            className="btn-ghost !py-2 text-xs text-slate-600 hover:text-primary w-full sm:w-auto text-center"
+            title="Open default email application"
+          >
+            <Mail className="h-3.5 w-3.5 text-slate-500" />
+            <span>Open Mail App</span>
+          </a>
+        </div>
+      </div>
     </form>
   );
 };
