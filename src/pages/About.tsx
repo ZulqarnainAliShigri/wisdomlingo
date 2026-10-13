@@ -28,7 +28,7 @@ export const AboutPage: React.FC = () => {
       <PageHero
         image={HERO_IMAGES.about}
         eyebrow="About Us"
-        title="15 Years of Educational Excellence"
+        title="5 Years of Educational Excellence"
         subtitle="Goethe-certified language training, European university admissions, and visa consulting."
       />
 
@@ -93,11 +93,10 @@ export const AboutPage: React.FC = () => {
                   <div
                     key={stat.label}
                     onClick={() => setActiveStatIdx(index)}
-                    className={`rounded-2xl px-5 py-6 text-center transition-all duration-500 cursor-pointer ${
-                      isActive
+                    className={`rounded-2xl px-5 py-6 text-center transition-all duration-500 cursor-pointer ${isActive
                         ? "bg-white shadow-xl ring-2 ring-primary/30 scale-105 border border-primary/20 -translate-y-1"
                         : "bg-primary-50/70 hover:bg-primary-50"
-                    }`}
+                      }`}
                   >
                     <span className="block text-3xl font-extrabold text-primary">{stat.value}</span>
                     <span className="mt-1 block text-xs font-semibold uppercase tracking-wide text-slate-600">
@@ -115,11 +114,10 @@ export const AboutPage: React.FC = () => {
                   key={stat.label}
                   type="button"
                   onClick={() => setActiveStatIdx(idx)}
-                  className={`h-2 rounded-full transition-all duration-500 ${
-                    activeStatIdx === idx
+                  className={`h-2 rounded-full transition-all duration-500 ${activeStatIdx === idx
                       ? "w-8 bg-primary"
                       : "w-2 bg-slate-300 hover:bg-slate-400"
-                  }`}
+                    }`}
                   aria-label={`Go to ${stat.label}`}
                 />
               ))}

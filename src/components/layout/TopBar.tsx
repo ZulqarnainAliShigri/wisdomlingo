@@ -144,7 +144,7 @@ export const TopBar: React.FC = () => {
       {/* ────────────────────────────────────────────────────────
           MOBILE: Continuous Scrolling Marquee Carousel
          ──────────────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden md:hidden py-2" aria-label="Quick contact ticker">
+      <div className="group relative overflow-hidden md:hidden py-2" aria-label="Quick contact ticker">
         {/* Soft edge fade masks */}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-white to-transparent z-10" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-white to-transparent z-10" />

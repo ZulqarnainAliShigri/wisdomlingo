@@ -13,7 +13,7 @@ export function useInfiniteCarousel<T>({
   itemsPerView = 1,
   intervalMs = 2000,
   autoPlay = true,
-  pauseOnHover = false, // Never stop on hover as requested
+  pauseOnHover = true, // Pauses when hovering on moving card, resumes when mouse leaves
 }: UseInfiniteCarouselOptions<T>) {
   const count = items.length;
 

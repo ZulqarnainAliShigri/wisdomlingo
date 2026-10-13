@@ -101,7 +101,9 @@
 }
 
 .animate-marquee:hover,
-.animate-marquee:active {
+.animate-marquee:active,
+.group:hover .animate-marquee,
+.group:active .animate-marquee {
   animation-play-state: paused;
 }
 

@@ -107,15 +107,16 @@ export const HomePage: React.FC = () => {
     items: filteredCourses,
     itemsPerView: courseItemsPerView,
     intervalMs: 2000,
+    pauseOnHover: true,
   });
 
   // 2. ACCREDITED PATHWAYS CAROUSEL (Desktop: 3 cards, Tablet: 2 cards, Mobile: 1 card)
+  // Auto-move disabled completely: moves ONLY when user clicks move icons (arrows)
   const programItemsPerView = viewportWidth < 640 ? 1 : viewportWidth < 1024 ? 2 : 3;
   const programCarousel = useInfiniteCarousel({
     items: HOME_PROGRAMS,
     itemsPerView: programItemsPerView,
-    intervalMs: 2000,
-    pauseOnHover: false,
+    autoPlay: false, // Will NOT auto-move; only advances when user clicks the move icon
   });
 
   // Program 3D carousel touch swipe gestures
@@ -150,27 +151,32 @@ export const HomePage: React.FC = () => {
     items: filteredDestinations,
     itemsPerView: destItemsPerView,
     intervalMs: 2000,
+    pauseOnHover: true,
   });
 
-  // 4. WHY US ANIMATED HIGHLIGHT (Continuous non-stop 2-second cycle)
+  // 4. WHY US ANIMATED HIGHLIGHT (Pauses on hover, resumes on leave)
   const [activeWhyIndex, setActiveWhyIndex] = useState(0);
+  const [isWhyPaused, setIsWhyPaused] = useState(false);
 
   useEffect(() => {
+    if (isWhyPaused) return;
     const interval = setInterval(() => {
       setActiveWhyIndex((prev) => (prev + 1) % WHY_US.length);
     }, 2000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isWhyPaused]);
 
-  // 5. PROCESS STEP ANIMATION (Continuous non-stop 2-second cycle)
+  // 5. PROCESS STEP ANIMATION (Pauses on hover, resumes on leave)
   const [activeProcessStep, setActiveProcessStep] = useState(0);
+  const [isProcessPaused, setIsProcessPaused] = useState(false);
 
   useEffect(() => {
+    if (isProcessPaused) return;
     const interval = setInterval(() => {
       setActiveProcessStep((prev) => (prev + 1) % PROCESS_STEPS.length);
     }, 2000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isProcessPaused]);
 
   // 6. TESTIMONIALS / SUCCESS STORIES INFINITE CAROUSEL
   const testimonialItemsPerView = viewportWidth < 640 ? 1 : viewportWidth < 1024 ? 2 : 3;
@@ -178,6 +184,7 @@ export const HomePage: React.FC = () => {
     items: displayStories,
     itemsPerView: testimonialItemsPerView,
     intervalMs: 2000,
+    pauseOnHover: true,
   });
 
   // 7. ARTICLES / KNOWLEDGE HUB INFINITE CAROUSEL
@@ -186,6 +193,7 @@ export const HomePage: React.FC = () => {
     items: displayArticles,
     itemsPerView: articleItemsPerView,
     intervalMs: 2000,
+    pauseOnHover: true,
   });
 
   // Constant Line 1 + Ultra-Short Line 2 Typewriter state
@@ -402,11 +410,10 @@ export const HomePage: React.FC = () => {
                       onClick={() => {
                         setActiveCourseTab(tab.key);
                       }}
-                      className={`flex items-center justify-center gap-1 rounded-xl px-2.5 py-1.5 text-[11px] font-bold transition sm:px-3.5 sm:py-2 sm:text-xs ${
-                        isActive
+                      className={`flex items-center justify-center gap-1 rounded-xl px-2.5 py-1.5 text-[11px] font-bold transition sm:px-3.5 sm:py-2 sm:text-xs ${isActive
                           ? "bg-primary text-white shadow-sm"
                           : "text-slate-600 hover:text-slate-900"
-                      }`}
+                        }`}
                     >
                       <tab.icon className="h-3 w-3 shrink-0 sm:h-3.5 sm:w-3.5" />
                       <span className="whitespace-nowrap">{tab.label}</span>
@@ -456,7 +463,11 @@ export const HomePage: React.FC = () => {
           </div>
 
           {/* Infinite Carousel Sliding Viewport */}
-          <div className="relative w-full max-w-full overflow-hidden mt-4">
+          <div
+            className="relative w-full max-w-full overflow-hidden mt-4"
+            onMouseEnter={() => courseCarousel.setIsPaused(true)}
+            onMouseLeave={() => courseCarousel.setIsPaused(false)}
+          >
             {/* Left Floating Arrow */}
             <button
               type="button"
@@ -478,7 +489,11 @@ export const HomePage: React.FC = () => {
             </button>
 
             {/* Track */}
-            <div className="w-full max-w-full overflow-hidden py-3 -my-3 px-1 sm:px-2">
+            <div
+              className="w-full max-w-full overflow-hidden py-3 -my-3 px-1 sm:px-2"
+              onMouseEnter={() => courseCarousel.setIsPaused(true)}
+              onMouseLeave={() => courseCarousel.setIsPaused(false)}
+            >
               <div
                 className="flex w-full min-w-0 flex-nowrap"
                 style={courseCarousel.trackStyle}
@@ -537,11 +552,10 @@ export const HomePage: React.FC = () => {
                 key={c.id}
                 type="button"
                 onClick={() => courseCarousel.goTo(idx)}
-                className={`h-2 rounded-full transition-all duration-500 ${
-                  courseCarousel.activeRealIndex === idx
+                className={`h-2 rounded-full transition-all duration-500 ${courseCarousel.activeRealIndex === idx
                     ? "w-8 bg-primary"
                     : "w-2 bg-slate-300 hover:bg-slate-400"
-                }`}
+                  }`}
                 aria-label={`Go to ${c.title}`}
               />
             ))}
@@ -722,11 +736,10 @@ export const HomePage: React.FC = () => {
                     }
                   >
                     <article
-                      className={`group relative flex h-full flex-col rounded-xl sm:rounded-2xl bg-white transition-all duration-500 overflow-hidden ${
-                        isCenter
+                      className={`group relative flex h-full flex-col rounded-xl sm:rounded-2xl bg-white transition-all duration-500 overflow-hidden ${isCenter
                           ? "border-2 border-slate-800/90 shadow-xl shadow-slate-900/20 ring-1 sm:ring-2 ring-primary/20"
                           : "border border-slate-300/90 shadow-md shadow-slate-900/10 hover:border-slate-400"
-                      }`}
+                        }`}
                     >
                       {/* Side card click overlay indicator */}
                       {!isCenter && (
@@ -860,11 +873,10 @@ export const HomePage: React.FC = () => {
                   key={program.title}
                   type="button"
                   onClick={() => programCarousel.goTo(idx)}
-                  className={`h-1.5 sm:h-2.5 rounded-full transition-all duration-500 ${
-                    programCarousel.activeRealIndex === idx
+                  className={`h-1.5 sm:h-2.5 rounded-full transition-all duration-500 ${programCarousel.activeRealIndex === idx
                       ? "w-6 sm:w-8 bg-primary"
                       : "w-1.5 sm:w-2.5 bg-slate-300 hover:bg-slate-400"
-                  }`}
+                    }`}
                   aria-label={`Go to ${program.title}`}
                 />
               ))}
@@ -909,11 +921,10 @@ export const HomePage: React.FC = () => {
                     onClick={() => {
                       setDestFilter(filterTab.id as any);
                     }}
-                    className={`rounded-full px-3 py-1 text-[11px] sm:text-xs font-bold transition-all ${
-                      destFilter === filterTab.id
+                    className={`rounded-full px-3 py-1 text-[11px] sm:text-xs font-bold transition-all ${destFilter === filterTab.id
                         ? "bg-primary text-white shadow-sm scale-105"
                         : "border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
-                    }`}
+                      }`}
                   >
                     {filterTab.label}
                   </button>
@@ -961,7 +972,11 @@ export const HomePage: React.FC = () => {
           </div>
 
           {/* Carousel Viewport with Floating Left and Right Navigation Buttons */}
-          <div className="relative w-full max-w-full overflow-hidden mt-6">
+          <div
+            className="relative w-full max-w-full overflow-hidden mt-6"
+            onMouseEnter={() => destCarousel.setIsPaused(true)}
+            onMouseLeave={() => destCarousel.setIsPaused(false)}
+          >
             {/* Left Floating Arrow */}
             <button
               type="button"
@@ -983,7 +998,11 @@ export const HomePage: React.FC = () => {
             </button>
 
             {/* Sliding Carousel Track */}
-            <div className="w-full max-w-full overflow-hidden py-3 -my-3 px-1 sm:px-2">
+            <div
+              className="w-full max-w-full overflow-hidden py-3 -my-3 px-1 sm:px-2"
+              onMouseEnter={() => destCarousel.setIsPaused(true)}
+              onMouseLeave={() => destCarousel.setIsPaused(false)}
+            >
               <div
                 className="flex w-full min-w-0 flex-nowrap"
                 style={destCarousel.trackStyle}
@@ -1009,11 +1028,10 @@ export const HomePage: React.FC = () => {
                     >
                       <article
                         onClick={() => destCarousel.goTo(realIndex)}
-                        className={`group relative flex h-full flex-col rounded-3xl border transition-all duration-500 overflow-hidden bg-white cursor-pointer ${
-                          isActive
+                        className={`group relative flex h-full flex-col rounded-3xl border transition-all duration-500 overflow-hidden bg-white cursor-pointer ${isActive
                             ? "border-primary/60 ring-2 ring-primary/30 shadow-2xl -translate-y-2 scale-101"
                             : "border-slate-200/90 shadow-sm hover:border-slate-300 hover:-translate-y-1"
-                        }`}
+                          }`}
                       >
                         {/* Photo Header */}
                         <div className="relative h-44 w-full overflow-hidden bg-slate-900">
@@ -1021,20 +1039,18 @@ export const HomePage: React.FC = () => {
                             src={photo}
                             alt={country.name}
                             loading="lazy"
-                            className={`h-full w-full object-cover transition-transform duration-700 ease-out ${
-                              isActive ? "scale-108 opacity-100" : "opacity-90 group-hover:scale-105"
-                            }`}
+                            className={`h-full w-full object-cover transition-transform duration-700 ease-out ${isActive ? "scale-108 opacity-100" : "opacity-90 group-hover:scale-105"
+                              }`}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
 
                           {/* Top Floating Flag & Perk Badge */}
                           <div className="absolute inset-x-3.5 top-3 flex items-center justify-between gap-2 z-10">
                             <span
-                              className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black shadow-md backdrop-blur-md transition-all duration-300 ${
-                                isActive
+                              className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black shadow-md backdrop-blur-md transition-all duration-300 ${isActive
                                   ? "bg-white text-primary ring-2 ring-primary-100 scale-105"
                                   : "bg-white/95 text-slate-900"
-                              }`}
+                                }`}
                             >
                               <span className="text-base leading-none">{flag}</span>
                               <span>{country.name}</span>
@@ -1049,11 +1065,10 @@ export const HomePage: React.FC = () => {
                           {/* Center Emblem Icon */}
                           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                             <div
-                              className={`flex h-14 w-14 items-center justify-center rounded-2xl border border-white/50 shadow-2xl backdrop-blur-md transition-all duration-500 ${
-                                isActive
+                              className={`flex h-14 w-14 items-center justify-center rounded-2xl border border-white/50 shadow-2xl backdrop-blur-md transition-all duration-500 ${isActive
                                   ? "bg-primary text-white scale-110 shadow-primary/50 ring-4 ring-primary/20 rotate-3"
                                   : "bg-white/95 text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-white"
-                              }`}
+                                }`}
                             >
                               <Globe className="h-7 w-7 transition-transform duration-300" />
                             </div>
@@ -1140,9 +1155,8 @@ export const HomePage: React.FC = () => {
                             <Link
                               to="/study-abroad"
                               onClick={(e) => e.stopPropagation()}
-                              className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2 px-3 text-xs sm:text-sm font-bold text-white transition-colors ${
-                                isActive ? "bg-primary hover:bg-blue-800" : "bg-slate-900 hover:bg-primary"
-                              }`}
+                              className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2 px-3 text-xs sm:text-sm font-bold text-white transition-colors ${isActive ? "bg-primary hover:bg-blue-800" : "bg-slate-900 hover:bg-primary"
+                                }`}
                             >
                               <span>Explore</span>
                               <ArrowRight className="h-3.5 w-3.5" />
@@ -1164,11 +1178,10 @@ export const HomePage: React.FC = () => {
                 key={country.id}
                 type="button"
                 onClick={() => destCarousel.goTo(idx)}
-                className={`h-2 rounded-full transition-all duration-500 ${
-                  destCarousel.activeRealIndex === idx
+                className={`h-2 rounded-full transition-all duration-500 ${destCarousel.activeRealIndex === idx
                     ? "w-8 bg-primary"
                     : "w-2 bg-slate-300 hover:bg-slate-400"
-                }`}
+                  }`}
                 aria-label={`Go to ${country.name}`}
               />
             ))}
@@ -1223,7 +1236,7 @@ export const HomePage: React.FC = () => {
               <Sparkles className="h-3.5 w-3.5 text-accent" /> Why WisdomLingo
             </span>
             <h2 className="mt-2 text-xl font-black tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
-              15 Years of <span className="text-primary">Proven Excellence</span>
+              5 Years of <span className="text-primary">Proven Excellence</span>
             </h2>
             <p className="hidden sm:block mt-1 text-xs sm:text-sm lg:text-base leading-relaxed text-slate-600">
               Zero-error visa filings, Goethe-certified faculty, and direct university ties.
@@ -1253,7 +1266,11 @@ export const HomePage: React.FC = () => {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3 sm:gap-5">
+            <div
+              className="grid grid-cols-2 gap-3 sm:gap-5"
+              onMouseEnter={() => setIsWhyPaused(true)}
+              onMouseLeave={() => setIsWhyPaused(false)}
+            >
               {WHY_US.map((item, index) => {
                 const isActive = activeWhyIndex === index;
 
@@ -1261,26 +1278,23 @@ export const HomePage: React.FC = () => {
                   <div
                     key={item.title}
                     onClick={() => setActiveWhyIndex(index)}
-                    className={`flex gap-3 rounded-2xl p-4 transition-all duration-500 cursor-pointer sm:block sm:gap-4 sm:p-6 ${
-                      isActive
+                    className={`flex gap-3 rounded-2xl p-4 transition-all duration-500 cursor-pointer sm:block sm:gap-4 sm:p-6 ${isActive
                         ? "bg-white shadow-xl ring-2 ring-primary/30 scale-102 border border-primary/20 -translate-y-1"
                         : "bg-white/90 shadow-xs hover:bg-white hover:shadow-md"
-                    }`}
+                      }`}
                   >
                     <span
-                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-all duration-300 sm:h-10 sm:w-10 ${
-                        isActive
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-all duration-300 sm:h-10 sm:w-10 ${isActive
                           ? "bg-primary text-white scale-110 shadow-md shadow-primary/25"
                           : "bg-primary-50 text-primary"
-                      }`}
+                        }`}
                     >
                       <item.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${isActive ? "animate-wiggle" : ""}`} />
                     </span>
                     <div className="sm:mt-4">
                       <h3
-                        className={`text-sm font-bold sm:text-base transition-colors ${
-                          isActive ? "text-primary font-black" : "text-slate-900"
-                        }`}
+                        className={`text-sm font-bold sm:text-base transition-colors ${isActive ? "text-primary font-black" : "text-slate-900"
+                          }`}
                       >
                         {item.title}
                       </h3>
@@ -1300,11 +1314,10 @@ export const HomePage: React.FC = () => {
                   key={item.title}
                   type="button"
                   onClick={() => setActiveWhyIndex(idx)}
-                  className={`h-2 rounded-full transition-all duration-500 ${
-                    activeWhyIndex === idx
+                  className={`h-2 rounded-full transition-all duration-500 ${activeWhyIndex === idx
                       ? "w-8 bg-primary"
                       : "w-2 bg-slate-300 hover:bg-slate-400"
-                  }`}
+                    }`}
                   aria-label={`Go to ${item.title}`}
                 />
               ))}
@@ -1330,7 +1343,11 @@ export const HomePage: React.FC = () => {
             </p>
           </div>
 
-          <div className="relative mt-10 lg:mt-16">
+          <div
+            className="relative mt-10 lg:mt-16"
+            onMouseEnter={() => setIsProcessPaused(true)}
+            onMouseLeave={() => setIsProcessPaused(false)}
+          >
             {/* Desktop timeline track base */}
             <div
               aria-hidden="true"
@@ -1364,23 +1381,21 @@ export const HomePage: React.FC = () => {
                   <React.Fragment key={step.title}>
                     <div
                       onClick={() => setActiveProcessStep(index)}
-                      className={`relative flex w-full max-w-sm flex-col items-center rounded-3xl border text-center transition-all duration-500 cursor-pointer p-5 ${
-                        isActive
+                      className={`relative flex w-full max-w-sm flex-col items-center rounded-3xl border text-center transition-all duration-500 cursor-pointer p-5 ${isActive
                           ? "border-primary/50 bg-gradient-to-b from-primary-50/70 via-white to-white shadow-xl ring-2 ring-primary/20 scale-102"
                           : isCompleted
-                          ? "border-emerald-200/90 bg-emerald-50/20 shadow-xs"
-                          : "border-slate-200/90 bg-white shadow-xs opacity-85 hover:opacity-100"
-                      }`}
+                            ? "border-emerald-200/90 bg-emerald-50/20 shadow-xs"
+                            : "border-slate-200/90 bg-white shadow-xs opacity-85 hover:opacity-100"
+                        }`}
                     >
                       <div className="flex items-center gap-2">
                         <span
-                          className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-black tracking-wide ${
-                            isActive
+                          className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-black tracking-wide ${isActive
                               ? "bg-accent text-white shadow-sm"
                               : isCompleted
-                              ? "bg-emerald-600 text-white"
-                              : "bg-slate-100 text-slate-700"
-                          }`}
+                                ? "bg-emerald-600 text-white"
+                                : "bg-slate-100 text-slate-700"
+                            }`}
                         >
                           STEP 0{index + 1}
                         </span>
@@ -1399,9 +1414,8 @@ export const HomePage: React.FC = () => {
                       </div>
 
                       <h3
-                        className={`mt-3 text-base font-extrabold transition-colors duration-300 ${
-                          isActive ? "text-primary text-lg" : "text-slate-900"
-                        }`}
+                        className={`mt-3 text-base font-extrabold transition-colors duration-300 ${isActive ? "text-primary text-lg" : "text-slate-900"
+                          }`}
                       >
                         {step.title}
                       </h3>
@@ -1462,29 +1476,26 @@ export const HomePage: React.FC = () => {
                   >
                     <div className="relative shrink-0">
                       <span
-                        className={`flex h-16 w-16 items-center justify-center rounded-full border-2 transition-all duration-300 ${
-                          isActive
+                        className={`flex h-16 w-16 items-center justify-center rounded-full border-2 transition-all duration-300 ${isActive
                             ? "scale-110 border-primary bg-primary text-white shadow-lg shadow-primary/25 ring-4 ring-primary-100"
                             : isCompleted
-                            ? "border-primary-400 bg-primary-50 text-primary"
-                            : "border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-700"
-                        }`}
+                              ? "border-primary-400 bg-primary-50 text-primary"
+                              : "border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-700"
+                          }`}
                       >
                         <step.icon
-                          className={`h-6 w-6 transition-transform duration-300 ${
-                            isActive ? "animate-wiggle text-white" : ""
-                          }`}
+                          className={`h-6 w-6 transition-transform duration-300 ${isActive ? "animate-wiggle text-white" : ""
+                            }`}
                         />
                       </span>
 
                       <span
-                        className={`absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold transition-all ${
-                          isActive
+                        className={`absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold transition-all ${isActive
                             ? "scale-110 bg-accent text-white shadow-sm ring-2 ring-white"
                             : isCompleted
-                            ? "bg-primary text-white"
-                            : "bg-slate-100 text-slate-600"
-                        }`}
+                              ? "bg-primary text-white"
+                              : "bg-slate-100 text-slate-600"
+                          }`}
                       >
                         0{index + 1}
                       </span>
@@ -1492,11 +1503,10 @@ export const HomePage: React.FC = () => {
 
                     <div className="mt-5">
                       <h3
-                        className={`text-base font-bold transition-colors duration-300 ${
-                          isActive
+                        className={`text-base font-bold transition-colors duration-300 ${isActive
                             ? "font-extrabold text-primary"
                             : "text-slate-900 group-hover:text-primary"
-                        }`}
+                          }`}
                       >
                         {step.title}
                       </h3>
@@ -1516,11 +1526,10 @@ export const HomePage: React.FC = () => {
                   key={step.title}
                   type="button"
                   onClick={() => setActiveProcessStep(idx)}
-                  className={`h-2 rounded-full transition-all duration-500 ${
-                    activeProcessStep === idx
+                  className={`h-2 rounded-full transition-all duration-500 ${activeProcessStep === idx
                       ? "w-8 bg-primary"
                       : "w-2 bg-slate-300 hover:bg-slate-400"
-                  }`}
+                    }`}
                   aria-label={`Go to Step ${idx + 1}: ${step.title}`}
                 />
               ))}
@@ -1613,7 +1622,11 @@ export const HomePage: React.FC = () => {
           </div>
 
           {/* Carousel Viewport with Floating Left/Right Arrows */}
-          <div className="relative w-full max-w-full overflow-hidden mt-6">
+          <div
+            className="relative w-full max-w-full overflow-hidden mt-6"
+            onMouseEnter={() => testimonialsCarousel.setIsPaused(true)}
+            onMouseLeave={() => testimonialsCarousel.setIsPaused(false)}
+          >
             <button
               type="button"
               onClick={testimonialsCarousel.prev}
@@ -1633,7 +1646,11 @@ export const HomePage: React.FC = () => {
             </button>
 
             {/* Sliding Track */}
-            <div className="w-full max-w-full overflow-hidden py-3 -my-3 px-1 sm:px-2">
+            <div
+              className="w-full max-w-full overflow-hidden py-3 -my-3 px-1 sm:px-2"
+              onMouseEnter={() => testimonialsCarousel.setIsPaused(true)}
+              onMouseLeave={() => testimonialsCarousel.setIsPaused(false)}
+            >
               <div
                 className="flex w-full min-w-0 flex-nowrap"
                 style={testimonialsCarousel.trackStyle}
@@ -1651,11 +1668,10 @@ export const HomePage: React.FC = () => {
                     >
                       <figure
                         onClick={() => testimonialsCarousel.goTo(realIndex)}
-                        className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border bg-white p-5 transition-all duration-500 cursor-pointer sm:p-6 ${
-                          isActive
+                        className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border bg-white p-5 transition-all duration-500 cursor-pointer sm:p-6 ${isActive
                             ? "border-primary/50 shadow-2xl -translate-y-2 ring-2 ring-primary/30 scale-101"
                             : "border-slate-200/90 shadow-sm hover:border-slate-300 hover:-translate-y-1"
-                        }`}
+                          }`}
                       >
                         {/* Background quote watermark */}
                         <Quote
@@ -1671,11 +1687,10 @@ export const HomePage: React.FC = () => {
                               {story.destination_country}
                             </span>
                             <span
-                              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold transition-all duration-300 ${
-                                isActive
+                              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold transition-all duration-300 ${isActive
                                   ? "border border-emerald-300 bg-emerald-100 text-emerald-800 scale-105"
                                   : "border border-emerald-200 bg-emerald-50 text-emerald-700"
-                              }`}
+                                }`}
                             >
                               <BadgeCheck className={`h-3.5 w-3.5 ${isActive ? "animate-wiggle" : ""}`} />
                               {story.status_badge || "Visa Approved"}
@@ -1714,9 +1729,8 @@ export const HomePage: React.FC = () => {
                                   src={story.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&q=80"}
                                   alt={story.name}
                                   loading="lazy"
-                                  className={`h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm transition-all duration-300 ${
-                                    isActive ? "ring-2 ring-primary scale-105" : "ring-1 ring-primary-100"
-                                  }`}
+                                  className={`h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm transition-all duration-300 ${isActive ? "ring-2 ring-primary scale-105" : "ring-1 ring-primary-100"
+                                    }`}
                                 />
                                 <span
                                   aria-label="Verified Alumnus"
@@ -1727,9 +1741,8 @@ export const HomePage: React.FC = () => {
                               </div>
                               <div className="min-w-0">
                                 <span
-                                  className={`block truncate text-xs sm:text-sm font-bold transition-colors ${
-                                    isActive ? "text-primary font-black" : "text-slate-900"
-                                  }`}
+                                  className={`block truncate text-xs sm:text-sm font-bold transition-colors ${isActive ? "text-primary font-black" : "text-slate-900"
+                                    }`}
                                 >
                                   {story.name}
                                 </span>
@@ -1787,11 +1800,10 @@ export const HomePage: React.FC = () => {
                 key={story.id || story.name}
                 type="button"
                 onClick={() => testimonialsCarousel.goTo(idx)}
-                className={`h-2 rounded-full transition-all duration-500 ${
-                  testimonialsCarousel.activeRealIndex === idx
+                className={`h-2 rounded-full transition-all duration-500 ${testimonialsCarousel.activeRealIndex === idx
                     ? "w-8 bg-primary"
                     : "w-2 bg-slate-300 hover:bg-slate-400"
-                }`}
+                  }`}
                 aria-label={`Go to ${story.name}`}
               />
             ))}
@@ -1913,7 +1925,11 @@ export const HomePage: React.FC = () => {
           </div>
 
           {/* Carousel Viewport with Floating Left/Right Arrows */}
-          <div className="relative w-full max-w-full overflow-hidden mt-6">
+          <div
+            className="relative w-full max-w-full overflow-hidden mt-6"
+            onMouseEnter={() => articlesCarousel.setIsPaused(true)}
+            onMouseLeave={() => articlesCarousel.setIsPaused(false)}
+          >
             <button
               type="button"
               onClick={articlesCarousel.prev}
@@ -1933,7 +1949,11 @@ export const HomePage: React.FC = () => {
             </button>
 
             {/* Sliding Track */}
-            <div className="w-full max-w-full overflow-hidden py-3 -my-3 px-1 sm:px-2">
+            <div
+              className="w-full max-w-full overflow-hidden py-3 -my-3 px-1 sm:px-2"
+              onMouseEnter={() => articlesCarousel.setIsPaused(true)}
+              onMouseLeave={() => articlesCarousel.setIsPaused(false)}
+            >
               <div
                 className="flex w-full min-w-0 flex-nowrap"
                 style={articlesCarousel.trackStyle}
@@ -1954,11 +1974,10 @@ export const HomePage: React.FC = () => {
                     >
                       <article
                         onClick={() => articlesCarousel.goTo(realIndex)}
-                        className={`group flex h-full flex-col overflow-hidden rounded-2xl border bg-white transition-all duration-500 cursor-pointer ${
-                          isActive
+                        className={`group flex h-full flex-col overflow-hidden rounded-2xl border bg-white transition-all duration-500 cursor-pointer ${isActive
                             ? "border-primary/60 shadow-2xl -translate-y-2 ring-2 ring-primary/30 scale-101"
                             : "border-slate-200/90 shadow-sm hover:border-slate-300 hover:-translate-y-1"
-                        }`}
+                          }`}
                       >
                         {/* Image & Badges */}
                         <div className="relative overflow-hidden">
@@ -1966,18 +1985,16 @@ export const HomePage: React.FC = () => {
                             src={articleImage}
                             alt={article.title}
                             loading="lazy"
-                            className={`h-48 w-full object-cover transition duration-700 ease-out ${
-                              isActive ? "scale-108" : "group-hover:scale-105"
-                            }`}
+                            className={`h-48 w-full object-cover transition duration-700 ease-out ${isActive ? "scale-108" : "group-hover:scale-105"
+                              }`}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-60" />
 
                           <span
-                            className={`absolute left-3.5 top-3.5 rounded-lg px-2.5 py-0.5 text-xs font-extrabold shadow-md backdrop-blur-xs transition-colors ${
-                              isActive
+                            className={`absolute left-3.5 top-3.5 rounded-lg px-2.5 py-0.5 text-xs font-extrabold shadow-md backdrop-blur-xs transition-colors ${isActive
                                 ? "bg-primary text-white"
                                 : "bg-white/95 text-slate-800"
-                            }`}
+                              }`}
                           >
                             {article.category}
                           </span>
@@ -2001,9 +2018,8 @@ export const HomePage: React.FC = () => {
                           </div>
 
                           <h3
-                            className={`mt-2.5 text-base font-bold leading-snug transition-colors ${
-                              isActive ? "text-primary font-black" : "text-slate-900 group-hover:text-primary"
-                            }`}
+                            className={`mt-2.5 text-base font-bold leading-snug transition-colors ${isActive ? "text-primary font-black" : "text-slate-900 group-hover:text-primary"
+                              }`}
                           >
                             <Link to={articleLink} className="hover:underline">
                               {article.title}
@@ -2052,9 +2068,8 @@ export const HomePage: React.FC = () => {
                             <Link
                               to={articleLink}
                               onClick={(e) => e.stopPropagation()}
-                              className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2 px-3 text-xs sm:text-sm font-bold text-white transition-colors ${
-                                isActive ? "bg-primary hover:bg-blue-800" : "bg-slate-900 hover:bg-primary"
-                              }`}
+                              className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2 px-3 text-xs sm:text-sm font-bold text-white transition-colors ${isActive ? "bg-primary hover:bg-blue-800" : "bg-slate-900 hover:bg-primary"
+                                }`}
                             >
                               <span>Read</span>
                               <ArrowRight className="h-3.5 w-3.5" />
@@ -2076,11 +2091,10 @@ export const HomePage: React.FC = () => {
                 key={article.id || article.title}
                 type="button"
                 onClick={() => articlesCarousel.goTo(idx)}
-                className={`h-2 rounded-full transition-all duration-500 ${
-                  articlesCarousel.activeRealIndex === idx
+                className={`h-2 rounded-full transition-all duration-500 ${articlesCarousel.activeRealIndex === idx
                     ? "w-8 bg-primary"
                     : "w-2 bg-slate-300 hover:bg-slate-400"
-                }`}
+                  }`}
                 aria-label={`Go to ${article.title}`}
               />
             ))}
