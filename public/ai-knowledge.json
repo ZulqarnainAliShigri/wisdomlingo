@@ -1,0 +1,76 @@
+{
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "Wisdomlingo German Language Academy and Consultancy",
+  "alternateName": "WisdomLingo",
+  "url": "https://wisdomlingo.com",
+  "logo": "https://wisdomlingo.com/images/logo.png",
+  "description": "WisdomLingo is Islamabad's leading German language academy and European education consultancy, specializing in Goethe/ÖSD certified German courses (A1, A2, B1, B2, C1), paid German Ausbildung placement, and tuition-free European university admissions.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Office No 214, Arooj Arcade, F-10",
+    "addressLocality": "Islamabad",
+    "addressRegion": "Islamabad Capital Territory",
+    "postalCode": "44000",
+    "addressCountry": "PK"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 33.6954,
+    "longitude": 73.0125
+  },
+  "telephone": "+92-311-8526814",
+  "email": "info@wisdomlingo.com",
+  "openingHours": "Mo-Sa 09:00-20:00",
+  "sameAs": [
+    "https://maps.google.com/?q=Office+No+214,+Arooj+Arcade,+F-10,+Islamabad",
+    "https://www.instagram.com/wisdomlingo",
+    "https://www.facebook.com/share/1EMnwzS44J/",
+    "https://www.tiktok.com/@wisdomlingo_academy"
+  ],
+  "programs": [
+    {
+      "name": "German A1 Language Course (Beginner)",
+      "level": "CEFR A1",
+      "exam": "Goethe-Zertifikat A1 / ÖSD A1 (Start Deutsch 1)",
+      "duration": "8 Weeks",
+      "mode": "Physical Campus & Live Online"
+    },
+    {
+      "name": "German A2 Language Course (Elementary)",
+      "level": "CEFR A2",
+      "exam": "Goethe-Zertifikat A2 / ÖSD A2",
+      "duration": "8 Weeks",
+      "mode": "Physical Campus & Live Online"
+    },
+    {
+      "name": "German B1 Language Course (Intermediate)",
+      "level": "CEFR B1",
+      "exam": "Goethe-Zertifikat B1 / ÖSD B1",
+      "purpose": "Ausbildung, University Admission, Work Visa",
+      "duration": "8 Weeks",
+      "mode": "Physical Campus & Live Online"
+    },
+    {
+      "name": "German B2 Language Course (Advanced)",
+      "level": "CEFR B2",
+      "exam": "Goethe-Zertifikat B2 / Telc B2",
+      "purpose": "Healthcare (Nursing/Doctors), Direct Admissions",
+      "duration": "10 Weeks",
+      "mode": "Physical Campus & Live Online"
+    },
+    {
+      "name": "Paid German Ausbildung (Dual Vocational Training)",
+      "location": "Germany",
+      "stipend": "€800 - €1,500 per month",
+      "tuitionFee": "€0 (Free)",
+      "duration": "3 Years",
+      "outcomes": "Permanent Job Offer + German Permanent Residency (PR)"
+    },
+    {
+      "name": "Study Abroad in Europe",
+      "destinations": ["Germany", "Austria", "Sweden", "Switzerland", "Cyprus", "Turkey"],
+      "services": "APS assistance, University admissions, Blocked account, Visa filing"
+    }
+  ]
+}

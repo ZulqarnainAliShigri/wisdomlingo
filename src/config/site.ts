@@ -51,7 +51,9 @@ export type Company = ReturnType<typeof buildCompany>;
 export function buildCompany(settings: CompanySettings) {
   const placeQuery = settings.google_place_query || settings.legal_name || settings.name;
   const digits = settings.phone_e164.replace(/[^\d]/g, "");
-  const street = [settings.address_street, settings.address_locality].filter(Boolean).join(", ");
+  const street = settings.address_street?.toLowerCase().includes(settings.address_locality?.toLowerCase())
+    ? settings.address_street
+    : [settings.address_street, settings.address_locality].filter(Boolean).join(", ");
 
   return {
     name: settings.name,
@@ -62,7 +64,7 @@ export function buildCompany(settings: CompanySettings) {
     whatsapp: `https://wa.me/${digits}`,
     email: settings.email,
     /** Street address, as listed on the Google Business Profile. */
-    address: [street, settings.address_postal_code].filter(Boolean).join(" "),
+    address: street,
     hours: settings.hours,
     /** Google Business Profile share link - opens the listing with reviews and directions. */
     googleMapsUrl: settings.google_maps_url,

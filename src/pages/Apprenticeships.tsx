@@ -13,6 +13,7 @@ import { PageHero } from "../components/ui/PageHero";
 import { SectionHeading } from "../components/ui/SectionHeading";
 import { Seo } from "../components/Seo";
 import { StructuredData } from "../components/StructuredData";
+import { generateFaqSchema } from "../seo";
 import { apprenticeshipListSchema } from "../lib/structuredData";
 import { useSeoSettings } from "../hooks/useSeo";
 import { useCompany } from "../hooks/useCompany";
@@ -42,11 +43,13 @@ export const AusbildungPage: React.FC = () => {
     () => apprenticeshipListSchema(items, settings.site_url, COMPANY.legalName),
     [items, settings.site_url, COMPANY.legalName]
   );
+  const faqSchemaData = useMemo(() => generateFaqSchema(), []);
 
   return (
     <>
       <Seo page="apprenticeships" />
       <StructuredData id="apprenticeships" data={apprenticeshipSchemaData} />
+      <StructuredData id="ausbildung-faq" data={faqSchemaData} />
 
       <PageHero
         image={HERO_IMAGES.apprenticeships}

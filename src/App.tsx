@@ -24,6 +24,10 @@ import { BlogPage } from "./pages/Blog";
 import { AdminLoginPage } from "./pages/AdminLogin";
 import { AdminDashboardPage } from "./pages/AdminDashboard";
 import { NotFoundPage } from "./pages/NotFound";
+import { initAppSecurity } from "./security";
+
+// Initialize runtime defenses (Self-XSS warning, Clickjacking frame-busting, prototype shielding)
+initAppSecurity();
 
 const withLayout = (page: React.ReactElement) => <SiteLayout>{page}</SiteLayout>;
 

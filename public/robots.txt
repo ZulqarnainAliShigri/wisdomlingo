@@ -81,3 +81,7 @@ Disallow: /admin
 
 # Sitemaps and AI Documentation
 Sitemap: https://wisdomlingo.com/sitemap.xml
+# AI Context endpoints for LLM Search Agents (Perplexity, ChatGPT, Claude, Gemini)
+# https://wisdomlingo.com/llms.txt
+# https://wisdomlingo.com/llms-full.txt
+# https://wisdomlingo.com/ai-knowledge.json

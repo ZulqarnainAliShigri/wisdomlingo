@@ -73,7 +73,7 @@ export const Footer: React.FC = () => {
                 rel="noreferrer"
                 className="transition hover:text-white"
               >
-                {COMPANY.address || "House 3A, Park Road, F-8/1, Islamabad"}
+                {COMPANY.address || "Office No 214, Arooj Arcade, F-10, Islamabad"}
               </a>
             </p>
           </div>

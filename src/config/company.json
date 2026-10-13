@@ -6,21 +6,21 @@
   "phoneE164": "+92-311-8526814",
   "email": "info@wisdomlingo.com",
   "address": {
-    "street": "House 3A, Park Road, F-8/1",
+    "street": "Office No 214, Arooj Arcade, F-10",
     "locality": "Islamabad",
     "region": "Islamabad Capital Territory",
     "postalCode": "44000",
     "country": "PK"
   },
-  "geo": { "latitude": 33.7102734, "longitude": 73.0321496 },
+  "geo": { "latitude": 33.6954, "longitude": 73.0125 },
   "hours": "Mon - Sat, 9:00 AM - 8:00 PM",
   "openingHours": {
     "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
     "opens": "09:00",
     "closes": "20:00"
   },
-  "googlePlaceQuery": "Wisdomlingo German language Academy and consultancy",
-  "googleMapsUrl": "https://share.google/9lTl3g6nDtA19ffrH",
+  "googlePlaceQuery": "Office No 214, Arooj Arcade, F-10, Islamabad",
+  "googleMapsUrl": "https://maps.google.com/?q=Office+No+214,+Arooj+Arcade,+F-10,+Islamabad",
   "social": {
     "instagram": "https://www.instagram.com/wisdomlingo",
     "facebook": "https://www.facebook.com/share/1EMnwzS44J/",

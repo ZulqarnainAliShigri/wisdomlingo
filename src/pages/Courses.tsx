@@ -28,6 +28,7 @@ import { HERO_IMAGES } from "../config/media";
 import { PageHero } from "../components/ui/PageHero";
 import { Seo } from "../components/Seo";
 import { StructuredData } from "../components/StructuredData";
+import { generateFaqSchema } from "../seo";
 import { courseListSchema } from "../lib/structuredData";
 import { useSeoSettings } from "../hooks/useSeo";
 import { DetailModal, DetailModalData } from "../components/public/DetailModal";
@@ -167,11 +168,13 @@ export const CoursesPage: React.FC = () => {
     () => courseListSchema(items, settings.site_url, COMPANY.legalName),
     [items, settings.site_url, COMPANY.legalName]
   );
+  const faqSchemaData = useMemo(() => generateFaqSchema(), []);
 
   return (
     <>
       <Seo page="courses" />
       <StructuredData id="courses" data={courseSchemaData} />
+      <StructuredData id="courses-faq" data={faqSchemaData} />
 
       {/* Hero Section */}
       <PageHero

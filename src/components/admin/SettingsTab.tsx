@@ -419,7 +419,7 @@ export const SettingsTab: React.FC<{ onEditProfile?: () => void; onBack?: () => 
                 label="Street"
                 value={form.address_street}
                 onChange={(value) => setField("address_street", value)}
-                placeholder="House 3A, Park Road, F-8/1"
+                placeholder="Office No 214, Arooj Arcade, F-10"
                 className="sm:col-span-2"
               />
               <Field
@@ -462,7 +462,7 @@ export const SettingsTab: React.FC<{ onEditProfile?: () => void; onBack?: () => 
                 label="Google listing name"
                 value={form.google_place_query}
                 onChange={(value) => setField("google_place_query", value)}
-                placeholder="Wisdomlingo German language Academy and consultancy"
+                placeholder="Office No 214, Arooj Arcade, F-10, Islamabad"
                 hint="Exactly as listed on Google - the embedded map resolves the pin from this."
                 className="sm:col-span-2"
               />
@@ -471,7 +471,7 @@ export const SettingsTab: React.FC<{ onEditProfile?: () => void; onBack?: () => 
                 label="Google Maps link"
                 value={form.google_maps_url}
                 onChange={(value) => setField("google_maps_url", value)}
-                placeholder="https://share.google/..."
+                placeholder="https://maps.google.com/?q=Office+No+214,+Arooj+Arcade,+F-10,+Islamabad"
                 className="sm:col-span-2"
               />
               <Field
@@ -479,14 +479,14 @@ export const SettingsTab: React.FC<{ onEditProfile?: () => void; onBack?: () => 
                 label="Latitude"
                 value={numberValue(form.geo_latitude)}
                 onChange={(value) => setField("geo_latitude", parseNumber(value))}
-                placeholder="33.7102734"
+                placeholder="33.6954"
               />
               <Field
                 id="company-lng"
                 label="Longitude"
                 value={numberValue(form.geo_longitude)}
                 onChange={(value) => setField("geo_longitude", parseNumber(value))}
-                placeholder="73.0321496"
+                placeholder="73.0125"
               />
               <Field
                 id="company-hours"

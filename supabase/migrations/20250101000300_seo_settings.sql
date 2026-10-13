@@ -75,7 +75,7 @@ values (
     },
     "about": {
       "title": "About Us & Contact",
-      "description": "Fifteen years placing Pakistani students in European universities and paid apprenticeships. Visit us in F-8/1 Islamabad or send an enquiry."
+      "description": "Fifteen years placing Pakistani students in European universities and paid apprenticeships. Visit us at Office No 214, Arooj Arcade, F-10, Islamabad or send an enquiry."
     }
   }'::jsonb
 )

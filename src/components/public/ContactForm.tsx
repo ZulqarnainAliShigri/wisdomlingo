@@ -6,6 +6,14 @@ import { useCompany } from "../../hooks/useCompany";
 import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 import { emailPattern } from "../../lib/utils";
 import { Spinner } from "../ui/Loader";
+import {
+  useBotProtection,
+  HoneypotField,
+  checkRateLimit,
+  recordRateLimitAttempt,
+  sanitizePayload,
+  logSecurityEvent,
+} from "../../security";
 
 interface ContactFormState {
   name: string;
@@ -41,6 +49,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
   onSent,
 }) => {
   const COMPANY = useCompany();
+  const { honeypotValue, setHoneypotValue, evaluateSubmission } = useBotProtection();
   const [form, setForm] = useState<ContactFormState>({
     ...EMPTY_CONTACT,
     subject: defaultSubject,
@@ -93,21 +102,45 @@ export const ContactForm: React.FC<ContactFormProps> = ({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    // 1. Anti-bot defense: check honeypot trap and submission velocity
+    const botCheck = evaluateSubmission();
+    if (botCheck.isBot) {
+      logSecurityEvent("honeypot_triggered", "critical", `Spam bot blocked: ${botCheck.reason}`);
+      toast.success("Thank you! Your enquiry has been received.");
+      setForm({ ...EMPTY_CONTACT, subject: defaultSubject, message: defaultMessage });
+      onSent?.();
+      return;
+    }
+
+    // 2. Anti-spam rate limiting: prevent form flooding
+    const rateCheck = checkRateLimit("contact_form");
+    if (!rateCheck.allowed) {
+      toast.error(rateCheck.message || "Please wait before submitting another enquiry.");
+      logSecurityEvent("rate_limit_exceeded", "warning", "Contact form rate limit triggered.");
+      return;
+    }
+
     if (!validate()) {
       toast.error("Please fix the highlighted fields.");
       return;
     }
 
+    // 3. Deep sanitization against XSS and malicious injection
+    const clean = sanitizePayload(form);
+
     setSubmitting(true);
     try {
+      recordRateLimitAttempt("contact_form");
+
       if (isSupabaseConfigured) {
         await supabase.from("contact_submissions").insert([
           {
-            name: form.name.trim(),
-            email: form.email.trim().toLowerCase(),
-            phone: form.phone.trim(),
-            subject: form.subject,
-            message: form.message.trim(),
+            name: clean.name.trim(),
+            email: clean.email.trim().toLowerCase(),
+            phone: clean.phone.trim(),
+            subject: clean.subject,
+            message: clean.message.trim(),
           },
         ]);
       }
@@ -140,6 +173,8 @@ export const ContactForm: React.FC<ContactFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit} noValidate className={isCard ? "card p-6 sm:p-8" : undefined}>
+      {/* Invisible Honeypot trap to catch automated web scrapers/bots */}
+      <HoneypotField value={honeypotValue} onChange={setHoneypotValue} />
       {isCard && (
         <div className="mb-6 space-y-3">
           <div className="flex flex-col gap-1">

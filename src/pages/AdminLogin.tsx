@@ -7,6 +7,13 @@ import { ADMIN_EMAIL, isSupabaseConfigured } from "../lib/supabase";
 import { emailPattern, errorMessage } from "../lib/utils";
 import { Logo } from "../components/layout/Logo";
 import { Spinner } from "../components/ui/Loader";
+import {
+  checkRateLimit,
+  recordRateLimitAttempt,
+  resetRateLimit,
+  sanitizeText,
+  logSecurityEvent,
+} from "../security";
 
 export const AdminLoginPage: React.FC = () => {
   const { signIn, session, loading } = useAuth();
@@ -21,7 +28,17 @@ export const AdminLoginPage: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!emailPattern.test(email.trim())) {
+
+    // Check brute-force rate limiting
+    const rateCheck = checkRateLimit("admin_login");
+    if (!rateCheck.allowed) {
+      toast.error(rateCheck.message || "Too many failed attempts. Please wait before trying again.");
+      logSecurityEvent("rate_limit_exceeded", "warning", "Admin login rate limit triggered.");
+      return;
+    }
+
+    const cleanEmail = sanitizeText(email);
+    if (!emailPattern.test(cleanEmail)) {
       toast.error("Please enter a valid email address.");
       return;
     }
@@ -32,10 +49,13 @@ export const AdminLoginPage: React.FC = () => {
 
     setSubmitting(true);
     try {
-      await signIn(email.trim(), password);
+      await signIn(cleanEmail, password);
+      resetRateLimit("admin_login");
       toast.success("Welcome back!");
       navigate("/admin/dashboard", { replace: true });
     } catch (error) {
+      recordRateLimitAttempt("admin_login");
+      logSecurityEvent("auth_failure", "warning", `Failed login attempt for user: ${cleanEmail}`);
       toast.error(errorMessage(error, "Login failed. Check your credentials and try again."));
     } finally {
       setSubmitting(false);

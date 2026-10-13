@@ -47,6 +47,12 @@ import {
   VisaApprovalDrawing,
 } from "../components/public/ProcessDrawings";
 import { Seo } from "../components/Seo";
+import { StructuredData } from "../components/StructuredData";
+import {
+  generateLocalBusinessSchema,
+  generateFaqSchema,
+  generateFeaturedCoursesSchema,
+} from "../seo";
 import { useInfiniteCarousel } from "../hooks/useInfiniteCarousel";
 
 /** Shown above the article grid on desktop, below it on phones. */
@@ -213,9 +219,16 @@ export const HomePage: React.FC = () => {
     return () => clearTimeout(timer);
   }, [displayText, isDeleting, subIndex]);
 
+  const localSchemaData = useMemo(() => generateLocalBusinessSchema(), []);
+  const faqSchemaData = useMemo(() => generateFaqSchema(), []);
+  const featuredCoursesSchemaData = useMemo(() => generateFeaturedCoursesSchema(), []);
+
   return (
     <>
       <Seo page="home" />
+      <StructuredData id="home-local" data={localSchemaData} />
+      <StructuredData id="home-faq" data={faqSchemaData} />
+      <StructuredData id="home-courses" data={featuredCoursesSchemaData} />
 
       {/* ══════════════════════════════════════════════════════
           HERO
