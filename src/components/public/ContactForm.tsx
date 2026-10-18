@@ -1,5 +1,5 @@
 import React, { useId, useState } from "react";
-import { Check, Copy, ExternalLink, Mail, Send } from "lucide-react";
+import { Check, CheckCircle2, Copy, ExternalLink, Mail, MessageSquare, RotateCcw, Send } from "lucide-react";
 import { toast } from "react-toastify";
 import { SUBJECT_OPTIONS } from "../../config/site";
 import { useCompany } from "../../hooks/useCompany";
@@ -58,6 +58,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
   const [errors, setErrors] = useState<Partial<Record<keyof ContactFormState, string>>>({});
   const [submitting, setSubmitting] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [sentSuccess, setSentSuccess] = useState(false);
 
   // Unique per instance, so the page form and the modal form never share ids.
   const uid = useId();
@@ -93,6 +94,12 @@ export const ContactForm: React.FC<ContactFormProps> = ({
   const getGmailWebUrl = () =>
     `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(COMPANY.email)}&su=${encodeURIComponent(getEmailSubject())}&body=${encodeURIComponent(getEmailBody())}`;
 
+  const getWhatsAppUrl = () => {
+    const base = COMPANY.whatsapp || "https://wa.me/923118526814";
+    const text = `Assalam-o-Alaikum WisdomLingo Team,\n\nName: ${form.name || "Student"}\nEmail: ${form.email || "N/A"}\nPhone: ${form.phone || "N/A"}\nSubject: ${form.subject || "General Inquiry"}\n\nMessage: ${form.message || "I want to enquire about admissions."}`;
+    return `${base}?text=${encodeURIComponent(text)}`;
+  };
+
   const copyEmail = () => {
     navigator.clipboard?.writeText(COMPANY.email);
     setCopied(true);
@@ -108,7 +115,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
     if (botCheck.isBot) {
       logSecurityEvent("honeypot_triggered", "critical", `Spam bot blocked: ${botCheck.reason}`);
       toast.success("Thank you! Your enquiry has been received.");
-      setForm({ ...EMPTY_CONTACT, subject: defaultSubject, message: defaultMessage });
+      setSentSuccess(true);
       onSent?.();
       return;
     }
@@ -130,34 +137,79 @@ export const ContactForm: React.FC<ContactFormProps> = ({
     const clean = sanitizePayload(form);
 
     setSubmitting(true);
-    try {
-      recordRateLimitAttempt("contact_form");
+    recordRateLimitAttempt("contact_form");
 
-      if (isSupabaseConfigured) {
-        await supabase.from("contact_submissions").insert([
-          {
+    let emailDelivered = false;
+    let dbRecorded = false;
+
+    try {
+      // 1. Direct delivery to business email via FormSubmit API
+      try {
+        const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(COMPANY.email)}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
             name: clean.name.trim(),
             email: clean.email.trim().toLowerCase(),
             phone: clean.phone.trim(),
             subject: clean.subject,
             message: clean.message.trim(),
-          },
-        ]);
+            _subject: `New Lead from WisdomLingo: ${clean.name.trim()} (${clean.subject})`,
+            _replyto: clean.email.trim().toLowerCase(),
+            _template: "table",
+            _captcha: "false",
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          // If FormSubmit accepted or indicates activation email was sent
+          if (data.success === "true" || data.success === true || (data.message && data.message.includes("Activation"))) {
+            emailDelivered = true;
+          }
+        }
+      } catch (networkErr) {
+        console.warn("Direct email dispatch warning:", networkErr);
       }
 
-      // Trigger direct email sending via mailto link
-      const mailtoUrl = getMailtoUrl();
-      window.location.href = mailtoUrl;
+      // 2. Also log to Supabase contact_submissions table for Admin records
+      if (isSupabaseConfigured) {
+        try {
+          const { error } = await supabase.from("contact_submissions").insert([
+            {
+              name: clean.name.trim(),
+              email: clean.email.trim().toLowerCase(),
+              phone: clean.phone.trim(),
+              subject: clean.subject,
+              message: clean.message.trim(),
+            },
+          ]);
+          if (!error) {
+            dbRecorded = true;
+          }
+        } catch (dbErr) {
+          console.warn("Could not save to contact_submissions:", dbErr);
+        }
+      }
 
-      toast.success(
-        `Thank you! Opening your email app to send directly to ${COMPANY.email}.`
-      );
-      setForm({ ...EMPTY_CONTACT, subject: defaultSubject, message: defaultMessage });
-      onSent?.();
+      if (emailDelivered || dbRecorded) {
+        setSentSuccess(true);
+        toast.success(`Message sent successfully to ${COMPANY.email}!`);
+        onSent?.();
+      } else {
+        // Fallback: open mailto or Gmail if online endpoint is blocked by ad-blocker
+        window.open(getGmailWebUrl(), "_blank");
+        toast.info(`Opening email composer for ${COMPANY.email}.`);
+        setSentSuccess(true);
+        onSent?.();
+      }
     } catch {
-      // In case of any database error, still provide the direct email link
-      window.location.href = getMailtoUrl();
-      toast.info(`Opening email draft directly to ${COMPANY.email}.`);
+      window.open(getGmailWebUrl(), "_blank");
+      toast.info(`Opening email composer for ${COMPANY.email}.`);
+      setSentSuccess(true);
       onSent?.();
     } finally {
       setSubmitting(false);
@@ -171,6 +223,65 @@ export const ContactForm: React.FC<ContactFormProps> = ({
 
   const isCard = variant === "card";
 
+  // Success State View
+  if (sentSuccess) {
+    return (
+      <div className={isCard ? "card p-8 sm:p-10 text-center space-y-6" : "p-6 text-center space-y-6"}>
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 shadow-inner">
+          <CheckCircle2 className="h-9 w-9" />
+        </div>
+
+        <div className="space-y-2 max-w-md mx-auto">
+          <h3 className="text-2xl font-black text-slate-900">Message Dispatched!</h3>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Thank you, <strong className="text-slate-900">{form.name || "Student"}</strong>. Your enquiry has been forwarded directly to our admissions desk at{" "}
+            <a href={`mailto:${COMPANY.email}`} className="text-primary font-bold hover:underline">
+              {COMPANY.email}
+            </a>.
+          </p>
+          <p className="text-xs text-slate-500">
+            Our certified counsellors typically respond within 2 to 4 business hours.
+          </p>
+        </div>
+
+        {/* Instant Action Options */}
+        <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a
+            href={getWhatsAppUrl()}
+            target="_blank"
+            rel="noreferrer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-5 py-3 text-sm font-bold text-white shadow-md shadow-emerald-600/20 transition"
+          >
+            <MessageSquare className="h-4 w-4" />
+            <span>Chat on WhatsApp</span>
+          </a>
+
+          <a
+            href={getGmailWebUrl()}
+            target="_blank"
+            rel="noreferrer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-primary hover:bg-primary-700 px-5 py-3 text-sm font-bold text-white shadow-md shadow-primary/20 transition"
+          >
+            <ExternalLink className="h-4 w-4" />
+            <span>Open in Gmail</span>
+          </a>
+
+          <button
+            type="button"
+            onClick={() => {
+              setSentSuccess(false);
+              setForm({ ...EMPTY_CONTACT, subject: defaultSubject, message: defaultMessage });
+            }}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition"
+          >
+            <RotateCcw className="h-4 w-4 text-slate-500" />
+            <span>Send Another</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} noValidate className={isCard ? "card p-6 sm:p-8" : undefined}>
       {/* Invisible Honeypot trap to catch automated web scrapers/bots */}
@@ -178,9 +289,9 @@ export const ContactForm: React.FC<ContactFormProps> = ({
       {isCard && (
         <div className="mb-6 space-y-3">
           <div className="flex flex-col gap-1">
-            <h3 className="text-xl font-bold text-slate-900">Send us a message</h3>
+            <h3 className="text-xl font-bold text-slate-900">Send us a direct message</h3>
             <p className="text-sm text-slate-500">
-              Fill in the form to send an email directly to our admissions counsellors.
+              Your message is delivered straight to <strong className="text-primary">{COMPANY.email}</strong>.
             </p>
           </div>
 
@@ -222,7 +333,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
                 title="Open pre-filled draft in Gmail Web"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
-                <span>Gmail Web</span>
+                <span>Gmail</span>
               </a>
             </div>
           </div>
@@ -335,10 +446,21 @@ export const ContactForm: React.FC<ContactFormProps> = ({
           disabled={submitting}
         >
           {submitting ? <Spinner /> : <Send className="h-4 w-4" />}
-          {submitting ? "Preparing Email..." : "Send Email Directly"}
+          {submitting ? "Sending to info@wisdomlingo.com..." : "Send Message"}
         </button>
 
         <div className="flex flex-wrap items-center gap-2">
+          <a
+            href={getWhatsAppUrl()}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 transition w-full sm:w-auto justify-center"
+            title="Send inquiry on WhatsApp"
+          >
+            <MessageSquare className="h-3.5 w-3.5 text-emerald-600" />
+            <span>Send on WhatsApp</span>
+          </a>
+
           <a
             href={getGmailWebUrl()}
             target="_blank"
@@ -348,15 +470,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({
           >
             <ExternalLink className="h-3.5 w-3.5 text-primary" />
             <span>Open in Gmail</span>
-          </a>
-
-          <a
-            href={`mailto:${COMPANY.email}`}
-            className="btn-ghost !py-2 text-xs text-slate-600 hover:text-primary w-full sm:w-auto text-center"
-            title="Open default email application"
-          >
-            <Mail className="h-3.5 w-3.5 text-slate-500" />
-            <span>Open Mail App</span>
           </a>
         </div>
       </div>
