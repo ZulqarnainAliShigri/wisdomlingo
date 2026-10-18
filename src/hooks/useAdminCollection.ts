@@ -17,8 +17,9 @@ export interface AdminCollection<T> {
   loading: boolean;
   saving: boolean;
   deleting: boolean;
+  tableMissing: boolean;
   reload: () => Promise<void>;
-  /** Insert when `id` is omitted, update otherwise. Resolves true on success. */
+  /** Insert when `id` is omitted or is a seed ID, update otherwise. Resolves true on success. */
   save: (payload: Record<string, unknown>, id?: string) => Promise<boolean>;
   remove: (item: T) => Promise<boolean>;
   toggleActive: (item: T) => Promise<void>;
@@ -27,9 +28,13 @@ export interface AdminCollection<T> {
 const READ_ONLY_MESSAGE =
   "Supabase is not connected, so changes cannot be saved. Add your project URL and anon key to .env.local.";
 
+/** Checks if a string is a valid standard UUID. */
+export const isUuid = (val?: string | null): boolean =>
+  Boolean(val && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(val));
+
 /**
  * One CRUD implementation shared by every admin tab: courses,
- * study destinations and apprenticeships all behave identically.
+ * study destinations, apprenticeships, stories and articles all behave identically.
  */
 export function useAdminCollection<T extends AdminEntity>(
   table: string,
@@ -40,10 +45,12 @@ export function useAdminCollection<T extends AdminEntity>(
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [tableMissing, setTableMissing] = useState(false);
 
   const reload = useCallback(async () => {
     if (!isSupabaseConfigured) {
       setItems(demoItems);
+      setTableMissing(false);
       setLoading(false);
       return;
     }
@@ -58,14 +65,23 @@ export function useAdminCollection<T extends AdminEntity>(
       if (error) {
         // Table may not have been created yet in user's Supabase instance
         console.warn(`Could not load ${table} from Supabase, using demo fallback:`, error.message);
-        setItems(demoItems);
-      } else if (!data || data.length === 0) {
+        const missing =
+          error.code === "PGRST205" ||
+          error.message?.includes("schema cache") ||
+          error.message?.includes("does not exist");
+        setTableMissing(missing);
         setItems(demoItems);
       } else {
-        setItems((data as Row[]).map(map));
+        setTableMissing(false);
+        if (!data || data.length === 0) {
+          setItems(demoItems);
+        } else {
+          setItems((data as Row[]).map(map));
+        }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.warn(`Exception loading ${table}:`, err);
+      setTableMissing(false);
       setItems(demoItems);
     } finally {
       setLoading(false);
@@ -85,19 +101,32 @@ export function useAdminCollection<T extends AdminEntity>(
       }
       setSaving(true);
       try {
-        if (id) {
+        // If id is provided and is a valid database UUID, update existing row.
+        // If id is omitted or is a seed ID (e.g. "seed-story-1", "seed-it"), insert as a new row in Supabase.
+        if (id && isUuid(id)) {
           const { error } = await supabase.from(table).update(payload).eq("id", id);
           if (error) throw error;
           toast.success("Changes saved.");
         } else {
           const { error } = await supabase.from(table).insert([payload]);
           if (error) throw error;
-          toast.success("Created successfully.");
+          toast.success("Saved successfully.");
         }
         await reload();
         return true;
-      } catch (error) {
-        toast.error(errorMessage(error, "Could not save your changes."));
+      } catch (error: any) {
+        if (
+          error?.code === "PGRST205" ||
+          error?.message?.includes("schema cache") ||
+          error?.message?.includes("does not exist")
+        ) {
+          toast.error(
+            `Table "${table}" does not exist in Supabase yet. Please run migration 20250101000500_stories_and_articles.sql in your Supabase SQL Editor.`,
+            { autoClose: 8000 }
+          );
+        } else {
+          toast.error(errorMessage(error, "Could not save your changes."));
+        }
         return false;
       } finally {
         setSaving(false);
@@ -114,9 +143,14 @@ export function useAdminCollection<T extends AdminEntity>(
       }
       setDeleting(true);
       try {
-        const { error } = await supabase.from(table).delete().eq("id", item.id);
-        if (error) throw error;
-        await deleteImageByUrl(item.image_url ?? null);
+        if (isUuid(item.id)) {
+          const { error } = await supabase.from(table).delete().eq("id", item.id);
+          if (error) throw error;
+          await deleteImageByUrl(item.image_url ?? null);
+        } else {
+          // Item was only a local seed item: remove directly from local state
+          setItems((current) => current.filter((i) => i.id !== item.id));
+        }
         toast.success("Deleted.");
         await reload();
         return true;
@@ -136,19 +170,27 @@ export function useAdminCollection<T extends AdminEntity>(
         toast.error(READ_ONLY_MESSAGE);
         return;
       }
-      const { error } = await supabase
-        .from(table)
-        .update({ is_active: !item.is_active })
-        .eq("id", item.id);
-      if (error) {
-        toast.error(errorMessage(error, "Could not update visibility."));
-        return;
+      if (isUuid(item.id)) {
+        const { error } = await supabase
+          .from(table)
+          .update({ is_active: !item.is_active })
+          .eq("id", item.id);
+        if (error) {
+          toast.error(errorMessage(error, "Could not update visibility."));
+          return;
+        }
+        toast.success(item.is_active ? "Hidden from the website." : "Now visible on the website.");
+        reload();
+      } else {
+        // Toggle in-memory seed item
+        setItems((current) =>
+          current.map((i) => (i.id === item.id ? { ...i, is_active: !i.is_active } : i))
+        );
+        toast.success(item.is_active ? "Hidden from the website." : "Now visible on the website.");
       }
-      toast.success(item.is_active ? "Hidden from the website." : "Now visible on the website.");
-      reload();
     },
     [table, reload]
   );
 
-  return { items, loading, saving, deleting, reload, save, remove, toggleActive };
+  return { items, loading, saving, deleting, tableMissing, reload, save, remove, toggleActive };
 }

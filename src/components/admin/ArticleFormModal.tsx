@@ -106,10 +106,12 @@ export const ArticleFormModal: React.FC<ArticleFormModalProps> = ({
       content: form.content.trim() || null,
       author: form.author.trim() || null,
       read_time: form.read_time.trim() || "5 min read",
-      image_url: form.image_url.trim() || null,
-      tags: form.tags,
+      tags: form.tags || [],
       link_url: form.link_url.trim() || null,
-      display_order: form.display_order === "" ? null : Number(form.display_order),
+      display_order:
+        form.display_order === "" || isNaN(Number(form.display_order))
+          ? null
+          : Number(form.display_order),
       is_active: form.is_active,
     };
 

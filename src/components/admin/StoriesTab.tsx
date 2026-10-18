@@ -8,7 +8,7 @@ import { AdminList } from "./AdminList";
 import { StoryFormModal } from "./StoryFormModal";
 
 export const StoriesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
-  const { items, loading, saving, deleting, save, remove, toggleActive } =
+  const { items, loading, saving, deleting, tableMissing, save, remove, toggleActive } =
     useAdminCollection<Story>("success_stories", mapStory, SEED_STORIES);
 
   const [search, setSearch] = useState("");
@@ -33,6 +33,8 @@ export const StoriesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
       <AdminList<Story>
         items={filtered}
         loading={loading}
+        tableMissing={tableMissing}
+        tableName="success_stories"
         primary={(story) => `${story.flag || "🎓"} ${story.name}`}
         secondary={(story) => `${story.role} • ${story.institution}`}
         image={(story) => story.avatar_url}

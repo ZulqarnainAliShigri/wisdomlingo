@@ -8,7 +8,7 @@ import { AdminList } from "./AdminList";
 import { ApprenticeshipFormModal } from "./ApprenticeshipFormModal";
 
 export const ApprenticeshipsTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
-  const { items, loading, saving, deleting, save, remove, toggleActive } =
+  const { items, loading, saving, deleting, tableMissing, save, remove, toggleActive } =
     useAdminCollection<Apprenticeship>("apprenticeships", mapApprenticeship, SEED_APPRENTICESHIPS);
 
   const [search, setSearch] = useState("");
@@ -30,6 +30,8 @@ export const ApprenticeshipsTab: React.FC<{ onBack?: () => void }> = ({ onBack }
       <AdminList<Apprenticeship>
         items={filtered}
         loading={loading}
+        tableMissing={tableMissing}
+        tableName="apprenticeships"
         primary={(item) => item.title}
         secondary={(item) => item.field}
         image={(item) => item.image_url}

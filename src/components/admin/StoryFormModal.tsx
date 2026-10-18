@@ -109,8 +109,10 @@ export const StoryFormModal: React.FC<StoryFormModalProps> = ({
       metric: form.metric.trim() || null,
       quote: form.quote.trim(),
       rating: Number(form.rating) || 5,
-      avatar_url: form.avatar_url.trim() || null,
-      display_order: form.display_order === "" ? null : Number(form.display_order),
+      display_order:
+        form.display_order === "" || isNaN(Number(form.display_order))
+          ? null
+          : Number(form.display_order),
       is_active: form.is_active,
     };
 

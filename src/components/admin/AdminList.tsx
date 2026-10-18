@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowLeft, Image as ImageIcon, LayoutGrid, List, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Image as ImageIcon, LayoutGrid, List, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { AdminEntity } from "../../hooks/useAdminCollection";
 import { EmptyState } from "../ui/EmptyState";
 import { FullPageLoader } from "../ui/Loader";
@@ -33,6 +33,8 @@ interface AdminListProps<T> {
   /* Navigation & View */
   onBack?: () => void;
   defaultView?: "cards" | "list";
+  tableMissing?: boolean;
+  tableName?: string;
 }
 
 /**
@@ -59,6 +61,8 @@ export function AdminList<T extends AdminEntity>({
   emptyHint,
   onBack,
   defaultView = "list",
+  tableMissing,
+  tableName,
 }: AdminListProps<T>) {
   const [viewMode, setViewMode] = useState<"cards" | "list">(defaultView);
 
@@ -81,6 +85,20 @@ export function AdminList<T extends AdminEntity>({
 
   return (
     <div className="space-y-4 sm:space-y-5">
+      {tableMissing && (
+        <div className="flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50/90 p-4 text-amber-900 shadow-xs">
+          <AlertTriangle className="h-5 w-5 shrink-0 text-amber-600 mt-0.5" />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold text-amber-900">
+              Database table &ldquo;{tableName || "this collection"}&rdquo; is not yet created in Supabase
+            </p>
+            <p className="text-xs text-amber-800 mt-1 leading-relaxed">
+              You are currently viewing bundled preview content. To enable saving and publishing changes to the database, run migration <code className="bg-amber-100 px-1 py-0.5 rounded font-mono font-semibold">20250101000500_stories_and_articles.sql</code> in your <strong>Supabase Dashboard &rarr; SQL Editor</strong>.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Unified Toolbar: Back button + Search + Add Button on same line, with View Switcher & Filter */}
       <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
         {/* Primary Row: [Back] + [Search] + [Mobile Add] */}

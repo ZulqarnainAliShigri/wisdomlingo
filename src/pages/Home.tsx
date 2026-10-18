@@ -7,19 +7,27 @@ import {
   Calendar,
   CalendarDays,
   Check,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
   Clock,
   Coins,
+  Copy,
+  ExternalLink,
   Globe,
   GraduationCap,
   HeartHandshake,
+  Mail,
+  MapPin,
   MessageSquare,
+  Phone,
   Quote,
+  Send,
   ShieldCheck,
   Sparkles,
   Star,
 } from "lucide-react";
+import { ContactForm } from "../components/public/ContactForm";
 import { useCompany } from "../hooks/useCompany";
 import { HERO_IMAGES } from "../config/media";
 import {
@@ -316,6 +324,12 @@ export const HomePage: React.FC = () => {
               >
                 Start Your Journey <ArrowRight className="h-4 w-4" />
               </button>
+              <a
+                href="#contact-email"
+                className="btn-ghost sm:flex-none sm:px-5 sm:py-3 sm:text-sm font-bold inline-flex items-center gap-1.5"
+              >
+                <Mail className="h-4 w-4 text-primary" /> Email Us
+              </a>
               <Link
                 to="/courses"
                 className="btn-ghost sm:flex-none sm:px-5 sm:py-3 sm:text-sm font-bold"
@@ -2125,6 +2139,112 @@ export const HomePage: React.FC = () => {
               >
                 Request Free Checklist <ArrowRight className="h-4 w-4" />
               </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          DIRECT EMAIL & MESSAGES TO info@wisdomlingo.com
+      ══════════════════════════════════════════════════════ */}
+      <section
+        id="contact-email"
+        className="section relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-primary-50/25 border-t border-slate-200"
+      >
+        <div className="container-page relative z-10">
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-start">
+            {/* Left Column: Direct Business Email Info & Value Props */}
+            <div className="lg:col-span-5 space-y-6">
+              <div>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-200/90 bg-primary-50 px-3 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-primary shadow-2xs">
+                  <Mail className="h-3.5 w-3.5 text-primary" /> Direct Business Email
+                </span>
+                <h2 className="mt-3 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
+                  Send a Message Directly to <span className="text-primary">{COMPANY.email}</span>
+                </h2>
+                <p className="mt-3 text-sm sm:text-base leading-relaxed text-slate-600">
+                  Have questions about German language batches (A1–C2), European public university admissions, or paid Ausbildung contracts in Germany? Fill out this direct form to reach our official admissions desk.
+                </p>
+              </div>
+
+              {/* Official Business Email Card */}
+              <div className="rounded-2xl border border-primary-100 bg-white p-5 shadow-sm space-y-4">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-blue-700 text-white shadow-md shadow-primary/20">
+                    <Mail className="h-6 w-6" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                      Official Communications Inbox
+                    </span>
+                    <a
+                      href={`mailto:${COMPANY.email}`}
+                      className="block truncate text-base sm:text-lg font-bold text-primary hover:underline"
+                    >
+                      {COMPANY.email}
+                    </a>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 text-xs">
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <span>24h Response Time</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <span>Free Profile Evaluation</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <span>Certified Counsellors</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <span>Direct Case Review</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Office & Quick Contact Points */}
+              <div className="space-y-3.5 text-xs sm:text-sm text-slate-600">
+                <div className="flex items-start gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700">
+                    <MapPin className="h-4 w-4 text-primary" />
+                  </span>
+                  <div>
+                    <strong className="block text-slate-900 font-semibold">Islamabad Campus &amp; Office</strong>
+                    <span>{COMPANY.address || "Office No 214, Arooj Arcade, F-10, Islamabad"}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700">
+                    <Phone className="h-4 w-4 text-primary" />
+                  </span>
+                  <div>
+                    <strong className="block text-slate-900 font-semibold">Direct Phone &amp; WhatsApp</strong>
+                    <a href={`tel:${COMPANY.phone}`} className="text-primary hover:underline font-medium">
+                      {COMPANY.phone}
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700">
+                    <Clock className="h-4 w-4 text-primary" />
+                  </span>
+                  <div>
+                    <strong className="block text-slate-900 font-semibold">Consultation Hours</strong>
+                    <span>{COMPANY.hours}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Direct Email Form Card */}
+            <div className="lg:col-span-7">
+              <ContactForm variant="card" />
             </div>
           </div>
         </div>

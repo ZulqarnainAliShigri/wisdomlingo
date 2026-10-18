@@ -12,7 +12,8 @@ supabase/
 │   ├── 20250101000100_rls_policies.sql          row level security
 │   ├── 20250101000200_storage_bucket.sql        course-images bucket + policies
 │   ├── 20250101000300_seo_settings.sql          editable SEO settings (one row)
-│   └── 20250101000400_company_settings.sql      editable business details (one row)
+│   ├── 20250101000400_company_settings.sql      editable business details (one row)
+│   └── 20250101000500_stories_and_articles.sql  success stories & articles tables + seeds
 └── seed.sql                                     starter content (11 courses, 6 countries, 5 fields)
 ```
 
@@ -25,7 +26,8 @@ supabase/
    3. `migrations/20250101000200_storage_bucket.sql`
    4. `migrations/20250101000300_seo_settings.sql`
    5. `migrations/20250101000400_company_settings.sql`
-   6. `seed.sql`
+   6. `migrations/20250101000500_stories_and_articles.sql`
+   7. `seed.sql`
 3. **Authentication → Users → Add user → Create new user**
    - Email `admin@wisdomlingo.com`, a strong password, tick **Auto Confirm User**.
 4. **Project Settings → API** — copy **Project URL** and the **anon public** key into

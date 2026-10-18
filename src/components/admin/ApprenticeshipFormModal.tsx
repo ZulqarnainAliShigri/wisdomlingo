@@ -60,8 +60,8 @@ export const ApprenticeshipFormModal: React.FC<ApprenticeshipFormModalProps> = (
             salary: editing.salary || "",
             duration: editing.duration || "",
             description: editing.description || "",
-            requirements: editing.requirements,
-            benefits: editing.benefits,
+            requirements: editing.requirements || [],
+            benefits: editing.benefits || [],
             image_url: editing.image_url || "",
             display_order:
               editing.display_order === null || editing.display_order === undefined
@@ -94,10 +94,13 @@ export const ApprenticeshipFormModal: React.FC<ApprenticeshipFormModalProps> = (
       salary: form.salary.trim() || null,
       duration: form.duration.trim() || null,
       description: form.description.trim() || null,
-      requirements: form.requirements,
-      benefits: form.benefits,
+      requirements: form.requirements || [],
+      benefits: form.benefits || [],
       image_url: form.image_url.trim() || null,
-      display_order: form.display_order === "" ? null : Number(form.display_order),
+      display_order:
+        form.display_order === "" || isNaN(Number(form.display_order))
+          ? null
+          : Number(form.display_order),
       is_active: form.is_active,
     };
 

@@ -8,7 +8,7 @@ import { AdminList } from "./AdminList";
 import { ArticleFormModal } from "./ArticleFormModal";
 
 export const ArticlesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
-  const { items, loading, saving, deleting, save, remove, toggleActive } =
+  const { items, loading, saving, deleting, tableMissing, save, remove, toggleActive } =
     useAdminCollection<Article>("articles", mapArticle, SEED_ARTICLES);
 
   const [search, setSearch] = useState("");
@@ -33,6 +33,8 @@ export const ArticlesTab: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
       <AdminList<Article>
         items={filtered}
         loading={loading}
+        tableMissing={tableMissing}
+        tableName="articles"
         primary={(art) => art.title}
         secondary={(art) => `${art.category} • ${art.author || "WisdomLingo"} • ${art.read_time || "5 min"}`}
         image={(art) => art.image_url}
